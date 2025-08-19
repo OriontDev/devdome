@@ -6,13 +6,16 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "../../config/firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../config/firebase";
+
 function Header(){
     const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const user = auth?.currentUser;
-    const userPhoto = user?.photoURL || pfp; // fallback if no photo
-    console.log(userPhoto);
+    const [userPhoto, setUserPhoto] = useState(pfp);
+    // console.log(userPhoto);
 
     const [menuOpen, setMenuOpen] = useState(false)
 
@@ -41,6 +44,24 @@ function Header(){
             console.err(err);
         }
     };
+
+
+    //fetch user pfp from firestore 
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            if (!currentUser) return;
+            const docRef = doc(db, "users", currentUser.uid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                setUserPhoto(data.photoURL || pfp); // Use Firestore PFP
+            } else {
+                setUserPhoto(pfp);
+            }
+        };
+
+        fetchUserProfile();
+    }, [currentUser]);
 
     console.log(auth?.currentUser?.email);
 

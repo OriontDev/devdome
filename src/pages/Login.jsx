@@ -1,15 +1,11 @@
 import styles from './Login.module.css'
 import google from '/google.svg'
 import { auth, googleProvider, db } from "../config/firebase"
-
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
 import {
   getDocs,
   collection,
-  addDoc,
-  deleteDoc,
-  updateDoc,
   doc,
   query, 
   where,
@@ -20,6 +16,13 @@ import { serverTimestamp } from "firebase/firestore";
 
 
 function Login(){
+
+    const defaultPfps = [
+        "/pfp1.svg",
+        "/pfp2.svg",
+        "/pfp3.svg",
+        "/pfp4.svg"
+    ];
 
     const createdAt = serverTimestamp();
     const usersCollectionRef = collection(db, "users");
@@ -36,13 +39,15 @@ function Login(){
             const querySnapshot = await getDocs(q);
 
             if (querySnapshot.empty) {
+
+                const assignedPfp = defaultPfps[Math.floor(Math.random() * defaultPfps.length)];
                 // User doesn't exist yet → add new document
                 await setDoc(doc(db, "users", user.uid), {
                     displayName: user.displayName,
                     bio: `Hello! I'm ${user.displayName}`,
                     createdAt: serverTimestamp(),
                     email: user.email,
-                    photoURL: user.photoURL,
+                    photoURL: assignedPfp,
                     github: "",
                     linkedin: "",
                     x: "",

@@ -42,7 +42,10 @@
 }
 
 .sidebartoppfp{
-    border-radius: 10px;
+    width: 80px;        /* or whatever size fits your sidebar */
+    height: 80px;
+    border-radius: 50%;  /* makes it circular */
+    object-fit: cover;
 }
 
 .editbutton{
@@ -92,5 +95,16 @@
     /* gap: 0px; space between project cards */
     grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); /* responsive columns */
     justify-items: center;    /* centers items inside each cell */
+}
+
+/* Optional: backdrop overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 999;
 }
 

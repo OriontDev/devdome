@@ -1,11 +1,12 @@
 import Header from "../components/Header/Header.jsx";
+import EditProfile from "../components/EditProfile/EditProfile.jsx";
 import styles from './Account.module.css'
 import github_logo from "../assets/github.svg"
 import x_logo from "../assets/x.svg"
 import linkedin_logo from "../assets/linkedin.svg"
-import pfp from '/public/pfp.png';
+import pfp from '/public/pfp.png'; //loading pfp
 import Projectcard from "../components/Projectcard/Projectcard.jsx";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useParams } from "react-router-dom";
@@ -13,17 +14,32 @@ import { auth, db } from "../config/firebase";
 
 function Account(){
 
+    // info of the profile we are viewing
     const [profile, setProfile] = useState(null);
+    // the current user logged in
     const [currentUser, setCurrentUser] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [isOwner, setIsOwner] = useState(false);
+
 
     const userPhoto = profile?.photoURL || pfp; // fallback if no photo
-    console.log(userPhoto);
+    // console.log(userPhoto);
     const tempCommentAmount = 90;
     const tempLikeAmount = 100;
 
+    const closePopup = () => {
+        setIsEditing(false);
+    };
+
     const { uid } = useParams();
 
-
+    useEffect(() => {
+    if (currentUser && profile) {
+        setIsOwner(currentUser.uid === profile.uid);
+    } else {
+        setIsOwner(false);
+    }
+    }, [currentUser, profile]);
 
     useEffect(() => {
         // Subscribe to Firebase auth state
@@ -35,24 +51,27 @@ function Account(){
     }, []);
 
     useEffect(() => {
-    const fetchProfile = async () => {
-        const targetUid = uid || auth.currentUser?.uid;
-        if (!targetUid) return;
+        const fetchProfile = async () => {
+            const targetUid = uid || auth.currentUser?.uid;
+            if (!targetUid) return;
 
-        const docRef = doc(db, "users", targetUid);
-        const docSnap = await getDoc(docRef);
+            const docRef = doc(db, "users", targetUid);
+            const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-            // setProfile(docSnap.data());
-            setProfile({ uid: docSnap.id, ...docSnap.data() }); // include uid
-        } else {
-                console.log("No profile found for this uid!");
-        }
-    };
+            if (docSnap.exists()) {
+                // setProfile(docSnap.data());
+                setProfile({ uid: docSnap.id, ...docSnap.data() }); // include uid
+            } else {
+                    console.log("No profile found for this uid!");
+            }
+        };
 
-    fetchProfile();
-    }, [uid]);
+        fetchProfile();
+    }, [uid]); //repeat everytime uid in web link mounts or changed
 
+
+    console.log("Profile photo:", profile?.photoURL);
+    console.log("Current user photo:", currentUser?.photoURL);
 
     return(
         <>
@@ -67,6 +86,7 @@ function Account(){
                                     <img
                                     src={profile?.photoURL || currentUser?.photoURL}
                                     className={styles.sidebartoppfp}
+                                    alt="ads"
                                     />
                                 ) : (
                                     <img src={pfp} className={styles.sidebartoppfp} />
@@ -81,8 +101,34 @@ function Account(){
 
                     {profile?.bio ? <p>{profile.bio}</p> : <p>Loading bio..</p>}
 
-                    
-                    {currentUser?.uid === profile?.uid ? <button className={styles.editbutton}>Edit Profile</button> : <></>}
+
+                    {isOwner && !isEditing && (
+                    <button onClick={() => setIsEditing(true)} className={styles.editbutton}>
+                        Edit Profile
+                    </button>
+                    )}
+
+                    {isEditing && (
+                        <>
+                            <div className={styles.overlay} onClick={closePopup}></div>
+                            <EditProfile 
+                                profile={profile} 
+                                onClose={() => setIsEditing(false)} 
+                                onSave={async (updatedData) => {
+                                    // Update Firestore
+                                    await setDoc(doc(db, "users", profile.uid), {
+                                    ...profile,
+                                    ...updatedData
+                                    });
+                                    // Update local state
+                                    setProfile({ ...profile, ...updatedData });
+                                }} 
+                            />                        
+                        </>
+
+                    )}
+
+
                     {/* <button className={styles.editbutton}>Edit Profile</button> */}
 
                     <div className={styles.socialcontainer}>
