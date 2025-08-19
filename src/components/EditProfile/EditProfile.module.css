@@ -9,10 +9,13 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   width: 80%;
+  max-width: 1100px;
   display: flex;
   align-items: center;
   flex-direction: column;
-
+  height: 80%;
+  max-height: 90vh; /* shrink if screen is smaller */
+  overflow-y: auto; /* enable scrolling if content is too tall */
   gap: 15px;
 }
 
@@ -63,6 +66,8 @@
 }
 
 .edittitle{
-  text-align: left;
-  display: flex;
+}
+
+.editcontainer{
+  width: 100%;
 }

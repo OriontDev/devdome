@@ -29,7 +29,7 @@ function EditProfile({ profile, onClose, onSave }) {
   return (
     <>
       <div className={styles.editPopup}>
-        <div>
+        <div className={styles.editcontainer}>
           <p className={styles.edittitle}>Bio</p>
           <textarea
             name="bio"
@@ -39,30 +39,45 @@ function EditProfile({ profile, onClose, onSave }) {
           />
         </div>
 
-        <input
-          name="github"
-          value={formData.github}
-          onChange={handleChange}
-          placeholder="GitHub URL"
-        />
-        <input
-          name="linkedin"
-          value={formData.linkedin}
-          onChange={handleChange}
-          placeholder="LinkedIn URL"
-        />
-        <input
-          name="x"
-          value={formData.x}
-          onChange={handleChange}
-          placeholder="X URL"
-        />
-        <input
-          name="personalWebsite"
-          value={formData.personalWebsite}
-          onChange={handleChange}
-          placeholder="Personal Website URL"
-        />
+        <div className={styles.editcontainer}>
+          <p className={styles.edittitle}>Github</p>
+          <input
+            name="github"
+            value={formData.github}
+            onChange={handleChange}
+            placeholder="GitHub URL"
+          />
+        </div>
+
+        <div className={styles.editcontainer}>
+          <p className={styles.edittitle}>LinkedIn</p>
+            <input
+              name="linkedin"
+              value={formData.linkedin}
+              onChange={handleChange}
+              placeholder="LinkedIn URL"
+            />
+        </div>
+
+        <div className={styles.editcontainer}>
+          <p className={styles.edittitle}>X (formerly twitter)</p>
+            <input
+              name="x"
+              value={formData.x}
+              onChange={handleChange}
+              placeholder="X URL"
+            />
+        </div>
+
+        <div className={styles.editcontainer}>
+          <p className={styles.edittitle}>Personal Website / Portofolio</p>
+            <input
+              name="personalWebsite"
+              value={formData.personalWebsite}
+              onChange={handleChange}
+              placeholder="Personal Website URL"
+            />
+        </div>
         <button onClick={handleSave}>Save</button>
         <button onClick={onClose}>Cancel</button>
       </div>

@@ -2,6 +2,7 @@ import Header from "../components/Header/Header.jsx";
 import EditProfile from "../components/EditProfile/EditProfile.jsx";
 import styles from './Account.module.css'
 import github_logo from "../assets/github.svg"
+import personal_logo from "../assets/website.svg"
 import x_logo from "../assets/x.svg"
 import linkedin_logo from "../assets/linkedin.svg"
 import pfp from '/public/pfp.png'; //loading pfp
@@ -92,7 +93,14 @@ function Account(){
                                     <img src={pfp} className={styles.sidebartoppfp} />
                                 )}
                                 <div className={styles.sidebartoptextcontainer}>
+                                    {/* Username */}
                                     <h2 className={styles.usernametop}>{profile?.displayName?.slice(0, 20) || "User"}</h2>
+                                    {/* Created */}
+                                    <h2 className={styles.usernametop}>
+                                    {profile?.createdAt
+                                        ? `Created at: ${new Date(profile.createdAt.seconds * 1000).toLocaleDateString()}`
+                                        : "..."}
+                                    </h2>
                                 </div>                      
                             </>
                         )}
