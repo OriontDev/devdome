@@ -4,6 +4,7 @@ import styles from './EditProfile.module.css';
 
 function EditProfile({ profile, onClose, onSave }) {
   const [formData, setFormData] = useState({
+    displayName: profile.displayName || "",
     bio: profile.bio || "",
     github: profile.github || "",
     linkedin: profile.linkedin || "",
@@ -14,7 +15,8 @@ function EditProfile({ profile, onClose, onSave }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     // limit bio length
-    if (name === "bio" && value.length > maxLength) return;
+    if (name === "bio" && value.length > maxLengthBio) return;
+    if (name === "displayName" && value.length > maxLengthDn) return;
     setFormData({ ...formData, [name]: value });
   };
 
@@ -24,11 +26,23 @@ function EditProfile({ profile, onClose, onSave }) {
   };
 
 //   to do add a filter function so that the length is always 200
-  const maxLength = 200;
+  const maxLengthBio = 200;
+  const maxLengthDn = 20;
 
   return (
     <>
       <div className={styles.editPopup}>
+
+        <div className={styles.editcontainer}>
+          <p className={styles.edittitle}>Display Name</p>
+          <input
+            name="displayName"
+            value={formData.displayName}
+            onChange={handleChange}
+            placeholder="Insert display name"
+          />
+        </div>
+
         <div className={styles.editcontainer}>
           <p className={styles.edittitle}>Bio</p>
           <textarea

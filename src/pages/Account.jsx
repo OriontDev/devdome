@@ -107,7 +107,7 @@ function Account(){
 
                     </div>
 
-                    {profile?.bio ? <p>{profile.bio}</p> : <p>Loading bio..</p>}
+                    {profile?.bio ? <p className={styles.bio}>{profile.bio}</p> : <p>Loading bio..</p>}
 
 
                     {isOwner && !isEditing && (

@@ -108,3 +108,10 @@
   z-index: 999;
 }
 
+.bio {
+  word-wrap: break-word;   /* Break long words onto next line */
+  overflow-wrap: anywhere;  /* Modern equivalent, ensures breaking anywhere if needed */
+  max-width: 100%;          /* Ensures it doesn’t overflow parent */
+  white-space: pre-wrap;    /* Keeps line breaks and wraps text */
+  margin-top: 10px;         /* optional spacing */
+}
