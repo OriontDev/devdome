@@ -1,6 +1,5 @@
 import Header from "../components/Header/Header.jsx";
 import styles from './Account.module.css'
-import { auth, db } from "../config/firebase";
 import github_logo from "../assets/github.svg"
 import x_logo from "../assets/x.svg"
 import linkedin_logo from "../assets/linkedin.svg"
@@ -9,17 +8,20 @@ import Projectcard from "../components/Projectcard/Projectcard.jsx";
 import { doc, getDoc } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-
+import { useParams } from "react-router-dom";
+import { auth, db } from "../config/firebase";
 
 function Account(){
 
     const [profile, setProfile] = useState(null);
     const [currentUser, setCurrentUser] = useState(null);
 
-    const userPhoto = currentUser?.photoURL || pfp; // fallback if no photo
+    const userPhoto = profile?.photoURL || pfp; // fallback if no photo
     console.log(userPhoto);
     const tempCommentAmount = 90;
     const tempLikeAmount = 100;
+
+    const { uid } = useParams();
 
 
 
@@ -34,20 +36,22 @@ function Account(){
 
     useEffect(() => {
     const fetchProfile = async () => {
-        if (!currentUser) return;
+        const targetUid = uid || auth.currentUser?.uid;
+        if (!targetUid) return;
 
-        const docRef = doc(db, "users", auth.currentUser.uid);
+        const docRef = doc(db, "users", targetUid);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            setProfile(docSnap.data());
+            // setProfile(docSnap.data());
+            setProfile({ uid: docSnap.id, ...docSnap.data() }); // include uid
         } else {
-                console.log("No profile found in Firestore!");
+                console.log("No profile found for this uid!");
         }
     };
 
     fetchProfile();
-    }, [currentUser]);
+    }, [uid]);
 
 
     return(
@@ -59,9 +63,16 @@ function Account(){
                     <div className={styles.sidebartopcontainer}>
                         {currentUser === null && profile === null ? (<p>Loading..</p>) : (
                             <>
-                                <img src={userPhoto} className={styles.sidebartoppfp}/>
+                                {profile?.photoURL || currentUser?.photoURL ? (
+                                    <img
+                                    src={profile?.photoURL || currentUser?.photoURL}
+                                    className={styles.sidebartoppfp}
+                                    />
+                                ) : (
+                                    <img src={pfp} className={styles.sidebartoppfp} />
+                                )}
                                 <div className={styles.sidebartoptextcontainer}>
-                                    <h2 className={styles.usernametop}>{currentUser?.displayName?.slice(0, 20) || "User"}</h2>
+                                    <h2 className={styles.usernametop}>{profile?.displayName?.slice(0, 20) || "User"}</h2>
                                 </div>                      
                             </>
                         )}
@@ -70,8 +81,9 @@ function Account(){
 
                     {profile?.bio ? <p>{profile.bio}</p> : <p>Loading bio..</p>}
 
-
-                    <button className={styles.editbutton}>Edit Profile</button>
+                    
+                    {currentUser?.uid === profile?.uid ? <button className={styles.editbutton}>Edit Profile</button> : <></>}
+                    {/* <button className={styles.editbutton}>Edit Profile</button> */}
 
                     <div className={styles.socialcontainer}>
                     {profile?.github && (
@@ -100,7 +112,7 @@ function Account(){
 
                 <div className={styles.profilecontainer}>
                     <div className={styles.profileheader}>
-                        <h1>Your Projects </h1>
+                        {currentUser?.uid === profile?.uid ? <h1>Your Projects </h1> : <h1>Projects </h1>}
                     </div>
                     <div className={styles.projectscontainer}>
                         <Projectcard

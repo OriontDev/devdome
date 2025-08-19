@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './Header.module.css';
 import logo from '/public/logo.png';
 import pfp from '/public/pfp.png';
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../config/firebase";
-import { signOut } from "firebase/auth";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 
 function Header(){
-
+    const [currentUser, setCurrentUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const user = auth?.currentUser;
     const userPhoto = user?.photoURL || pfp; // fallback if no photo
@@ -17,6 +18,15 @@ function Header(){
 
 
     const navigate = useNavigate(); //initialize usenavigate
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+        setCurrentUser(user);
+        setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const toggleMenu = () => {
         setMenuOpen((prev) => !prev);
@@ -46,14 +56,16 @@ function Header(){
                 </div>
                 <div className={styles.rightheader}>
                     <div className={styles.profileWrapper}>
-                        <img
-                        className={styles.profilepicture}
-                        src={userPhoto}
-                        onClick={toggleMenu}
-                        />
+                        {!loading && (
+                            <img
+                            className={styles.profilepicture}
+                            src={userPhoto}
+                            onClick={toggleMenu}
+                            />
+                        )}
                         {menuOpen && (
                         <div className={styles.dropdown}>
-                            <div className={styles.dropdownItemCard} onClick={() => navigate("/account")}>
+                            <div className={styles.dropdownItemCard} onClick={() => navigate(`/account/${auth.currentUser.uid}`)}>
                                 <img src={userPhoto} className={styles.dropdownpfp}/>
                                 <h1 className={styles.dropdownuser}>{auth?.currentUser?.displayName || "User"}</h1>
                             </div>
