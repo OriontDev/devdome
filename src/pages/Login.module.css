@@ -1,0 +1,117 @@
+
+
+.background {
+    width: 100%;
+    height: 100vh;
+    background: url('/schoolbg.png') center/cover no-repeat;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+/* dark overlay only behind content */
+.background::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.775); /* darkness level */
+    z-index: 0; /* stay behind */
+
+}
+
+.container1 {
+    position: relative;
+    z-index: 1;   /* ensures it's above the overlay */
+    padding: 2rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    padding: 0;
+    width: 50vw;
+}
+
+
+.container2 {
+    position: relative;
+    z-index: 1;   /* ensures it's above the overlay */
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 15px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.471);
+}
+
+.title{
+    font-size: 5rem;
+    color: rgb(19, 73, 236);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.slogan{
+    font-weight: lighter;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+input{
+    font-size: 1.5rem;
+    width: 400px;
+    height: 50px;
+    border-radius: 8px;
+    border: grey solid 1px;
+    padding-left: 10px;
+}
+.loginbutton{
+    cursor: pointer;
+    background-color: rgb(19, 73, 236);
+    padding: 10px;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 8px;
+    border: none;
+    height: 50px;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.signinbutton{
+    cursor: pointer;
+    background-color: rgb(29, 196, 17);
+    padding: 10px;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 8px;
+    border: none;
+    height: 50px;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.googlebutton{
+    cursor: pointer;
+    background-color: rgb(209, 221, 255);
+    padding: 10px;
+    font-weight: bold;
+    font-size: 1.4rem;
+    color: rgb(0, 0, 0);
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 8px;
+    border: none;
+    display: flex;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.googlelogo{
+    width: 35px;
+}

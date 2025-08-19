@@ -1,0 +1,135 @@
+.header {
+    display: flex;
+    justify-content: space-between; /* left & right go to the edges */
+    align-items: center;
+    position: relative;             /* so centerheader can be positioned relative to this */
+    background-color: #fff;
+    height: 56px;
+    box-shadow: -1px 2px 4px rgba(0, 0, 0, 0.335);
+}
+
+.leftheader,
+.rightheader {
+    display: flex;
+    align-items: center;
+    /* gap: 5px; */
+}
+
+.centerheader {
+    position: absolute;  /* take out of flex flow */
+    left: 50%;           /* move to the middle */
+    transform: translateX(-50%); /* adjust for its own width */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo {
+    height: 50px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.profilepicture {
+    height: 50px;
+    margin: 5px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: filter 0.3s ease; /* smooth effect */
+}
+
+.profilepicture:hover {
+    filter: brightness(70%);
+}
+
+.title{
+    font-family: Arial, Helvetica, sans-serif;
+    color: #1877F2;
+}
+
+.profileWrapper {
+  position: relative;
+}
+
+.dropdown {
+  position: absolute;
+  right: 10px;
+  top: 60px;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 8px 0;
+  min-width: 400px;
+  z-index: 1000;
+  display: flex;
+  justify-content: left;
+  flex-direction: column;
+}
+
+.dropdownItem {
+  background: none;
+  border: none;
+  padding: 10px 10px;
+  width: 90%;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 10px;
+  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.dropdownItem:hover {
+  background-color: #ededed;
+}
+
+.dropdownItemCard:hover {
+  background-color: #1362cb;
+}
+
+.dropdownItemCard {
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  width: 89%;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 10px;
+  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #1877F2;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.dropdownpfp{
+  height: 60px;
+  border-radius: 100px;
+  border: solid #1767d1 2px;
+}
+
+.dropdownuser{
+  font-size: 1.2rem;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.logouticon {
+  width: 20px;
+  height: 20px;          /* must match icon height exactly */
+  background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yH/r/foe7A7YmG4v.png');
+  background-repeat: no-repeat;
+  background-position: 0 -110px; /* vertical offset: -80px for the correct icon */
+}
+
+.dropdownlogocontainer{
+  background-color: rgb(214, 214, 214);
+  width: 20px;
+  padding: 8px;
+  border-radius: 50px;
+}

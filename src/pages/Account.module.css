@@ -1,0 +1,96 @@
+.maincontainer{
+    display: flex;
+    padding: 20px 50px;
+    gap: 25px;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+    
+}
+.sidebarcontainer{
+    width: 25vw;
+    max-width: 280px;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px rgb(212, 212, 212) solid;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+}
+.profilecontainer{
+    width: 70vw;
+    min-height: 411px;
+    max-width: 1000px;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px rgb(212, 212, 212) solid;
+}
+
+.sidebartopcontainer{
+    display: flex;
+}
+
+.sidebartoptextcontainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+}
+
+.usernametop{
+    font-size: 1rem;
+}
+
+.sidebartoppfp{
+    border-radius: 10px;
+}
+
+.editbutton{
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    font-weight: bold;
+    background-color: #1877F2;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.editbutton:hover{
+    background-color: #3d89ec;
+}
+
+.socialcontainer{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.socialbutton {
+    cursor: pointer;
+    width: 50px;
+    transition: transform 0.3s ease;
+    border-radius: 100px;
+}
+
+.socialbutton:hover {
+    transform: scale(1.1); 
+}
+
+
+.profileheader{
+    background-color: #1877F2;
+    color: white;
+    border-radius: 10px 10px 0px 0px;
+    padding: 5px;
+}
+
+.projectscontainer{
+    display: grid;
+    padding: 10px;
+    
+    /* gap: 0px; space between project cards */
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); /* responsive columns */
+    justify-items: center;    /* centers items inside each cell */
+}
+
