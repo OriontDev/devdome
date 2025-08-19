@@ -26,7 +26,7 @@ function Account(){
     useEffect(() => {
         // Subscribe to Firebase auth state
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-        setCurrentUser(user || null);
+            setCurrentUser(user || null);
         });
 
         return () => unsubscribe();
@@ -34,7 +34,7 @@ function Account(){
 
     useEffect(() => {
     const fetchProfile = async () => {
-        if (!auth.currentUser) return;
+        if (!currentUser) return;
 
         const docRef = doc(db, "users", auth.currentUser.uid);
         const docSnap = await getDoc(docRef);
@@ -47,7 +47,7 @@ function Account(){
     };
 
     fetchProfile();
-    }, []);
+    }, [currentUser]);
 
 
     return(
@@ -68,20 +68,32 @@ function Account(){
 
                     </div>
 
-                    <p>{profile?.bio}</p>
+                    {profile?.bio ? <p>{profile.bio}</p> : <p>Loading bio..</p>}
+
 
                     <button className={styles.editbutton}>Edit Profile</button>
 
                     <div className={styles.socialcontainer}>
-                        {/* If profile?.github is truthy (not null, undefined, empty string, or false), then it evaluates and returns the right-hand side */}
-                        {profile?.github && (
-                            <a href={profile.github} target="_blank" rel="noopener noreferrer">
-                                <img className={styles.socialbutton} src={github_logo} />
-                            </a>
-                        )}
-                        {profile?.linkedin != null ? <img className={styles.socialbutton} src={linkedin_logo}/> : <></>}
-                        {profile?.x != null ? <img className={styles.socialbutton} src={x_logo}/> : <></>}
-                        {profile?.personalWebsite != null ? <img className={styles.socialbutton} src={linkedin_logo}/> : <></>}
+                    {profile?.github && (
+                        <a href={profile.github} target="_blank" rel="noopener noreferrer">
+                        <img className={styles.socialbutton} src={github_logo} />
+                        </a>
+                    )}
+                    {profile?.linkedin && (
+                        <a href={profile.linkedin} target="_blank" rel="noopener noreferrer">
+                        <img className={styles.socialbutton} src={linkedin_logo} />
+                        </a>
+                    )}
+                    {profile?.x && (
+                        <a href={profile.x} target="_blank" rel="noopener noreferrer">
+                        <img className={styles.socialbutton} src={x_logo} />
+                        </a>
+                    )}
+                    {profile?.personalWebsite && (
+                        <a href={profile.personalWebsite} target="_blank" rel="noopener noreferrer">
+                        <img className={styles.socialbutton} src={personal_logo} />
+                        </a>
+                    )}
                     </div>
                 </div>
 
