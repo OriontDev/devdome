@@ -1,4 +1,4 @@
-import styles from './Login.module.css'
+import styles from './Register.module.css'
 import google from '/google.svg'
 import { auth, googleProvider, db } from "../config/firebase"
 import { useNavigate } from "react-router-dom";
@@ -31,6 +31,7 @@ function Login(){
     //For email login
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [name, setname] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
 
     async function signInWithGoogle() {
@@ -121,6 +122,10 @@ function Login(){
                     <h1 className={styles.slogan}>Showcase. Collaborate. Elevate</h1>
                 </div>
                 <div className={styles.container2}>
+                    <div>
+                        <h1 className={styles.registertitle}>Create an account</h1>
+                        <h1 className={styles.registerdescription}>It's quick and easy</h1>
+                    </div>
                     <p className={styles.error}>{errorMsg}</p>
                     <input type='text' placeholder='Insert Email' value={email} onChange={(e) => setEmail(e.target.value)}></input>
                     <input type='password' placeholder='Insert Password' value={password} onChange={(e) => setPassword(e.target.value)}></input>
@@ -129,7 +134,7 @@ function Login(){
                     
                     <hr/>
                     <br/>
-                    <button className={styles.signinbutton} onClick={() => navigate("/register")}>Create a new account</button>
+                    <button className={styles.signinbutton}>Create a new account</button>
                 </div>
             </div>
         </>

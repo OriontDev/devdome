@@ -125,6 +125,16 @@ input{
     color: red;
 }
 
+.registertitle{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.registerdescription{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+}
+
+
 /* Media query for smaller screens */
 @media screen and (max-width: 768px) {
     .background {
