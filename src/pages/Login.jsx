@@ -89,26 +89,54 @@ function Login(){
 
     //login with email
     async function logInEmail(){
-        if(email === "" && password === ""){printError("noboth"); return;}
-        if(email === ""){printError("noemail"); return;}
-        if(password === ""){printError("nopass"); return;}
-        try{
+        if(email === "" && password === ""){
+            printError("noboth"); return;
+        }
+        if(email === ""){
+            printError("noemail"); return;
+        }
+        if(password === ""){
+            printError("nopass"); return;
+        }
+
+        try {
+            // First check if input matches an email
             const q = query(usersCollectionRef, where("email", "==", email));
             const querySnapshot = await getDocs(q);
 
-            if(querySnapshot.empty){
-                printError("unexist");
-            }else{
-                console.log("logging in..");
-                printError("clear");
+            if (!querySnapshot.empty) {
+                // Input is an email -> login directly
                 await signInWithEmailAndPassword(auth, email, password);
-                // await createUserWithEmailAndPassword(auth, email, password);
+                console.log("logging in with email..");
+                printError("clear");
+                return;
             }
-            
-        } catch (err){
-            console.err(err);
+
+            // If not found, check if it's a username
+            const qu = query(usersCollectionRef, where("username", "==", email));
+            const querySnapshot2 = await getDocs(qu);
+
+            if (!querySnapshot2.empty) {
+                // Get email from username
+                const userDoc = querySnapshot2.docs[0];
+                const userData = userDoc.data();
+                const realEmail = userData.email;
+
+                await signInWithEmailAndPassword(auth, realEmail, password);
+                console.log("logging in with username..");
+                printError("clear");
+                return;
+            }
+
+            // If neither email nor username exists
+            printError("unexist");
+
+        } catch (err) {
+            console.error(err);
+            printError("authfail"); // optional: handle auth error
         }
     };
+
 
 
     console.log(auth?.currentUser?.email);

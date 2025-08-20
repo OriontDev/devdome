@@ -1,5 +1,4 @@
 import styles from './Register.module.css'
-import google from '/google.svg'
 import { auth, googleProvider, db } from "../config/firebase"
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, signInWithPopup, signOut, fetchSignInMethodsForEmail, signInWithEmailAndPassword } from "firebase/auth";
@@ -16,7 +15,7 @@ import { useState } from 'react';
 
 
 
-function Login(){
+function Register(){
 
     const defaultPfps = [
         "/pfp1.svg",
@@ -25,13 +24,17 @@ function Login(){
         "/pfp4.svg"
     ];
 
+    // Allowed characters: letters, numbers, underscore, and dot
+    const usernameRegex = /^[a-zA-Z0-9._]+$/;
     const usersCollectionRef = collection(db, "users");
     const navigate = useNavigate(); //initialize usenavigate
 
     //For email login
+    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [name, setname] = useState("");
+    const [copassword, setCopassword] = useState("");
+    const [name, setName] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
 
     async function signInWithGoogle() {
@@ -71,43 +74,93 @@ function Login(){
         }
     }
 
+
+
     function printError(type){
         if (type === "unexist"){
             setErrorMsg("incorrect email/password/provider!")
-        }else if(type === "nopass"){
-            setErrorMsg("please fill the password!")
-        }else if(type === "noemail"){
-            setErrorMsg("please fill the email!")
-        }else if(type === "noboth"){
-            setErrorMsg("please fill the email & password!")
+        }else if(type === "notfull"){
+            setErrorMsg("please fill all the columns")
+        }else if(type === "notmatch"){
+            setErrorMsg("passwords doesn't match!")
+        }else if(type === "used"){
+            setErrorMsg("this email has already been used!")
         }else if(type === "clear"){
             setErrorMsg("")
+        }else if(type === "takenuser"){
+            setErrorMsg("this username is taken!")
+        }else if(type === "longuser"){
+            setErrorMsg("Username cant be longer than 20 letter!")
+        }else if(type === "invalidsymbols"){
+            setErrorMsg("Usernamae contains forbidden symbols!")
+        }else if(type === "shortpass"){
+            setErrorMsg("Password has to be atleast 7 letter!")
         }
         else{
             setErrorMsg("Something went wrong")
         }
     }
 
+    async function handleSignIn(){
+        await createUserWithEmailAndPassword(auth, email, password);
+        const assignedPfp = defaultPfps[Math.floor(Math.random() * defaultPfps.length)];
+        await setDoc(doc(db, "users", user.uid), {
+            username: username,
+            displayName: name,
+            bio: `Hello! I'm ${name}`,
+            createdAt: serverTimestamp(),
+            email: email,
+            photoURL: assignedPfp,
+            github: "",
+            linkedin: "",
+            x: "",
+            personalWebsite: "",
+            userId: user.uid,
+        });
+        console.log("User added to database");
+        navigate("/home");
+    }
+
     //login with email
-    async function logInEmail(){
-        if(email === "" && password === ""){printError("noboth"); return;}
-        if(email === ""){printError("noemail"); return;}
-        if(password === ""){printError("nopass"); return;}
+    async function signInEmail(){
+        if(email === "" || password === "" || name === "" || copassword === ""){printError("notfull"); return;}
+        if(password !== copassword){printError("notmatch"); return;}
+        if(password.length < 7){printError("shortpass"); return;}
         try{
-            const q = query(usersCollectionRef, where("email", "==", email));
-            const querySnapshot = await getDocs(q);
+            //check if email already used
+            const qe = query(usersCollectionRef, where("email", "==", email));
+            const querySnapshot = await getDocs(qe);
+
+            //check if username is already used
+            const qu = query(usersCollectionRef, where("username", "==", username));
+            const querySnapshot2 = await getDocs(qu);
 
             if(querySnapshot.empty){
-                printError("unexist");
+                if(querySnapshot2.empty){
+                    if(username.length < 21){
+                        if (usernameRegex.test(username)) {
+                            console.log("logging in..");
+                            printError("clear");
+                            handleSignIn();//actually signs in
+                        } else {
+                            // username contains forbidden symbols
+                            printError("invalidsymbols");
+                        }
+                    }else{
+                        //username too long
+                        printError("longuser");                   
+                    }
+                }else{
+                    //username taken
+                    printError("takenuser");
+                }
             }else{
-                console.log("logging in..");
-                printError("clear");
-                await signInWithEmailAndPassword(auth, email, password);
-                // await createUserWithEmailAndPassword(auth, email, password);
+                //email used
+                printError("used");
             }
             
         } catch (err){
-            console.err(err);
+            console.error(err);
         }
     };
 
@@ -127,18 +180,20 @@ function Login(){
                         <h1 className={styles.registerdescription}>It's quick and easy</h1>
                     </div>
                     <p className={styles.error}>{errorMsg}</p>
+                    <input type='text' placeholder='Insert username' value={username} onChange={(e) => setUsername(e.target.value)}></input>
+                    <input type='text' placeholder='Insert Your Name' value={name} onChange={(e) => setName(e.target.value)}></input>
                     <input type='text' placeholder='Insert Email' value={email} onChange={(e) => setEmail(e.target.value)}></input>
                     <input type='password' placeholder='Insert Password' value={password} onChange={(e) => setPassword(e.target.value)}></input>
-                    <button className={styles.loginbutton} onClick={logInEmail}>Login</button>
-                    <button className={styles.googlebutton} onClick={signInWithGoogle}>Login with <img src={google} className={styles.googlelogo}/></button>
+                    <input type='password' placeholder='Confirm Password' value={copassword} onChange={(e) => setCopassword(e.target.value)}></input>
+                    <button className={styles.signinbutton} onClick={signInEmail}>Create a new account</button>
                     
                     <hr/>
-                    <br/>
-                    <button className={styles.signinbutton}>Create a new account</button>
+                        <h1 className={styles.registerdescription}>Already have an account?</h1>
+                    <button className={styles.loginbutton} onClick={() => navigate('/')}>Return to login page</button>
                 </div>
             </div>
         </>
     );
 }
 
-export default Login
+export default Register
