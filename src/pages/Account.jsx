@@ -94,6 +94,7 @@ function Account(){
                                 )}
                                 <div className={styles.sidebartoptextcontainer}>
                                     {/* Username */}
+                                    <h2 className={styles.usernametop}>@{profile?.username?.slice(0, 20) || "User"}</h2>
                                     <h2 className={styles.usernametop}>{profile?.displayName?.slice(0, 20) || "User"}</h2>
                                     {/* Created */}
                                     <h2 className={styles.usernametop}>

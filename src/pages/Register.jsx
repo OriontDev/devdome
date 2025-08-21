@@ -102,7 +102,9 @@ function Register(){
     }
 
     async function handleSignIn(){
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
         const assignedPfp = defaultPfps[Math.floor(Math.random() * defaultPfps.length)];
         await setDoc(doc(db, "users", user.uid), {
             username: username,
@@ -141,7 +143,7 @@ function Register(){
                         if (usernameRegex.test(username)) {
                             console.log("logging in..");
                             printError("clear");
-                            handleSignIn();//actually signs in
+                            await handleSignIn();//actually signs in
                         } else {
                             // username contains forbidden symbols
                             printError("invalidsymbols");

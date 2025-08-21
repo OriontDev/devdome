@@ -70,7 +70,7 @@
   background: none;
   border: none;
   padding: 10px 10px;
-  width: 90%;
+  width: 95%;
   text-align: left;
   cursor: pointer;
   font-size: 14px;
@@ -94,7 +94,7 @@
   background: none;
   border: none;
   padding: 10px 16px;
-  width: 89%;
+  width: 95%;
   text-align: left;
   cursor: pointer;
   font-size: 14px;
@@ -129,7 +129,7 @@
 
 .dropdownlogocontainer{
   background-color: rgb(214, 214, 214);
-  width: 20px;
+  width: 35px;
   padding: 8px;
   border-radius: 50px;
 }

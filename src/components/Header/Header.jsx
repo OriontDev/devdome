@@ -10,11 +10,11 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../config/firebase";
 
 function Header(){
-    const [currentUser, setCurrentUser] = useState(null);
+    const [authUser, setAuthUser] = useState(null);     // Firebase Auth user
+    const [userProfile, setUserProfile] = useState(null); // Firestore doc data
     const [loading, setLoading] = useState(true);
 
     const user = auth?.currentUser;
-    const [userPhoto, setUserPhoto] = useState(pfp);
     // console.log(userPhoto);
 
     const [menuOpen, setMenuOpen] = useState(false)
@@ -24,7 +24,7 @@ function Header(){
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-        setCurrentUser(user);
+        setAuthUser(user);
         setLoading(false);
         });
 
@@ -49,19 +49,18 @@ function Header(){
     //fetch user pfp from firestore 
     useEffect(() => {
         const fetchUserProfile = async () => {
-            if (!currentUser) return;
-            const docRef = doc(db, "users", currentUser.uid);
+            if (!authUser) return;
+            const docRef = doc(db, "users", authUser.uid);
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
-                const data = docSnap.data();
-                setUserPhoto(data.photoURL || pfp); // Use Firestore PFP
+                setUserProfile(docSnap.data());
             } else {
-                setUserPhoto(pfp);
+                console.log("failed fetching data for setUserProfile")
             }
         };
 
         fetchUserProfile();
-    }, [currentUser]);
+    }, [authUser]);
 
     console.log(auth?.currentUser?.email);
 
@@ -80,15 +79,15 @@ function Header(){
                         {!loading && (
                             <img
                             className={styles.profilepicture}
-                            src={userPhoto}
+                            src={userProfile?.photoURL}
                             onClick={toggleMenu}
                             />
                         )}
                         {menuOpen && (
                         <div className={styles.dropdown}>
                             <div className={styles.dropdownItemCard} onClick={() => navigate(`/account/${auth.currentUser.uid}`)}>
-                                <img src={userPhoto} className={styles.dropdownpfp}/>
-                                <h1 className={styles.dropdownuser}>{auth?.currentUser?.displayName || "User"}</h1>
+                                <img src={userProfile?.photoURL} className={styles.dropdownpfp}/>
+                                <h1 className={styles.dropdownuser}>{userProfile.displayName || "User"}</h1>
                             </div>
                             <div className={styles.dropdownItem} onClick={logOut}>
                                 <div className={styles.dropdownlogocontainer}>

@@ -58,6 +58,7 @@ function Login(){
                     x: "",
                     personalWebsite: "",
                     userId: user.uid,
+                    username: user.displayName.slice(0, 20)
                 });
                 console.log("User added to database");
             } else {
@@ -81,6 +82,8 @@ function Login(){
             setErrorMsg("please fill the email & password!")
         }else if(type === "clear"){
             setErrorMsg("")
+        }else if(type === "authfail"){
+            setErrorMsg("Auth failed!")
         }
         else{
             setErrorMsg("Something went wrong")
@@ -109,6 +112,7 @@ function Login(){
                 await signInWithEmailAndPassword(auth, email, password);
                 console.log("logging in with email..");
                 printError("clear");
+                navigate('/home');
                 return;
             }
 
@@ -125,6 +129,7 @@ function Login(){
                 await signInWithEmailAndPassword(auth, realEmail, password);
                 console.log("logging in with username..");
                 printError("clear");
+                navigate('/home');
                 return;
             }
 
@@ -150,7 +155,7 @@ function Login(){
                 </div>
                 <div className={styles.container2}>
                     <p className={styles.error}>{errorMsg}</p>
-                    <input type='text' placeholder='Insert Email' value={email} onChange={(e) => setEmail(e.target.value)}></input>
+                    <input type='text' placeholder='Insert Email/Username' value={email} onChange={(e) => setEmail(e.target.value)}></input>
                     <input type='password' placeholder='Insert Password' value={password} onChange={(e) => setPassword(e.target.value)}></input>
                     <button className={styles.loginbutton} onClick={logInEmail}>Login</button>
                     <button className={styles.googlebutton} onClick={signInWithGoogle}>Login with <img src={google} className={styles.googlelogo}/></button>
