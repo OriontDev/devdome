@@ -1,0 +1,26 @@
+.container{
+    width: 100%;
+    background-color: rgb(213, 213, 213);
+    border-radius: 10px;
+    height: 4.5rem;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    gap: 10px;
+}
+
+.infocontainer{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 5px;
+}
+
+.profilepicture{
+    border-radius: 50%;
+    width: 3.5rem;
+}
+
+.username{
+    font-size: 1.5rem;
+}

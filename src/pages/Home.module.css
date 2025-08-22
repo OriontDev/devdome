@@ -1,0 +1,36 @@
+* {
+    margin: 0;
+}
+
+.container{
+    background-color: red;
+    height: 88vh;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.contentcontainer{
+    width: 70vw;
+    max-width: 800px;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px rgb(212, 212, 212) solid;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+}
+
+.sidebarcontainer{
+    width: 35vw;
+    max-width: 280px;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px rgb(212, 212, 212) solid;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 20px;
+}
