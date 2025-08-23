@@ -46,7 +46,7 @@ function Header(){
     };
 
 
-    //fetch user pfp from firestore 
+    //fetch current user profile from firestore 
     useEffect(() => {
         const fetchUserProfile = async () => {
             if (!authUser) return;

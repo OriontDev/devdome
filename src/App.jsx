@@ -4,7 +4,9 @@ import Login from './pages/Login';
 import Account from './pages/Account';
 import Project from './pages/Project';
 import Register from './pages/Register';
-import { HashRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoute from './pages/ProtectedRoute';
+import Error from './pages/Error';
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
 
@@ -14,10 +16,12 @@ function App() {
         <Routes>
           <Route path="/" element={<Login/>}/>
           <Route path="/register" element={<Register/>}/>
-          <Route path="/home" element={<Home/>}/>
-          <Route path="/account/:uid" element={<Account/>}/>
-          <Route path="/project/:id" element={<Project/>}/>
+          <Route path="/home" element={<ProtectedRoute><Home/></ProtectedRoute>}/>
+          <Route path="/account/:uid" element={<ProtectedRoute><Account/></ProtectedRoute>}/>
+          <Route path="/project/:id" element={<ProtectedRoute><Project/></ProtectedRoute>}/>
 
+
+          <Route path="*" element={<Error/>}/>
         </Routes>
       </HashRouter>
     </>

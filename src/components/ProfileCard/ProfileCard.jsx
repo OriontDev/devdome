@@ -8,7 +8,7 @@ function ProfileCard(){
                 <img src={pfp} className={styles.profilepicture}/>
                 <div className={styles.infocontainer}>
                     <h1 className={styles.username}>@Username</h1>
-                    <button>ss</button>
+                    <button className={styles.addbutton}>Send friend request</button>
                 </div>
             </div>
         </>
