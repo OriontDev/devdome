@@ -48,10 +48,7 @@ function Home(){
                 <div className={styles.contentcontainer}>c</div>
                 <div className={styles.sidebarcontainer}>
                     <div className={styles.friendscontainer}>
-                        <div className={styles.friendstopbuttoncontainer}>
-                            <button>Friendlist</button>
-                            <button>Inbox</button>
-                        </div>
+                        <h1>Friends</h1>
                         <ProfileCard/>
                         <ProfileCard/>
                         <ProfileCard/>

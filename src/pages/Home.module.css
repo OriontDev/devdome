@@ -59,18 +59,3 @@
     gap: 20px;
     overflow-y: auto;
 }
-
-.friendstopbuttoncontainer{
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
-
-.friendstopbuttoncontainer button{
-    padding: 2px;
-    border: none;
-    background-color: #1877F2;
-    color: white;
-    font-weight: bold;
-    border-radius: 5px;
-}

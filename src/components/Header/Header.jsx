@@ -8,6 +8,7 @@ import { signOut, onAuthStateChanged } from "firebase/auth";
 
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../config/firebase";
+import ProfileCard from '../ProfileCard/ProfileCard';
 
 function Header(){
     const [authUser, setAuthUser] = useState(null);     // Firebase Auth user
@@ -17,7 +18,8 @@ function Header(){
     const user = auth?.currentUser;
     // console.log(userPhoto);
 
-    const [menuOpen, setMenuOpen] = useState(false)
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [inboxOpen, setInboxOpen] = useState(false)
 
 
     const navigate = useNavigate(); //initialize usenavigate
@@ -32,8 +34,15 @@ function Header(){
     }, []);
 
     const toggleMenu = () => {
+        setInboxOpen(false);
         setMenuOpen((prev) => !prev);
     };
+
+    const toggleInbox = () => {
+        setInboxOpen((prev) => !prev);
+        setMenuOpen(false);
+    };
+
 
     async function logOut(){
         try{
@@ -75,6 +84,33 @@ function Header(){
                     <img className={styles.logo} src={logo}/>
                 </div>
                 <div className={styles.rightheader}>
+                    <div>
+                        <div className={styles.inboxwrapper}onClick={toggleInbox}>
+                            {!loading && (
+                                <div
+                                className={styles.inboxlogo}
+                                />
+                            )}
+                        </div>
+
+
+                        {inboxOpen && (
+                        <div className={styles.inboxdropdown}>
+                            <h1>Inbox</h1>
+                            <ProfileCard/>
+                            <ProfileCard/>
+                            <ProfileCard/>
+                            <ProfileCard/>
+                            <ProfileCard/>
+                            <ProfileCard/>
+                            <ProfileCard/>
+                            <ProfileCard/>
+                            <ProfileCard/>
+                            {/* <button className={styles.dropdownItem} onClick={logOut}>Log Out</button> */}
+                        </div>
+                        )}
+                    </div>
+
                     <div className={styles.profileWrapper}>
                         {!loading && (
                             <img
@@ -83,6 +119,7 @@ function Header(){
                             onClick={toggleMenu}
                             />
                         )}
+                        
                         {menuOpen && (
                         <div className={styles.dropdown}>
                             <div className={styles.dropdownItemCard} onClick={() => navigate(`/account/${auth.currentUser.uid}`)}>
