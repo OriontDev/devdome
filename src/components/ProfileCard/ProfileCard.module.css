@@ -20,6 +20,7 @@
 .profilepicture{
     border-radius: 50%;
     width: 3.5rem;
+    cursor: pointer;
 }
 
 .addbutton{
@@ -30,6 +31,7 @@
     color: white;
     font-weight: bold;
     transition: background-color 0.3s ease;
+    cursor: pointer;
 }
 
 .addbutton:hover{
@@ -38,4 +40,9 @@
 
 .username{
     font-size: 1.3rem;
+    cursor: pointer;
+}
+
+.username:hover{
+    text-decoration: underline;
 }

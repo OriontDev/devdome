@@ -58,6 +58,7 @@ function Login(){
                     x: "",
                     personalWebsite: "",
                     userId: user.uid,
+                    provider: "google",
                     username: user.displayName.slice(0, 20)
                 });
                 console.log("User added to database");
@@ -143,7 +144,6 @@ function Login(){
     };
 
 
-
     console.log(auth?.currentUser?.email);
 
     return(
@@ -158,10 +158,11 @@ function Login(){
                     <input type='text' placeholder='Insert Email/Username' value={email} onChange={(e) => setEmail(e.target.value)}></input>
                     <input type='password' placeholder='Insert Password' value={password} onChange={(e) => setPassword(e.target.value)}></input>
                     <button className={styles.loginbutton} onClick={logInEmail}>Login</button>
-                    <button className={styles.googlebutton} onClick={signInWithGoogle}>Login with <img src={google} className={styles.googlelogo}/></button>
+                    <button className={styles.forgotpasswordbutton} onClick={() => navigate("/reset")}>Forgot password?</button>
                     
                     <hr/>
                     <br/>
+                    <button className={styles.googlebutton} onClick={signInWithGoogle}>Login with <img src={google} className={styles.googlelogo}/></button>
                     <button className={styles.signinbutton} onClick={() => navigate("/register")}>Create a new account</button>
                 </div>
             </div>

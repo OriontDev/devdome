@@ -118,6 +118,7 @@ function Register(){
             x: "",
             personalWebsite: "",
             userId: user.uid,
+            provider: "email"
         });
         console.log("User added to database");
         navigate("/home");

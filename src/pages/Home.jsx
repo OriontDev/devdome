@@ -14,7 +14,8 @@ import {
   query, 
   where,
   setDoc,
-  serverTimestamp
+  serverTimestamp,
+  limit
 } from "firebase/firestore";
 
 
@@ -22,7 +23,7 @@ function Home(){
 
     const [authUser, setAuthUser] = useState(null);     // Firebase Auth user
     const [userProfile, setUserProfile] = useState(null); // Firestore doc data
-    const [showFriendList, setShowFriendList] = useState(false);
+    const [friendReccomendations, setFriendReccomendations] = useState([]);
 
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate(); //initialize usenavigate
@@ -53,6 +54,30 @@ function Home(){
         fetchUserProfile();
     }, [authUser]);
 
+    // fetch friend recommendations (max 10)
+    useEffect(() => {
+        const fetchFriendRecommendations = async () => {
+            try {
+                const usersRef = collection(db, "users");
+                const q = query(usersRef, limit(10)); // fetch at most 10 users
+
+                const querySnapshot = await getDocs(q);
+
+                const users = querySnapshot.docs
+                    .map(doc => ({ id: doc.id, ...doc.data() }))
+                    // filter out current user from recommendations
+                    .filter(user => user.id !== authUser?.uid);
+
+                setFriendReccomendations(users);
+                console.log("Friend recommendations:", users);
+            } catch (err) {
+                console.error("Error fetching friend recommendations:", err);
+            }
+        };
+
+        if (authUser) fetchFriendRecommendations();
+    }, [authUser]);
+
     return(
         <>
             <Header/>
@@ -61,21 +86,15 @@ function Home(){
                 <div className={styles.sidebarcontainer}>
                     <div className={styles.friendscontainer}>
                         <h1>Friends</h1>
-                        <ProfileCard/>
-                        <ProfileCard/>
-                        <ProfileCard/>
-                        <ProfileCard/>
+                        <h3>you dont have a friend lol</h3>
                     </div>
                     <div className={styles.friendlistcontainer}>
-                        <ProfileCard/>
-                        <ProfileCard/>
-                        <ProfileCard/>
-                        <ProfileCard/>
-                        <ProfileCard/>
-                        <ProfileCard/>
-                        <ProfileCard/>
-                        <ProfileCard/>
-                        <ProfileCard/>
+                        {friendReccomendations.map((user) => <ProfileCard
+                                                                key={user.id}
+                                                                username={user.username}
+                                                                photo={user.photoURL}
+                                                                userid={user.id}
+                                                            />)}
                     </div>
 
                 </div>
