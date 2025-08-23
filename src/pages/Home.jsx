@@ -1,11 +1,21 @@
 import Header from "../components/Header/Header.jsx";
 import styles from './Home.module.css'
 import ProfileCard from "../components/ProfileCard/ProfileCard.jsx";
+import InboxRequestCard from "../components/InboxRequestCard/InboxRequestCard.jsx";
 import { useState, useEffect } from "react";
-import { doc, getDoc, setDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { useParams, useNavigate } from "react-router-dom";
 import { auth, db } from "../config/firebase";
+import {
+  getDocs,
+  getDoc,
+  collection,
+  doc,
+  query, 
+  where,
+  setDoc,
+  serverTimestamp
+} from "firebase/firestore";
 
 
 function Home(){
@@ -13,6 +23,7 @@ function Home(){
     const [authUser, setAuthUser] = useState(null);     // Firebase Auth user
     const [userProfile, setUserProfile] = useState(null); // Firestore doc data
     const [showFriendList, setShowFriendList] = useState(false);
+
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate(); //initialize usenavigate
 
@@ -25,6 +36,7 @@ function Home(){
         return () => unsubscribe();
     }, []);
 
+    // fetch userprofile
     useEffect(() => {
         const fetchUserProfile = async () => {
             if (!authUser) return;
