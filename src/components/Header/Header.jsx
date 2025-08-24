@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "../../config/firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 
-import { doc, getDoc, query, collection, where, getDocs } from "firebase/firestore";
+import { setDoc, doc, getDoc, query, collection, where, serverTimestamp, onSnapshot, deleteDoc } from "firebase/firestore";
 import { db } from "../../config/firebase";
 import InboxRequestCard from '../InboxRequestCard/InboxRequestCard';
 
@@ -61,8 +61,8 @@ function Header(){
     useEffect(() => {
         const fetchUserProfile = async () => {
             if (!authUser) return;
-            const docRef = doc(db, "users", authUser.uid);
-            const docSnap = await getDoc(docRef);
+                const docRef = doc(db, "users", authUser.uid);
+                const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
                 setUserProfile(docSnap.data());
             } else {
@@ -75,53 +75,75 @@ function Header(){
 
     // fetch user's friend request
     useEffect(() => {
-        const fetchUserFriendRequests = async () => {
-            if (!authUser) return;
+        if (!authUser) return;
+        const requestsRef = collection(db, "friendRequests");
+        const q = query(requestsRef, where("to", "==", authUser.uid));
 
-            try {
-                // Get all pending friend requests where current user is the receiver
-
-                const requestsRef = collection(db, "friendRequests");
-                const q = query(requestsRef, where("to", "==", authUser.uid));
-
-                const querySnapshot = await getDocs(q);
-
-                const requests = await Promise.all(
-                    querySnapshot.docs.map(async (docSnap) => {
-                        const data = docSnap.data();
-
-                        // fetch sender's profile (from users collection)
-                        const senderRef = doc(db, "users", data.from);
-                        const senderSnap = await getDoc(senderRef);
-
-                        return {
-                            id: docSnap.id,
-                            ...data,
-                            senderName: senderSnap.exists()
-                                ? senderSnap.data().username
-                                : "Unknown User",
-                            senderPhoto: senderSnap.exists()
-                                ? senderSnap.data().photoURL
-                                : null,
-                            senderUid: senderSnap.exists()
-                                ? senderSnap.data().uid
-                                : null,
-                        };
-                    })
-                );
-
-                setFriendRequests(requests);
-                console.log("Fetched pending requests:", requests);
-            } catch (err) {
-                console.error("Error fetching friend requests:", err);
-            }
-        };
-
-        fetchUserFriendRequests();
+        //onSnapshot is a real-time listener.
+        const unsubscribe = onSnapshot(q, async (snapshot) => {
+            const requests = await Promise.all(
+                snapshot.docs.map(async (docSnap) => {
+                    const data = docSnap.data();
+                    //fetch sender acc information
+                    const senderSnap = await getDoc(doc(db, "users", data.from));
+                    return {
+                        id: docSnap.id,
+                        ...data,
+                        senderName: senderSnap.exists() ? senderSnap.data().username : "Unknown User",
+                        senderPhoto: senderSnap.exists() ? senderSnap.data().photoURL : null,
+                        senderUid: senderSnap.exists() ? senderSnap.data().uid : null,
+                    };
+            })
+        );
+        setFriendRequests(requests);
+    });
+        return () => unsubscribe();
     }, [authUser]);
 
-    console.log(auth?.currentUser?.email);
-    console.log(friendRequests)
+
+    // Accept friend request
+    async function acceptRequest(requestId) {
+        if (!authUser) return;
+
+        try {
+            const requestDoc = doc(db, "friendRequests", requestId);
+            const requestSnap = await getDoc(requestDoc);
+            if (!requestSnap.exists()) return;
+
+            const senderUid = requestSnap.data().from;
+
+            // Create friendship
+            const userFriendRef = doc(db, "users", authUser.uid, "friends", senderUid);
+            const senderFriendRef = doc(db, "users", senderUid, "friends", authUser.uid);
+
+            await setDoc(userFriendRef, { uid: senderUid, since: serverTimestamp() });
+            await setDoc(senderFriendRef, { uid: authUser.uid, since: serverTimestamp() });
+
+            // Delete request
+            await deleteDoc(requestDoc);
+
+            // Update UI
+            setFriendRequests(prev => prev.filter(req => req.id !== requestId));
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async function rejectRequest(requestId) {
+        if (!authUser) return;
+
+        try {
+            const requestDoc = doc(db, "friendRequests", requestId);
+            await deleteDoc(requestDoc);
+            setFriendRequests(prev => prev.filter(req => req.id !== requestId));
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+
+    // console.log(auth?.currentUser?.email);
+    // console.log(friendRequests)
 
     return(
         <>
@@ -151,7 +173,10 @@ function Header(){
                                                                     key={request.id}
                                                                     senderName={request.senderName}
                                                                     senderPhoto={request.senderPhoto}
-                                                                    senderUid={request.senderUid}/>)}
+                                                                    senderUid={request.senderUid}
+                                                                    acceptFunction={() => acceptRequest(request.id)}
+                                                                    rejectFunction={() => rejectRequest(request.id)}
+                                                                />)}
                                 {/* <button className={styles.dropdownItem} onClick={logOut}>Log Out</button> */}
                             </div>
                         )}

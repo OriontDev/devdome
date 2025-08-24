@@ -2,7 +2,7 @@ import styles from './InboxRequestCard.module.css';
 import pfp from '/public/pfp.png'; //loading pfp
 import { useNavigate } from "react-router-dom";
 
-function InboxRequestCard( { senderName, senderPhoto, senderUid} ){
+function InboxRequestCard( { senderName, senderPhoto, senderUid, acceptFunction, rejectFunction} ){
 
     const navigate = useNavigate();
 
@@ -18,8 +18,8 @@ function InboxRequestCard( { senderName, senderPhoto, senderUid} ){
                 <div className={styles.infocontainer}>
                     <h5 className={styles.message}>@{senderName} sent you a friend request </h5>
                     <div className={styles.buttoncontainer}>
-                        <button className={styles.addbutton}>Accept</button>
-                        <button className={styles.addbutton}>Decline</button>
+                        <button className={styles.addbutton} onClick={acceptFunction}>Accept</button>
+                        <button className={styles.addbutton} onClick={rejectFunction}>Decline</button>
                     </div>
 
                 </div>

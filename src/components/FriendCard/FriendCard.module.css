@@ -38,22 +38,6 @@
     background-color: #4b94f4;
 }
 
-.removebutton{
-    border-radius: 5px;
-    border: none;
-    padding: 3px;
-    background-color: #6ca4ee00;
-    border: 2px solid #1877F2;
-    color: #1877F2;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-    cursor: pointer;
-}
-
-.removebutton:hover{
-    background-color: #8cbeff81;
-}
-
 .username{
     font-size: 1.3rem;
     cursor: pointer;

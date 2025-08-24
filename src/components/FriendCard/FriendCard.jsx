@@ -1,8 +1,8 @@
-import styles from './ProfileCard.module.css';
+import styles from './FriendCard.module.css';
 import pfp from '/public/pfp.png'; //loading pfp
 import { useNavigate } from 'react-router-dom';
 
-function ProfileCard( { username, photo, userid, requestSent, sendFriendRequestFunc, cancelFriendRequestFunc } ){
+function FriendCard( { username, photo, userid, removeFunction } ){
 
     const navigate = useNavigate();
 
@@ -17,13 +17,11 @@ function ProfileCard( { username, photo, userid, requestSent, sendFriendRequestF
                 />
                 <div className={styles.infocontainer}>
                     <h1 className={styles.username} onClick={() => navigate(`/account/${userid}`)}>@{username}</h1>
-                    <button className={requestSent ? styles.removebutton : styles.addbutton} onClick={requestSent ? cancelFriendRequestFunc : sendFriendRequestFunc}>
-                        {requestSent ? "Cancel pending request" : "Send friend request"}
-                    </button>
+                    <button className={styles.addbutton} onClick={removeFunction}>Remove friend</button>
                 </div>
             </div>
         </>
     );
 }
 
-export default ProfileCard
+export default FriendCard
