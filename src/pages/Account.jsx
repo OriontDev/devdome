@@ -34,6 +34,7 @@ function Account(){
 
     const { uid } = useParams();
 
+    //Check if the page is ours or not
     useEffect(() => {
     if (currentUser && profile) {
         setIsOwner(currentUser.uid === profile.uid);
@@ -51,6 +52,9 @@ function Account(){
         return () => unsubscribe();
     }, []);
 
+
+
+    //fetch the info of the profile we are viewing, it could be ours or other people's
     useEffect(() => {
         const fetchProfile = async () => {
             const targetUid = uid || auth.currentUser?.uid;
