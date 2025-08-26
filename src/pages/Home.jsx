@@ -2,6 +2,7 @@ import Header from "../components/Header/Header.jsx";
 import styles from './Home.module.css'
 import ProfileCard from "../components/ProfileCard/ProfileCard.jsx";
 import FriendCard from "../components/FriendCard/FriendCard.jsx";
+import Post from "../components/Post/Post.jsx";
 import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useParams, useNavigate } from "react-router-dom";
@@ -26,6 +27,7 @@ function Home(){
     const [userProfile, setUserProfile] = useState(null); // Firestore doc data
     const [friendReccomendations, setFriendReccomendations] = useState([]); //friend reccomendation
     const [friends, setFriends] = useState([]); //user's friend
+    const [isPosting, setIsPosting] = useState(false);
 
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate(); //initialize usenavigate
@@ -38,6 +40,10 @@ function Home(){
 
         return () => unsubscribe();
     }, []);
+
+    const closePopup = () => {
+        setIsPosting(false);
+    };
 
     // fetch userprofile
     useEffect(() => {
@@ -241,15 +247,25 @@ function Home(){
     }
 
 
-
     return(
         <>
             <Header/>
             <div className={styles.container}>
                 <div className={styles.contentcontainer}>
                     <div className={styles.userpostcontainer}>
+                        {isPosting ? 
+                            <div className={styles.overlay} onClick={closePopup}></div> 
+                        : <></>}
                         <img src={userProfile !== null ? userProfile.photoURL : null} className={styles.userpostpfp}/>
                         <button>Whats on your mind, {userProfile !== null ? userProfile.displayName : "Loading.."} ?</button>
+                    </div>
+                    <div className={styles.postcontainer}>
+                        <Post/>
+                        <Post/>
+                        <Post/>
+                        <Post/>
+                        <Post/>
+                        <Post/>
                     </div>
                 </div>
                 <div className={styles.sidebarcontainer}>
