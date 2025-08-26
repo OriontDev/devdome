@@ -7,7 +7,8 @@ p{
     background-color: rgb(255, 255, 255);
     border-radius: 10px;
     min-height: 11rem;
-    height: 100%;
+    max-height: 25rem;
+    /* height: 100%; */
     /* height: 9rem; */
     display: flex;
     flex-direction: column;
@@ -86,7 +87,7 @@ p{
 }
 
 .footercontainer{
-    background-color: red;
+    background-color: rgb(255, 255, 255);
     width: 100%;
     height: 100%;
     max-height: 2.2rem;
@@ -95,9 +96,71 @@ p{
 }
 
 
-.likecontainer{
+.footerbuttoncontainer{
+  width: 33%;
+  padding: 8px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: bold;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.footerbuttoncontainerliked{
+  width: 33%;
+  padding: 8px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: bold;
+  justify-content: center;
+  cursor: pointer;
+  background-color: rgb(237, 237, 237);
+}
+
+.likelogo{
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-position: 0 -863px;
+    background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yC/r/pS7pURSmNlX.png?_nc_eui2=AeErAUrAkR18yU687qemddon94jW2ZlCNaX3iNbZmUI1pTQCjc11GSbC9x369RRX_PfGIPBzWmwdshzUKMJDBbiq');
+}
+
+.likelogoliked{
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-position: 0 -842px;
+    background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yC/r/pS7pURSmNlX.png?_nc_eui2=AeErAUrAkR18yU687qemddon94jW2ZlCNaX3iNbZmUI1pTQCjc11GSbC9x369RRX_PfGIPBzWmwdshzUKMJDBbiq');  
+}
+
+.commentlogo{
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-position: 0 -821px;
+    background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yC/r/pS7pURSmNlX.png?_nc_eui2=AeErAUrAkR18yU687qemddon94jW2ZlCNaX3iNbZmUI1pTQCjc11GSbC9x369RRX_PfGIPBzWmwdshzUKMJDBbiq');
+}
+
+.sharelogo{
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-position: 0 -885px;
+    background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yC/r/pS7pURSmNlX.png?_nc_eui2=AeErAUrAkR18yU687qemddon94jW2ZlCNaX3iNbZmUI1pTQCjc11GSbC9x369RRX_PfGIPBzWmwdshzUKMJDBbiq');
+}
+
+
+.footerbuttoncontainer:hover{
+    background-color: rgb(237, 237, 237);
+}
+
+/* 
+.likelogocontainer{
   width: 35px;
   padding: 8px;
   border-radius: 50px;
-  display: flex;
-}
+} */

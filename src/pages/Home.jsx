@@ -18,7 +18,9 @@ import {
   serverTimestamp,
   deleteDoc,
   limit,
-  onSnapshot
+  onSnapshot,
+  updateDoc,
+  increment
 } from "firebase/firestore";
 
 function Home(){
@@ -28,6 +30,7 @@ function Home(){
     const [friendReccomendations, setFriendReccomendations] = useState([]); //friend reccomendation
     const [friends, setFriends] = useState([]); //user's friend
     const [isPosting, setIsPosting] = useState(false);
+    const [posts, setPosts] = useState([]);
 
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate(); //initialize usenavigate
@@ -100,7 +103,7 @@ function Home(){
     }, [authUser, friends]);
 
     // fetch user's friends
-    // real-time listener for user's friends
+    // real-time listener for user's friends with onsnapshot
     useEffect(() => {
         if (!authUser) return;
 
@@ -246,6 +249,99 @@ function Home(){
         }
     }
 
+    //fetch posts
+    useEffect(() => {
+        if (!authUser) return;
+
+        const fetchPosts = async () => {
+            try {
+                const postsRef = collection(db, "posts");
+                const postsSnap = await getDocs(postsRef);
+
+                const postsData = await Promise.all(
+                    postsSnap.docs.map(async (docSnap) => {
+                        const postData = docSnap.data();
+
+                        // check if current user liked this post
+                        const likeDocRef = doc(db, "posts", docSnap.id, "likes", authUser.uid);
+                        const likeDocSnap = await getDoc(likeDocRef);
+                        const currentUserLiked = likeDocSnap.exists();
+
+                        return {
+                            id: docSnap.id,
+                            userId: postData.userId,
+                            username: postData.username,
+                            userPhotoURL: postData.userPhotoURL,
+                            message: postData.message,
+                            createdAt: postData.createdAt?.toDate().toLocaleString() || "Unknown",
+                            likesAmount: postData.likesAmount || 0,
+                            commentsAmount: postData.commentsAmount || 0,
+                            currentUserLiked, // ✅ true/false
+                        };
+                    })
+                );
+
+                setPosts(postsData);
+            } catch (err) {
+                console.error("Error fetching posts:", err);
+            }
+        };
+
+        fetchPosts();
+    }, [authUser]);
+
+    // like/unlike post
+    async function likePost(postId) {
+        if (!authUser) return;
+
+        try {
+            const postRef = doc(db, "posts", postId);
+            const likeRef = doc(db, "posts", postId, "likes", authUser.uid);
+
+            const likeSnap = await getDoc(likeRef);
+
+            if (likeSnap.exists()) {
+                // user already liked → unlike
+                await deleteDoc(likeRef);
+                await updateDoc(postRef, {
+                    likesAmount: increment(-1),
+                });
+                console.log("Post unliked:", postId);
+
+                // update local state instantly
+                setPosts(prev =>
+                    prev.map(post =>
+                        post.id === postId
+                            ? { ...post, likesAmount: post.likesAmount - 1, currentUserLiked: false }
+                            : post
+                    )
+                );
+            } else {
+                // user hasn’t liked → like
+                await setDoc(likeRef, {
+                    userId: authUser.uid,
+                    createdAt: serverTimestamp(),
+                });
+                await updateDoc(postRef, {
+                    likesAmount: increment(1),
+                });
+                console.log("Post liked:", postId);
+
+                // update local state instantly
+                setPosts(prev =>
+                    prev.map(post =>
+                        post.id === postId
+                            ? { ...post, likesAmount: post.likesAmount + 1, currentUserLiked: true }
+                            : post
+                    )
+                );
+            }
+        } catch (err) {
+            console.error("Error liking/unliking post:", err);
+        }
+    }
+
+
 
     return(
         <>
@@ -260,12 +356,24 @@ function Home(){
                         <button>Whats on your mind, {userProfile !== null ? userProfile.displayName : "Loading.."} ?</button>
                     </div>
                     <div className={styles.postcontainer}>
-                        <Post/>
-                        <Post/>
-                        <Post/>
-                        <Post/>
-                        <Post/>
-                        <Post/>
+                        <Post
+                            username={"OriontDev"}
+                            message={"lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit ametlorem ipsum dolor sit amet lorem ipsum dolor sit lorem ipsum dolor sit amet lorem ipsum dolor s lorem ipsum dolor s lorem ipsum dolor sit ametit ametit amet amet"}
+                            createdAt={"24-20-12"}
+                            likesAmount={21}
+                            commentsAmount={20}/>
+                        {posts.map((post) => <Post
+                                                key={post.id}
+                                                username={post.username}
+                                                userId={post.userId}
+                                                userPhotoURL={post.userPhotoURL}
+                                                message={post.message}
+                                                createdAt={post.createdAt}
+                                                likesAmount={post.likesAmount}
+                                                commentsAmount={post.commentsAmount}
+                                                currentUserLiked={post.currentUserLiked}
+                                                likeFunction={() => likePost(post.id)}
+                                            />)}
                     </div>
                 </div>
                 <div className={styles.sidebarcontainer}>
