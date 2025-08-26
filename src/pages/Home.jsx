@@ -20,7 +20,6 @@ import {
   onSnapshot
 } from "firebase/firestore";
 
-
 function Home(){
 
     const [authUser, setAuthUser] = useState(null);     // Firebase Auth user
@@ -247,7 +246,12 @@ function Home(){
         <>
             <Header/>
             <div className={styles.container}>
-                <div className={styles.contentcontainer}>c</div>
+                <div className={styles.contentcontainer}>
+                    <div className={styles.userpostcontainer}>
+                        <img src={userProfile !== null ? userProfile.photoURL : null} className={styles.userpostpfp}/>
+                        <button>Whats on your mind, {userProfile !== null ? userProfile.displayName : "Loading.."} ?</button>
+                    </div>
+                </div>
                 <div className={styles.sidebarcontainer}>
                     <div className={styles.friendscontainer}>
                         <h1>Friends</h1>

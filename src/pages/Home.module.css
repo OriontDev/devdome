@@ -15,12 +15,10 @@
 .contentcontainer{
     width: 50vw;
     max-width: 600px;
-    background-color: white;
-    border-radius: 10px;
+    background-color: rgb(255, 177, 177);
     border: 1px rgb(212, 212, 212) solid;
     display: flex;
     flex-direction: column;
-    padding: 20px;
     gap: 20px;
 }
 
@@ -59,6 +57,33 @@
     padding: 10px;
     gap: 20px;
     overflow-y: auto;
+}
+
+.userpostpfp{
+    border-radius: 50%;
+    width: 60px;
+}
+
+.userpostcontainer button{
+    width: 80%;
+    border-radius: 300px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: grey;
+    text-align: left;
+    padding: 5px;
+}
+
+.userpostcontainer{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 10px;
+    gap: 10px;
+    border-radius: 10px;
+    background-color: rgb(255, 255, 255);
 }
 
 @media screen and (max-width: 768px) {
