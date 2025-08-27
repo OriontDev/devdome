@@ -10,7 +10,7 @@
 .contentcontainer{
     scrollbar-width: none; /* hide scroll for Firefox */
     overflow-x: auto;
-
+    gap: 5px;
     width: 50vw;
     max-width: 600px;
     border-radius: 10px;
@@ -160,6 +160,38 @@
 
 .footerbuttoncontainer:hover{
     background-color: rgb(237, 237, 237);
+}
+
+.commentsectioncontainer{
+    display: flex;
+    flex-direction: column;
+
+}
+
+.commentinputcontainer{
+    display: flex;
+    align-items: center;
+    height: 8rem;
+    gap: 10px;
+}
+
+.commentinputcontainer textarea {
+    width: 100%;
+    outline: none;
+    resize: none;
+    font-size: 1.3rem;
+    overflow: hidden;        /* hide scrollbars */
+    line-height: 1.5rem;     /* adjust to match font size */
+    padding: 4px 8px;        /* optional, adjust for spacing */
+    min-height: 1.5rem;      /* 1 line height */
+    max-height: 6rem;
+    box-sizing: border-box;  /* include padding in height */
+}
+
+/* the profile picture of comment input under the post */
+.commentinputpfp{
+    border-radius: 50%;
+    width: 50px;
 }
 
 

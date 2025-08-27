@@ -80,7 +80,6 @@ function Account(){
 
     return(
         <>
-            <Header/>
             <div className={styles.maincontainer}>
                 <div className={styles.sidebarcontainer}>
 

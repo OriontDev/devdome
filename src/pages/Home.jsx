@@ -344,7 +344,6 @@ function Home(){
 
     return(
         <>
-            <Header/>
             <div className={styles.container}>
                 <div className={styles.contentcontainer}>
                     <div className={styles.userpostcontainer}>
