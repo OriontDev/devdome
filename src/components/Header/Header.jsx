@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import styles from './Header.module.css';
 import logo from '/public/logo.png';
-import pfp from '/public/pfp.png';
+
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../config/firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
-
+import pfp from '/public/pfp.png';
 import { setDoc, doc, getDoc, query, collection, where, serverTimestamp, onSnapshot, deleteDoc } from "firebase/firestore";
 import { db } from "../../config/firebase";
 import InboxRequestCard from '../InboxRequestCard/InboxRequestCard';
@@ -183,13 +183,16 @@ function Header(){
                     </div>
 
                     <div className={styles.profileWrapper}>
-                        {!loading && (
+                        {!loading ? (
                             <img
                             className={styles.profilepicture}
                             src={userProfile?.photoURL}
                             onClick={toggleMenu}
                             />
-                        )}
+                        ) : <img
+                                className={styles.profilepicture}
+                                src={pfp}
+                            />}
                         
                         {menuOpen && (
                         <div className={styles.dropdown}>

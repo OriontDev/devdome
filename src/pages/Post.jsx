@@ -3,6 +3,7 @@ import styles from './Post.module.css';
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { auth, db } from "../config/firebase";
+import pfp from '/public/pfp.png';
 import { onAuthStateChanged } from "firebase/auth";
 import {
   collection,
@@ -15,6 +16,8 @@ import {
   limit,
   setDoc,
   serverTimestamp,
+  updateDoc,
+  increment,
   deleteDoc
 } from "firebase/firestore";
 import FriendCard from "../components/FriendCard/FriendCard.jsx";
@@ -30,6 +33,7 @@ function Post() {
   const [friends, setFriends] = useState([]);
   const [friendReccomendations, setFriendReccomendations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentUserLiked, setCurrentUserLiked] = useState(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -39,6 +43,8 @@ function Post() {
 
         return () => unsubscribe();
     }, []);
+
+    console.log(authUser)
 
     // fetch friend recommendations (max 10)
     useEffect(() => {
@@ -224,35 +230,83 @@ function Post() {
         }
     }
 
+    async function likePost(postId) {
+        if (!authUser) return;
 
-
-    // fetch the current post data
-    useEffect(() => {
-    if (!id) return;
-
-    const fetchPost = async () => {
         try {
-        const postRef = doc(db, "posts", id);
-        const postSnap = await getDoc(postRef);
+            const postRef = doc(db, "posts", postId);
+            const likeRef = doc(db, "posts", postId, "likes", authUser.uid);
 
-        if (postSnap.exists()) {
-            setPostData({ id: postSnap.id, ...postSnap.data() });
-            console.log("✅ Post data:", postSnap.data());
-        } else {
-            console.warn("⚠️ No such post found");
-            navigate('/error' ,{state: {invalidPost: true}});
-        }
+            const likeSnap = await getDoc(likeRef);
+
+            if (likeSnap.exists()) {
+                // user already liked → unlike
+                await deleteDoc(likeRef);
+                await updateDoc(postRef, {
+                    likesAmount: increment(-1),
+                });
+                setCurrentUserLiked(false); // ✅ toggle state
+                setPostData(prev => prev ? { ...prev, likesAmount: prev.likesAmount - 1 } : prev);
+                console.log("Post unliked:", postId);
+            } else {
+                // user hasn’t liked → like
+                await setDoc(likeRef, {
+                    userId: authUser.uid,
+                    createdAt: serverTimestamp(),
+                });
+                await updateDoc(postRef, {
+                    likesAmount: increment(1),
+                });
+                setCurrentUserLiked(true); // ✅ toggle state
+                setPostData(prev => prev ? { ...prev, likesAmount: prev.likesAmount + 1 } : prev);
+                console.log("Post liked:", postId);
+
+            }
         } catch (err) {
-        console.error("Error fetching post:", err);
+            console.error("Error liking/unliking post:", err);
         }
-    };
+    }
 
-    fetchPost();
-    }, [id]);
+    useEffect(() => {
+        if (!id || !authUser) return;
+
+        const fetchPost = async () => {
+            try {
+                const postRef = doc(db, "posts", id);
+                const postSnap = await getDoc(postRef);
+
+                if (!postSnap.exists()) {
+                    console.warn("⚠️ No such post found");
+                    navigate('/error', { state: { invalidPost: true } });
+                    return;
+                }
+
+                const data = postSnap.data();
+
+
+                setPostData({
+                    id: postSnap.id,
+                    ...data,
+                    createdAt: data.createdAt?.toDate().toLocaleString() || null,
+                });
+
+                const userLikedRef = doc(db, "posts", id, "likes", authUser.uid)
+                const userLikedSnap = await getDoc(userLikedRef)
+                setCurrentUserLiked(userLikedSnap.exists());
+
+            } catch (err) {
+                console.error("Error fetching post:", err);
+            }
+        };
+
+        fetchPost();
+    }, [id, authUser, navigate]);
 
 
 
-  if (loading) return <h1>Loading...</h1>;
+
+    if (loading) return <p>Loading... page</p>;
+    if(postData === null) return <p>Loading... post</p>
 
   return (
     <>
@@ -260,10 +314,39 @@ function Post() {
       <div className={styles.container}>
         <div className={styles.contentcontainer}>
           <div className={styles.headercontainer}>
-                a
+                <img src={postData !== null ? postData.userPhotoURL : pfp} className={styles.headerpfp}/>
+                <div className={styles.titlecontainer}>
+                    <p>@{postData !== null ? postData.username : "Loading"}</p>
+                    <p>{postData !== null ? postData.createdAt : "Loading"}</p>
+                </div>
           </div>
+
+          <div className={styles.messagecontainer}>
+            <p>{postData.message}</p>
+          </div>
+
+            <hr/>
+            <div className={styles.footercontainer}>
+                <div className={currentUserLiked ? styles.footerbuttoncontainerliked : styles.footerbuttoncontainer} onClick={() => likePost(postData.id)}>
+                    <div className={currentUserLiked ? styles.likelogoliked : styles.likelogo}></div>
+                    <p>{postData.likesAmount}</p>
+                </div>
+                <div className={styles.footerbuttoncontainer}>
+                    <div className={styles.commentlogo}></div>
+                    <p>{postData.commentsAmount}</p>
+                </div>
+                <div className={styles.footerbuttoncontainer}>
+                    <div className={styles.sharelogo}></div>
+                    <p>67</p>
+                </div>
+            </div>
+            <hr/>
+            <div className={styles.commentscontainer}>
+                <h1>Comments</h1>
+            </div>
         </div>
 
+        {/* Sidebar friends */}
         <div className={styles.sidebarcontainer}>
           <div className={styles.friendscontainer}>
             <h1>Friends</h1>

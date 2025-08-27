@@ -16,7 +16,7 @@ function ProtectedRoute({ children }) {
     return () => unsubscribe();
   }, []);
 
-  if (loading) return <p>Loading...</p>; // spinner/loader
+  if (loading) return <h1>Loading...</h1>; // spinner/loader
 
   if (!authUser) return <Navigate to="/" />;
 
