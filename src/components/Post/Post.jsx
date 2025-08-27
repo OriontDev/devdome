@@ -3,7 +3,7 @@ import pfp from '/public/pfp.png'; //loading pfp
 import { useNavigate } from 'react-router-dom';
 import exitlogo from '/exitlogo.svg'
 
-function Post( {username, userPhotoURL, message, createdAt, likesAmount, commentsAmount, currentUserLiked, likeFunction, redirectToPostPage } ){
+function Post( {username, displayName, userPhotoURL, message, createdAt, likesAmount, commentsAmount, currentUserLiked, likeFunction, redirectToPostPage } ){
 
     const navigate = useNavigate();
 
@@ -13,7 +13,7 @@ function Post( {username, userPhotoURL, message, createdAt, likesAmount, comment
                 <div className={styles.header}>
                     <img src={userPhotoURL || pfp} className={styles.pfp}/>
                     <div className={styles.title}>
-                        <p className={styles.username}>@{username}</p>
+                        <p className={styles.username}>@{username} - {displayName}</p>
                         <p className={styles.date}>{createdAt}</p>
                     </div>
                     <div className={styles.postinfobutton}>•••</div>
@@ -27,7 +27,7 @@ function Post( {username, userPhotoURL, message, createdAt, likesAmount, comment
                         <div className={currentUserLiked ? styles.likelogoliked : styles.likelogo}></div>
                         <p>{likesAmount}</p>
                     </div>
-                    <div className={styles.footerbuttoncontainer}>
+                    <div className={styles.footerbuttoncontainer} onClick={redirectToPostPage}>
                         <div className={styles.commentlogo}></div>
                         <p>{commentsAmount}</p>
                     </div>

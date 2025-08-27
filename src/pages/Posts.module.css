@@ -175,13 +175,20 @@
     gap: 10px;
 }
 
-.commentinputcontainer textarea {
+.textareacontainer textarea::placeholder{
+    color: rgb(153, 153, 153);
+}
+
+.textareacontainer textarea {
+    background-color: rgba(255, 255, 255, 0.499);
+    border: none;
+    border-radius: 10px;
     width: 100%;
     outline: none;
     resize: none;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     overflow: hidden;        /* hide scrollbars */
-    line-height: 1.5rem;     /* adjust to match font size */
+    line-height: 1.4rem;     /* adjust to match font size */
     padding: 4px 8px;        /* optional, adjust for spacing */
     min-height: 1.5rem;      /* 1 line height */
     max-height: 6rem;
@@ -194,6 +201,47 @@
     width: 50px;
 }
 
+.textareacontainer{
+    width: 100%;
+    background-color: rgb(225, 225, 225);
+    padding: 3px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.textareabuttoncontainer{
+    height: 2rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.sendbutton{
+    width: 2rem;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.sendbuttonoff{
+    width: 2rem;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: not-allowed;
+}
+
+.sendbutton:hover{
+    cursor: pointer;
+    background-color: rgb(249, 249, 249);
+}
+
+.sendbuttonimage{
+    width: 20px;
+}
 
 @media screen and (max-width: 768px) {
     .sidebarcontainer {

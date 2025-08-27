@@ -1,8 +1,8 @@
 
-import styles from './Post.module.css';
+import styles from './Posts.module.css';
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { auth, db } from "../config/firebase";
+import { auth, db } from "../config/firebase.jsx";
 import pfp from '/public/pfp.png';
 import { onAuthStateChanged } from "firebase/auth";
 import {
@@ -23,7 +23,7 @@ import {
 import FriendCard from "../components/FriendCard/FriendCard.jsx";
 import ProfileCard from "../components/ProfileCard/ProfileCard.jsx";
 
-function Post() {
+function Posts() {
   const { id } = useParams(); 
   const navigate = useNavigate();
 
@@ -357,7 +357,7 @@ function Post() {
           <div className={styles.headercontainer}>
                 <img src={postData !== null ? postData.userPhotoURL : pfp} className={styles.headerpfp}/>
                 <div className={styles.titlecontainer}>
-                    <p>@{postData !== null ? postData.username : "Loading"}</p>
+                    <p>@{postData !== null ? postData.username : "Loading"} - {postData !== null ? postData.displayName : "Loading"}</p>
                     <p>{postData !== null ? postData.createdAt : "Loading"}</p>
                 </div>
           </div>
@@ -385,7 +385,15 @@ function Post() {
             <div className={styles.commentsectioncontainer}>
                 <div className={styles.commentinputcontainer}>
                     <img src={userProfile.photoURL} className={styles.commentinputpfp}/>
-                    <textarea placeholder="Write a comment.." onChange={userCommentChange} ref={textareaRef} value={userCommentInput}></textarea>
+                    <div className={styles.textareacontainer}>
+                        <textarea placeholder="Write a comment.." onChange={userCommentChange} ref={textareaRef} value={userCommentInput}></textarea>
+                        <div className={styles.textareabuttoncontainer}>
+                            <div className={userCommentInput !== "" ? styles.sendbutton : styles.sendbuttonoff}>
+                                <img src='/paperplane.svg' className={styles.sendbuttonimage}/>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <hr/>
@@ -428,4 +436,4 @@ function Post() {
   );
 }
 
-export default Post;
+export default Posts;

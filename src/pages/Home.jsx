@@ -271,6 +271,7 @@ function Home(){
                             id: docSnap.id,
                             userId: postData.userId,
                             username: postData.username,
+                            displayName: postData.displayName,
                             userPhotoURL: postData.userPhotoURL,
                             message: postData.message,
                             createdAt: postData.createdAt?.toDate().toLocaleString() || "Unknown",
@@ -353,6 +354,7 @@ function Home(){
                         <img src={userProfile !== null ? userProfile.photoURL : null} className={styles.userpostpfp}/>
                         <button>Whats on your mind, {userProfile !== null ? userProfile.displayName : "Loading.."} ?</button>
                     </div>
+                    {console.log(posts)}
                     <div className={styles.postcontainer}>
                         <Post
                             username={"OriontDev"}
@@ -363,6 +365,7 @@ function Home(){
                         {posts.map((post) => <Post
                                                 key={post.id}
                                                 username={post.username}
+                                                displayName={post.displayName}
                                                 userId={post.userId}
                                                 userPhotoURL={post.userPhotoURL}
                                                 message={post.message}
@@ -371,7 +374,7 @@ function Home(){
                                                 commentsAmount={post.commentsAmount}
                                                 currentUserLiked={post.currentUserLiked}
                                                 likeFunction={() => likePost(post.id)}
-                                                redirectToPostPage={() => navigate(`/post/${post.id}`)}
+                                                redirectToPostPage={() => navigate(`/posts/${post.id}`)}
                                             />)}
                     </div>
                 </div>
