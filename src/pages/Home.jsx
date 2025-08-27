@@ -342,7 +342,6 @@ function Home(){
     }
 
 
-
     return(
         <>
             <Header/>
@@ -373,6 +372,7 @@ function Home(){
                                                 commentsAmount={post.commentsAmount}
                                                 currentUserLiked={post.currentUserLiked}
                                                 likeFunction={() => likePost(post.id)}
+                                                redirectToPostPage={() => navigate(`/post/${post.id}`)}
                                             />)}
                     </div>
                 </div>

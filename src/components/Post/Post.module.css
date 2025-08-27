@@ -43,6 +43,12 @@ p{
 
 .username{
     font-weight: bold;
+    cursor: pointer;
+}
+
+
+.username:hover{
+    text-decoration: underline;
 }
 
 .date{
@@ -56,27 +62,13 @@ p{
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 3.5rem;
-    border-radius: 50%;
+    width: 3rem;
+    border-radius: 1000px;
     font-weight: bold;
     cursor: pointer;
 }
 
-.deletepostbutton{
-    height: 90%;
-    background-color: rgb(255, 255, 255);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 3.5rem;
-    border-radius: 50%;
-    font-weight: bold;
-    cursor: pointer;
-}
 
-.deletepostbutton:hover{
-    background-color: rgb(234, 234, 234);
-}
 
 .postinfobutton:hover{
     background-color: rgb(234, 234, 234);
@@ -84,6 +76,7 @@ p{
 
 .messagecontainer{
     height: 100%;
+    cursor: pointer;
 }
 
 .footercontainer{

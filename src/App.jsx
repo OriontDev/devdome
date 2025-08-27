@@ -7,6 +7,7 @@ import Register from './pages/Register';
 import ProtectedRoute from './pages/ProtectedRoute';
 import Error from './pages/Error';
 import ResetPassword from './pages/ResetPassword';
+import Post from './pages/Post';
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
@@ -21,7 +22,7 @@ function App() {
           <Route path="/home" element={<ProtectedRoute><Home/></ProtectedRoute>}/>
           <Route path="/account/:uid" element={<ProtectedRoute><Account/></ProtectedRoute>}/>
           <Route path="/project/:id" element={<ProtectedRoute><Project/></ProtectedRoute>}/>
-
+          <Route path="/post/:id" element={<ProtectedRoute><Post/></ProtectedRoute>}/>
 
           <Route path="*" element={<Error/>}/>
         </Routes>
