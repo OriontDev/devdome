@@ -61,7 +61,9 @@ function Posts() {
     const [loading, setLoading] = useState(true);
     const [currentUserLiked, setCurrentUserLiked] = useState(false);
 
-    //auth user
+    const [comments, setComments] = useState([]);
+
+    //fetch auth user
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
         setAuthUser(user);

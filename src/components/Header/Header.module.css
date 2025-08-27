@@ -6,6 +6,11 @@
     background-color: #fff;
     height: 56px;
     box-shadow: -1px 2px 4px rgba(0, 0, 0, 0.335);
+
+    -webkit-user-select: none; /* Chrome, Safari */
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* IE10+ */
+    user-select: none;         /* Standard */
 }
 
 .leftheader,
@@ -180,4 +185,27 @@
   user-select: none;       /* Modern browsers */
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none;     /* Old IE/Edge */
+}
+
+@media screen and (max-width: 768px) {
+  .centerheader {
+    display: none;
+  }
+
+  .dropdown{
+    align-items:end;
+    padding: 10px;
+  }
+
+  .dropdownItemCard {
+    width: 80%;
+  }
+
+  .dropdownItem {
+    width: 80%;
+  }
+
+  .inboxdropdown{
+    min-width: 300px;
+  }
 }

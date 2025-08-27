@@ -115,3 +115,13 @@
   white-space: pre-wrap;    /* Keeps line breaks and wraps text */
   margin-top: 10px;         /* optional spacing */
 }
+
+@media screen and (max-width: 768px) {
+    .profilecontainer{
+        display: none;
+    }
+    .sidebarcontainer{
+        min-width: 90vw;
+        max-width: none;
+    }
+}

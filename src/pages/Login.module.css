@@ -150,11 +150,16 @@ input{
     .container1 {
         display: flex; /* hide the left side with title & slogan */
         text-align: center;
+        background-color: white;
+        width: 90vw;
+        font-weight: bold;
+        box-shadow: rgb(187, 182, 255) 5px 5px 0px;
     }
 
     .container2 {
         width: 85%; /* make login container wider for small screens */
         padding: 15px;
+
     }
 
     input {
