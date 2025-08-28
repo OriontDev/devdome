@@ -20,6 +20,7 @@ import {
   increment,
   deleteDoc
 } from "firebase/firestore";
+import Comment from '../components/Comment/Comment.jsx';
 import FriendCard from "../components/FriendCard/FriendCard.jsx";
 import ProfileCard from "../components/ProfileCard/ProfileCard.jsx";
 
@@ -357,7 +358,9 @@ function Posts() {
         fetchPost();
     }, [id, authUser, navigate]);
 
-
+    async function postComment(){
+        setUserCommentInput((prev) => "");
+    }
 
 
     if (loading) return <p>Loading... page</p>;
@@ -373,6 +376,12 @@ function Posts() {
                     <p>@{postData !== null ? postData.username : "Loading"} - {postData !== null ? postData.displayName : "Loading"}</p>
                     <p>{postData !== null ? postData.createdAt : "Loading"}</p>
                 </div>
+                <div className={styles.headerbuttoncontainer}>
+                    <div className={styles.settingiconcontainer}>
+                        <div className={styles.settingicon}></div>
+                    </div>
+                </div>
+
           </div>
 
           <div className={styles.messagecontainer}>
@@ -395,21 +404,25 @@ function Posts() {
                 </div>
             </div>
             <hr/>
-            <div className={styles.commentsectioncontainer}>
+            <div className={styles.usercommentsectioncontainer}>
                 <div className={styles.commentinputcontainer}>
                     <img src={userProfile.photoURL} className={styles.commentinputpfp}/>
                     <div className={styles.textareacontainer}>
                         <textarea placeholder="Write a comment.." onChange={userCommentChange} ref={textareaRef} value={userCommentInput}></textarea>
                         <div className={styles.textareabuttoncontainer}>
-                            <div className={userCommentInput !== "" ? styles.sendbutton : styles.sendbuttonoff}>
+                            <div className={userCommentInput !== "" ? styles.sendbutton : styles.sendbuttonoff} onClick={postComment}>
                                 <img src='/paperplane.svg' className={styles.sendbuttonimage}/>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
             <hr/>
+            <div className={styles.commentscontainer}>
+                <Comment message="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum!"/>
+                <Comment message="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum!"/>
+                <Comment message="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum!"/>
+            </div>
         </div>
 
         {/* Sidebar friends */}

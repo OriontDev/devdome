@@ -386,6 +386,7 @@ function Home(){
                                                 currentUserLiked={post.currentUserLiked}
                                                 likeFunction={() => likePost(post.id)}
                                                 redirectToPostPage={() => navigate(`/posts/${post.id}`)}
+                                                redirectToUserPage={() => navigate(`/account/${post.userId}`)}
                                             />)}
                     </div>
                 </div>

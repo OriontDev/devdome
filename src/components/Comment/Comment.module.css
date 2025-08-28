@@ -1,0 +1,45 @@
+.container{
+    display: flex;
+    gap: 5px;
+}
+
+.pfp{
+    height: 50px;
+    border-radius: 50%;
+}
+
+.rightcontainer{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-weight: bold;
+    padding-top: 5px;
+}
+
+.messagecontainer{
+    background-color: rgb(240, 240, 240);
+    border-radius: 10px;
+    padding: 5px;
+    font-weight: normal;
+    line-height: 1.3rem;
+}
+
+.showtext{
+    font-weight: bold;
+    cursor: pointer;
+    width: fit-content;
+
+    user-select: none;   /* Standard */
+    -webkit-user-select: none; /* For Safari/Chrome */
+    -moz-user-select: none;    /* For Firefox */
+    -ms-user-select: none;     /* For old IE/Edge */
+}
+
+.showtext:hover{
+    text-decoration: underline;
+}
+
+.namedate{
+    cursor: pointer;
+    width: fit-content;
+}

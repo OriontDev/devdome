@@ -80,6 +80,7 @@
     justify-content: center;
     font-weight: bold;
     font-size: 1.1rem;
+    min-width: fit-content;
 }
 
 .messagecontainer{
@@ -162,7 +163,7 @@
     background-color: rgb(237, 237, 237);
 }
 
-.commentsectioncontainer{
+.usercommentsectioncontainer{
     display: flex;
     flex-direction: column;
 
@@ -241,6 +242,53 @@
 
 .sendbuttonimage{
     width: 20px;
+}
+
+.commentscontainer{
+    /* background-color: red; */
+    width: 100%;
+    height: 100%;
+}
+
+.commentscontainer{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.headerbuttoncontainer{
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.settingiconcontainer{
+    background-color: rgb(232, 232, 232);
+    width: 40px;
+    height: 65%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border 0.2s ease-in-out;
+}
+
+.settingiconcontainer:hover{
+    border: rgb(190, 190, 190) 2px solid;
+}
+
+.settingiconcontainer:active{
+    background-color: rgb(213, 213, 213);
+    border: rgb(190, 190, 190) 2px solid;
+}
+
+.settingicon{
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-position: 0 -589px;
+    background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yC/r/pS7pURSmNlX.png?_nc_eui2=AeErAUrAkR18yU687qemddon94jW2ZlCNaX3iNbZmUI1pTQCjc11GSbC9x369RRX_PfGIPBzWmwdshzUKMJDBbiq');
 }
 
 @media screen and (max-width: 768px) {
