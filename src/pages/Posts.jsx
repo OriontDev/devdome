@@ -29,7 +29,10 @@ function Posts() {
   const navigate = useNavigate();
 
 
+    const [editDropdownOpen, setEditDropdownOpen] = useState(false);
     const [userCommentInput, setUserCommentInput] = useState("");
+
+    const [isOwner, setIsOwner] = useState(false);
     const textareaRef = useRef(null);
 
     const userCommentChange = (e) => {
@@ -119,7 +122,7 @@ function Posts() {
                     }));
 
                 setFriendReccomendations(users);
-                console.log("Friend recommendations:", users);
+                // console.log("Friend recommendations:", users);
             } catch (err) {
                 console.error("Error fetching friend recommendations:", err);
             }
@@ -362,6 +365,14 @@ function Posts() {
         setUserCommentInput((prev) => "");
     }
 
+    //Check if the post is ours or not
+    useEffect(() => {
+    if (authUser && postData) { //if authuser and postdata already exist
+        setIsOwner(authUser.uid === postData.userId); //setIsOwner to wether the user uid from those two match
+    } else {
+        setIsOwner(false);
+    }
+    }, [authUser, postData, id]);
 
     if (loading) return <p>Loading... page</p>;
     if(postData === null) return <p>Loading... post</p>
@@ -377,9 +388,37 @@ function Posts() {
                     <p>{postData !== null ? postData.createdAt : "Loading"}</p>
                 </div>
                 <div className={styles.headerbuttoncontainer}>
-                    <div className={styles.settingiconcontainer}>
+                    <div className={styles.settingiconcontainer} onClick={() => setEditDropdownOpen(prev => !prev)}>
                         <div className={styles.settingicon}></div>
                     </div>
+                    {editDropdownOpen && (
+                    <div className={styles.dropdown}>
+                        {isOwner ? (
+                            <>
+                                <div className={styles.dropdownitem}>
+                                    <div className={styles.dropdownlogocontainer}>
+                                        <div className={styles.editlogodropdown}></div>
+                                    </div>
+                                    <p onClick={() => console.log("Edit clicked")}>Edit</p>
+                                </div>
+                                
+                                <div className={styles.dropdownitem}>
+                                    <div className={styles.dropdownlogocontainer}>
+                                        <div className={styles.deletelogodropdown}></div>
+                                    </div>
+                                    <p onClick={() => console.log("Delete clicked")}>Delete</p>
+                                </div>
+                            </>
+                        ) : (
+                            <div className={styles.dropdownitem}>
+                                <div className={styles.dropdownlogocontainer}>
+                                    <div className={styles.reportlogodropdown}></div>
+                                </div>
+                                <p onClick={() => console.log("Report clicked")}>Report</p>
+                            </div>
+                        )}
+                    </div>
+                    )}
                 </div>
 
           </div>

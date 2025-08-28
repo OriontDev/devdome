@@ -195,14 +195,15 @@
   .dropdown{
     align-items:end;
     padding: 10px;
+    min-width: 300px;
   }
 
   .dropdownItemCard {
-    width: 80%;
+    width: 100%;
   }
 
   .dropdownItem {
-    width: 80%;
+    width: 100%;
   }
 
   .inboxdropdown{

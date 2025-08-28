@@ -3,7 +3,6 @@ import styles from './Comment.module.css';
 import pfp from '/public/pfp.png'; //loading pfp
 
 function Comment( {message} ){
-
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
 
@@ -17,7 +16,7 @@ function Comment( {message} ){
         <div className={styles.container}>
             <img src={pfp} className={styles.pfp}/>
             <div className={styles.rightcontainer}>
-                <p className={styles.namedate}>@OriontDev - 19/22/10</p>
+                <p className={styles.namedate}>@Oreore - 19/22/10</p>
                 <div className={styles.messagecontainer}>
                     <p>{!messageCutted ? message.slice(0, 256) + "..." : message}</p>
 
