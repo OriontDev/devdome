@@ -262,17 +262,28 @@ function Home(){
                     postsSnap.docs.map(async (docSnap) => {
                         const postData = docSnap.data();
 
+                        //get post owner data
+                        const userRef = doc(db, "users", postData.userId);
+                        const userDataSnap = await getDoc(userRef);
+                        let userData = null;
+                        if(userDataSnap.exists()){
+                            userData = userDataSnap.data();
+                        }
+
+
                         // check if current user liked this post
                         const likeDocRef = doc(db, "posts", docSnap.id, "likes", authUser.uid);
                         const likeDocSnap = await getDoc(likeDocRef);
                         const currentUserLiked = likeDocSnap.exists();
 
+                        
+
                         return {
                             id: docSnap.id,
                             userId: postData.userId,
-                            username: postData.username,
-                            displayName: postData.displayName,
-                            userPhotoURL: postData.userPhotoURL,
+                            username: userData?.username,
+                            displayName: userData?.displayName,
+                            userPhotoURL: userData?.photoURL,
                             message: postData.message,
                             createdAt: postData.createdAt?.toDate().toLocaleString() || "Unknown",
                             likesAmount: postData.likesAmount || 0,

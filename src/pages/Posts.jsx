@@ -327,9 +327,20 @@ function Posts() {
 
                 const data = postSnap.data();
 
+                //get post owner data
+                const userRef = doc(db, "users", data.userId);
+                const userDataSnap = await getDoc(userRef);
+                let userData = null;
+                if(userDataSnap.exists()){
+                    userData = userDataSnap.data();
+                }
+
 
                 setPostData({
                     id: postSnap.id,
+                    username: userData?.username,
+                    displayName: userData?.displayName,
+                    userPhotoURL: userData?.photoURL,
                     ...data,
                     createdAt: data.createdAt?.toDate().toLocaleString() || null,
                 });
