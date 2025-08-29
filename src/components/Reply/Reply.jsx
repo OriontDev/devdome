@@ -1,16 +1,73 @@
 import { useEffect, useState } from 'react';
 import styles from './Reply.module.css';
+import { doc, getDoc, setDoc, deleteDoc, updateDoc, increment } from "firebase/firestore";
+import { db, auth } from "../../config/firebase"; // ✅ import auth + db
 import pfp from '/public/pfp.png'; //loading pfp
 
-function Reply( { userId, photoURL, username, message, createdAt, ownerId} ){
+function Reply( { postId, userId, replyId, photoURL, username, message, createdAt, likesAmount, ownerId} ){
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
 
+    const [currentUserLiked, setCurrentUserLiked] = useState(false);
+    const [likes, setLikes] = useState(likesAmount || 0);
+
     useEffect(() => {
-        if(message.length >= 256){
+        if (message?.length >= 256) {
             setIsLong(true);
         }
-    }, [])
+
+        // ✅ check if current user already liked this reply
+        const checkLike = async () => {
+            const authUser = auth.currentUser;
+            if (!authUser || !postId || !replyId) return;
+
+            try {
+                const likeRef = doc(db, "posts", postId, "comments", replyId, "likes", authUser.uid);
+                const likeSnap = await getDoc(likeRef);
+                if (likeSnap.exists()) {
+                    setCurrentUserLiked(true);
+                }
+            } catch (err) {
+                console.error("Error checking reply like:", err);
+            }
+        };
+
+        checkLike();
+    }, [postId, replyId, message]);
+
+    async function likeReply() {
+        const authUser = auth.currentUser;
+        if (!authUser || !postId || !replyId) return;
+
+        // ✅ reply itself is still just a comment doc
+        const replyRef = doc(db, "posts", postId, "comments", replyId);
+        const likeRef = doc(db, "posts", postId, "comments", replyId, "likes", authUser.uid);
+
+        try {
+            if (currentUserLiked) {
+                // Unlike
+                await deleteDoc(likeRef);
+                await updateDoc(replyRef, {
+                    likesAmount: increment(-1),
+                });
+                setLikes(prev => prev - 1);
+                setCurrentUserLiked(false);
+            } else {
+                // Like
+                await setDoc(likeRef, {
+                    userId: authUser.uid,
+                    createdAt: new Date(),
+                });
+                await updateDoc(replyRef, {
+                    likesAmount: increment(1),
+                });
+                setLikes(prev => prev + 1);
+                setCurrentUserLiked(true);
+            }
+        } catch (err) {
+            console.error("Error liking reply:", err);
+        }
+    }
 
     return(
         <div className={styles.container}>
@@ -35,9 +92,9 @@ function Reply( { userId, photoURL, username, message, createdAt, ownerId} ){
                     </div>
                 </div>
                 <div className={styles.buttonscontainer}>
-                    <div className={styles.logocontainer}>
+                    <div className={currentUserLiked ? styles.likedlogocontainer : styles.logocontainer} onClick={likeReply}>
                         <div className={styles.likelogo}></div>
-                        <p>78</p>
+                        <p>{likes}</p>
                     </div>
                 </div>
             </div>

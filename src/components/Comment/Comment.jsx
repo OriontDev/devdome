@@ -1,23 +1,76 @@
 import { use, useEffect, useState } from 'react';
 import styles from './Comment.module.css';
 import Reply from '../Reply/Reply.jsx'
+import { doc, getDoc, setDoc, deleteDoc, updateDoc, increment } from "firebase/firestore";
+import { db, auth } from "../../config/firebase"; // ✅ adjust path
+
 import pfp from '/public/pfp.png'; //loading pfp
 
-function Comment( { userId, photoURL, username, message, createdAt, replies = [], ownerId} ){
+function Comment( { postId, commentId, userId, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId} ){
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
     const [hasReplies, setHasReplies] = useState(false);
     const [replyOpen, setReplyOpen] = useState(false);
+    const [currentUserLiked, setCurrentUserLiked] = useState(false);
+    const [likes, setLikes] = useState(likesAmount);
+
 
     useEffect(() => {
-        if(message.length >= 256){
+        if (message.length >= 256) {
             setIsLong(true);
         }
 
-        if(replies.length !== 0){
+        if (replies.length !== 0) {
             setHasReplies(true);
         }
-    }, [])
+
+        // ✅ check if current user already liked this comment
+        const checkLike = async () => {
+            const authUser = auth.currentUser;
+            if (!authUser || !postId || !commentId) return; // ✅ guard
+
+            const likeRef = doc(db, "posts", postId, "comments", commentId, "likes", authUser.uid);
+            const likeSnap = await getDoc(likeRef);
+            if (likeSnap.exists()) {
+                setCurrentUserLiked(true);
+            }
+        };
+
+        checkLike();
+    }, [postId, commentId, message, replies]);
+
+    async function likeComment() {
+        const authUser = auth.currentUser;
+        if (!authUser) return;
+
+        const commentRef = doc(db, "posts", postId, "comments", commentId);
+        const likeRef = doc(db, "posts", postId, "comments", commentId, "likes", authUser.uid);
+
+        try {
+            if (currentUserLiked) {
+                // ✅ Unlike
+                await deleteDoc(likeRef);
+                await updateDoc(commentRef, {
+                    likesAmount: increment(-1),
+                });
+                setLikes(prev => prev - 1);
+                setCurrentUserLiked(false);
+            } else {
+                // ✅ Like
+                await setDoc(likeRef, {
+                    userId: authUser.uid,
+                    createdAt: new Date(),
+                });
+                await updateDoc(commentRef, {
+                    likesAmount: increment(1),
+                });
+                setLikes(prev => prev + 1);
+                setCurrentUserLiked(true);
+            }
+        } catch (err) {
+            console.error("Error liking comment:", err);
+        }
+    }
 
     return(
         <div className={styles.container}>
@@ -42,9 +95,9 @@ function Comment( { userId, photoURL, username, message, createdAt, replies = []
                     </div>
                 </div>
                 <div className={styles.buttonscontainer}>
-                    <div className={styles.logocontainer}>
+                    <div className={currentUserLiked ? styles.likedlogocontainer : styles.logocontainer} onClick={likeComment}>
                         <div className={styles.likelogo}></div>
-                        <p>78</p>
+                        <p>{likes}</p>
                     </div>
                     <div className={styles.logocontainer}>
                         <div className={styles.commentlogo}></div>
@@ -55,11 +108,14 @@ function Comment( { userId, photoURL, username, message, createdAt, replies = []
 
                 {replyOpen ? replies.map((reply) => <Reply
                                             key={reply.id}
+                                            postId={postId}
+                                            replyId={reply.id}
                                             userId={reply.userId}
                                             photoURL={reply.user.photoURL} 
                                             username={reply.user.username} 
                                             message={reply.text}
                                             createdAt={reply.createdAt}
+                                            likesAmount={reply.likesAmount}
                                             ownerId={ownerId}
                                         />) : <></>}
             </div>

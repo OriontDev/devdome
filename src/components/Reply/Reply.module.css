@@ -64,6 +64,21 @@
     cursor: pointer;
 }
 
+.likedlogocontainer{
+    gap: 5px;
+    align-items: center;
+    padding: 5px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    background-color: rgb(235, 235, 235);
+}
+
+.likedlogocontainer:hover{
+    background-color: rgb(222, 222, 222);
+}
+
 .postownernamedate{
     border-radius: 5px;
     padding: 0px 10px;

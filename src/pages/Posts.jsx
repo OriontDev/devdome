@@ -396,6 +396,7 @@ function Posts() {
                         text: commentData.text,
                         parentCommentId: commentData.parentCommentId || null,
                         createdAt: commentData.createdAt?.toDate().toLocaleString() || "Unknown",
+                        likesAmount: commentData.likesAmount || 0,
                     };
                 });
 
@@ -442,7 +443,7 @@ function Posts() {
                 });
 
                 setComments(topLevelComments);
-                console.log(allCommentsWithUser);
+                // console.log(allCommentsWithUser);
 
             } catch (err) {
                 console.error("Error fetching comments:", err);
@@ -540,12 +541,15 @@ function Posts() {
             <div className={styles.commentscontainer}>
                 {comments.map((comment) => <Comment
                                                 key={comment.id}
+                                                postId={postData.id}
+                                                commentId={comment.id}
                                                 userId={comment.userId}
                                                 photoURL={comment.user.photoURL}
                                                 username={comment.user.username}
                                                 message={comment.text}
                                                 createdAt={comment.createdAt}
                                                 replies={comment.replies}
+                                                likesAmount={comment.likesAmount}
                                                 ownerId={postData.userId}/>)}
                 <Comment message="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum!"/>
                 <Comment message="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum!"/>
