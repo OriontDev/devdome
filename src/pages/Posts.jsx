@@ -32,8 +32,22 @@ function Posts() {
     const [editDropdownOpen, setEditDropdownOpen] = useState(false);
     const [userCommentInput, setUserCommentInput] = useState("");
 
+
     const [isOwner, setIsOwner] = useState(false);
     const textareaRef = useRef(null);
+
+
+
+  //initialize with location.state (fast path)
+    const [postData, setPostData] = useState(null);
+    const [userProfile, setUserProfile] = useState(null);
+    const [authUser, setAuthUser] = useState(null);
+    const [friends, setFriends] = useState([]);
+    const [friendReccomendations, setFriendReccomendations] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [currentUserLiked, setCurrentUserLiked] = useState(false);
+
+    const [comments, setComments] = useState([]);
 
     const userCommentChange = (e) => {
         setUserCommentInput(e.target.value);
@@ -56,16 +70,6 @@ function Posts() {
     }, []);
 
 
-  //initialize with location.state (fast path)
-    const [postData, setPostData] = useState(null);
-    const [userProfile, setUserProfile] = useState(null);
-    const [authUser, setAuthUser] = useState(null);
-    const [friends, setFriends] = useState([]);
-    const [friendReccomendations, setFriendReccomendations] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [currentUserLiked, setCurrentUserLiked] = useState(false);
-
-    const [comments, setComments] = useState([]);
 
     //fetch auth user
     useEffect(() => {
@@ -374,6 +378,82 @@ function Posts() {
     }
     }, [authUser, postData, id]);
 
+    //fetch comment (still modifying)
+    useEffect(() => {
+        if (!authUser || !postData?.id) return;
+
+        const fetchComments = async () => {
+            try {
+                const commentsRef = collection(db, "posts", postData.id, "comments");
+                const commentsSnap = await getDocs(commentsRef);
+
+                // Get raw comments data
+                const allComments = commentsSnap.docs.map(docSnap => {
+                    const commentData = docSnap.data();
+                    return {
+                        id: docSnap.id,
+                        userId: commentData.userId,
+                        text: commentData.text,
+                        parentCommentId: commentData.parentCommentId || null,
+                        createdAt: commentData.createdAt?.toDate().toLocaleString() || "Unknown",
+                    };
+                });
+
+                // Fetch user info for each unique userId
+                const uniqueUserIds = [...new Set(allComments.map(c => c.userId))];
+                const userDocs = await Promise.all(
+                    uniqueUserIds.map(async (uid) => {
+                        const userRef = doc(db, "users", uid);
+                        const userSnap = await getDoc(userRef);
+                        return userSnap.exists()
+                            ? { id: uid, ...userSnap.data() }
+                            : { id: uid, username: "Unknown", photoURL: null };
+                    })
+                );
+
+                // Map userId → userData
+                const userMap = {};
+                userDocs.forEach(u => {
+                    userMap[u.id] = {
+                        username: u.username,
+                        photoURL: u.photoURL
+                    };
+                });
+
+                // Attach user info to comments
+                const allCommentsWithUser = allComments.map(c => ({
+                    ...c,
+                    user: userMap[c.userId] || { username: "Unknown", photoURL: null }
+                }));
+
+                // Split into top-level and replies
+                const topLevelComments = allCommentsWithUser
+                    .filter(c => c.parentCommentId === null)
+                    .map(c => ({ ...c, replies: [] }));
+
+                const replies = allCommentsWithUser.filter(c => c.parentCommentId !== null);
+
+                // Attach replies to their parent comment
+                replies.forEach(reply => {
+                    const parent = topLevelComments.find(c => c.id === reply.parentCommentId);
+                    if (parent) {
+                        parent.replies.push(reply);
+                    }
+                });
+
+                setComments(topLevelComments);
+                console.log(allCommentsWithUser);
+
+            } catch (err) {
+                console.error("Error fetching comments:", err);
+            }
+        };
+
+        fetchComments();
+    }, [authUser, postData]);
+
+
+
     if (loading) return <p>Loading... page</p>;
     if(postData === null) return <p>Loading... post</p>
 
@@ -458,6 +538,15 @@ function Posts() {
             </div>
             <hr/>
             <div className={styles.commentscontainer}>
+                {comments.map((comment) => <Comment
+                                                key={comment.id}
+                                                userId={comment.userId}
+                                                photoURL={comment.user.photoURL}
+                                                username={comment.user.username}
+                                                message={comment.text}
+                                                createdAt={comment.createdAt}
+                                                replies={comment.replies}
+                                                ownerId={postData.userId}/>)}
                 <Comment message="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum!"/>
                 <Comment message="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum!"/>
                 <Comment message="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum!"/>

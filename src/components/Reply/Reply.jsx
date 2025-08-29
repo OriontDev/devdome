@@ -1,21 +1,14 @@
-import { use, useEffect, useState } from 'react';
-import styles from './Comment.module.css';
-import Reply from '../Reply/Reply.jsx'
+import { useEffect, useState } from 'react';
+import styles from './Reply.module.css';
 import pfp from '/public/pfp.png'; //loading pfp
 
-function Comment( { userId, photoURL, username, message, createdAt, replies = [], ownerId} ){
+function Reply( { userId, photoURL, username, message, createdAt, ownerId} ){
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
-    const [hasReplies, setHasReplies] = useState(false);
-    const [replyOpen, setReplyOpen] = useState(false);
 
     useEffect(() => {
         if(message.length >= 256){
             setIsLong(true);
-        }
-
-        if(replies.length !== 0){
-            setHasReplies(true);
         }
     }, [])
 
@@ -46,26 +39,11 @@ function Comment( { userId, photoURL, username, message, createdAt, replies = []
                         <div className={styles.likelogo}></div>
                         <p>78</p>
                     </div>
-                    <div className={styles.logocontainer}>
-                        <div className={styles.commentlogo}></div>
-                        <p>0</p>
-                    </div>
                 </div>
-                {!hasReplies ? <></> : (!replyOpen ? <p className={styles.showreplybutton} onClick={() => setReplyOpen(true)}>⮟Show Replies</p> : <p className={styles.showreplybutton} onClick={() => setReplyOpen(false)}>⮝Hide Replies</p>)}
-
-                {replyOpen ? replies.map((reply) => <Reply
-                                            key={reply.id}
-                                            userId={reply.userId}
-                                            photoURL={reply.user.photoURL} 
-                                            username={reply.user.username} 
-                                            message={reply.text}
-                                            createdAt={reply.createdAt}
-                                            ownerId={ownerId}
-                                        />) : <></>}
             </div>
         </div>
     )
 
 }
 
-export default Comment;
+export default Reply;
