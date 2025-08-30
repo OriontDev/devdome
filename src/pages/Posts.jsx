@@ -31,10 +31,12 @@ function Posts() {
 
     const [editDropdownOpen, setEditDropdownOpen] = useState(false);
     const [userCommentInput, setUserCommentInput] = useState("");
+    const [openDropdownId, setOpenDropdownId] = useState(null);
 
 
     const [isOwner, setIsOwner] = useState(false);
     const textareaRef = useRef(null);
+    const dropdownRef = useRef(null); //Ref for dropdown
 
 
 
@@ -69,7 +71,21 @@ function Posts() {
         adjustHeight(); // adjust when component mounts
     }, []);
 
+    //close dropdown if user click outside dropdown
+    useEffect(() => {
+        function handleClickOutside(event) {
+        // If dropdown is open and click target is outside → close
+        if (editDropdownOpen && dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setEditDropdownOpen(false);
+        }
+        }
 
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [editDropdownOpen]);
 
     //fetch auth user
     useEffect(() => {
@@ -502,7 +518,7 @@ function Posts() {
                         <div className={styles.settingicon}></div>
                     </div>
                     {editDropdownOpen && (
-                    <div className={styles.dropdown}>
+                    <div ref={dropdownRef} className={styles.dropdown}>
                         {isOwner ? (
                             <>
                                 <div className={styles.dropdownitem}>
@@ -579,10 +595,10 @@ function Posts() {
                                                 createdAt={timeAgo(comment.createdAt)}
                                                 replies={comment.replies}
                                                 likesAmount={comment.likesAmount}
-                                                ownerId={postData.userId}/>)}
-                <Comment message="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum! Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum!"/>
-                <Comment message="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum!"/>
-                <Comment message="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti voluptas, suscipit deserunt ut nobis perspiciatis vitae, hic laborum sequi aut iste repudiandae dignissimos harum qui voluptatibus recusandae expedita reiciendis rerum!"/>
+                                                ownerId={postData.userId}
+                                                openDropdownId={openDropdownId}
+                                                setOpenDropdownId={setOpenDropdownId}
+                                                />)}
             </div>
         </div>
 

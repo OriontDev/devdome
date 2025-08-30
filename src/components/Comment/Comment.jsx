@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './Comment.module.css';
 import Reply from '../Reply/Reply.jsx'
 import { doc, getDoc, setDoc, deleteDoc, updateDoc, increment } from "firebase/firestore";
@@ -6,13 +6,23 @@ import { db, auth } from "../../config/firebase"; // ✅ adjust path
 
 import pfp from '/public/pfp.png'; //loading pfp
 
-function Comment( { postId, commentId, userId, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId} ){
+function Comment( { postId, commentId, userId, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId} ){
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
     const [hasReplies, setHasReplies] = useState(false);
     const [replyOpen, setReplyOpen] = useState(false);
     const [currentUserLiked, setCurrentUserLiked] = useState(false);
     const [likes, setLikes] = useState(likesAmount);
+
+    const isDropdownOpen = openDropdownId === commentId;
+
+    function toggleDropdown() {
+        if (isDropdownOpen) {
+            setOpenDropdownId(null); // close
+        } else {
+            setOpenDropdownId(commentId); // open this one
+        }
+    }
 
 
     useEffect(() => {
@@ -79,9 +89,22 @@ function Comment( { postId, commentId, userId, photoURL, username, message, crea
                 <div className={styles.usercontainer}>
                     <div className={styles.namedatecontainer}>
                         <p className={styles.namedate}><span className={userId === ownerId ? styles.postownernamedate : styles.username}>@{username}</span> - {createdAt}</p>
-                        <div className={styles.dropdownbutton}>
+                        <div className={styles.dropdownbutton} onClick={toggleDropdown}>
                             <div className={styles.dropdownbuttonlogo}></div>
                         </div>
+
+                        {isDropdownOpen && (
+                        <div className={styles.dropdownmenu}>
+                            {auth.currentUser?.uid === userId ? (
+                            <>
+                                <p className={styles.dropdownitem}>Edit</p>
+                                <p className={`${styles.dropdownitem} ${styles.delete}`}>Delete</p>
+                            </>
+                            ) : (
+                            <p className={styles.dropdownitem}>Report</p>
+                            )}
+                        </div>
+                        )}
                     </div>
 
                     <div className={styles.messagecontainer}>
@@ -111,19 +134,23 @@ function Comment( { postId, commentId, userId, photoURL, username, message, crea
                     </div>
                 </div>
                 {!hasReplies ? <></> : (!replyOpen ? <p className={styles.showreplybutton} onClick={() => setReplyOpen(true)}>⮟Show Replies</p> : <p className={styles.showreplybutton} onClick={() => setReplyOpen(false)}>⮝Hide Replies</p>)}
+                <div className={styles.repliescontainer}>
+                    {replyOpen ? replies.map((reply) => <Reply
+                                                key={reply.id}
+                                                postId={postId}
+                                                replyId={reply.id}
+                                                userId={reply.userId}
+                                                photoURL={reply.user.photoURL} 
+                                                username={reply.user.username} 
+                                                message={reply.text}
+                                                createdAt={reply.createdAt}
+                                                likesAmount={reply.likesAmount}
+                                                ownerId={ownerId}
+                                                openDropdownId={openDropdownId}
+                                                setOpenDropdownId={setOpenDropdownId}
+                                            />) : <></>}
+                </div>
 
-                {replyOpen ? replies.map((reply) => <Reply
-                                            key={reply.id}
-                                            postId={postId}
-                                            replyId={reply.id}
-                                            userId={reply.userId}
-                                            photoURL={reply.user.photoURL} 
-                                            username={reply.user.username} 
-                                            message={reply.text}
-                                            createdAt={reply.createdAt}
-                                            likesAmount={reply.likesAmount}
-                                            ownerId={ownerId}
-                                        />) : <></>}
             </div>
         </div>
     )

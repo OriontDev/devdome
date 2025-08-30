@@ -19,12 +19,14 @@
 .rightcontainer{
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
 .messagecontainer{
     background-color: rgb(240, 240, 240);
     border-radius: 10px;
     padding: 5px;
+    width: fit-content;
     font-weight: normal;
     line-height: 1.3rem;
 }
@@ -128,4 +130,67 @@
     background-repeat: no-repeat;
     background-position: 0 -842px;
     background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yC/r/pS7pURSmNlX.png?_nc_eui2=AeErAUrAkR18yU687qemddon94jW2ZlCNaX3iNbZmUI1pTQCjc11GSbC9x369RRX_PfGIPBzWmwdshzUKMJDBbiq');  
+}
+
+.namedatecontainer{
+    display: flex;
+    width: 100%;
+    position: relative;
+}
+
+
+.dropdownbutton{
+    margin-left: auto;
+    cursor: pointer;
+    background-color: rgb(228, 228, 228);
+    border-radius: 5px;
+}
+
+.dropdownbutton:hover{
+    background-color: rgb(240, 240, 240);
+}
+
+.dropdownbuttonlogo{
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-position: 0 -589px;
+    background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yC/r/pS7pURSmNlX.png?_nc_eui2=AeErAUrAkR18yU687qemddon94jW2ZlCNaX3iNbZmUI1pTQCjc11GSbC9x369RRX_PfGIPBzWmwdshzUKMJDBbiq');
+}
+
+.dropdownmenu {
+    position: absolute;
+    margin-top: 5px;
+    right: 0;
+    top: 15px;
+    background-color: white;
+    border: 1px solid rgb(220, 220, 220);
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 150px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.dropdownitem {
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    user-select: none;
+}
+
+.dropdownitem:hover {
+    background-color: rgb(245, 245, 245);
+}
+
+.dropdownitem.delete {
+    color: red;
+    font-weight: bold;
+}
+
+.dropdownitem.delete:hover {
+    background-color: rgb(255, 240, 240);
 }

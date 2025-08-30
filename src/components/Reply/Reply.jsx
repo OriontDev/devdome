@@ -4,12 +4,24 @@ import { doc, getDoc, setDoc, deleteDoc, updateDoc, increment } from "firebase/f
 import { db, auth } from "../../config/firebase"; // ✅ import auth + db
 import pfp from '/public/pfp.png'; //loading pfp
 
-function Reply( { postId, userId, replyId, photoURL, username, message, createdAt, likesAmount, ownerId} ){
+function Reply( { postId, userId, replyId, photoURL, username, message, createdAt, likesAmount, ownerId, openDropdownId, setOpenDropdownId} ){
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
 
     const [currentUserLiked, setCurrentUserLiked] = useState(false);
     const [likes, setLikes] = useState(likesAmount || 0);
+
+
+    //check if any dropdown is open
+    const isDropdownOpen = openDropdownId === replyId;
+    function toggleDropdown() {
+        if (isDropdownOpen) {
+            setOpenDropdownId(null); // close it
+        } else {
+            setOpenDropdownId(replyId); // open this reply’s dropdown (and close others automatically)
+        }
+    }
+
 
     useEffect(() => {
         if (message?.length >= 256) {
@@ -74,7 +86,26 @@ function Reply( { postId, userId, replyId, photoURL, username, message, createdA
             <img src={photoURL} className={styles.pfp}/>
             <div className={styles.rightcontainer}>
                 <div className={styles.usercontainer}>
-                    <p className={styles.namedate}><span className={userId === ownerId ? styles.postownernamedate : styles.username}>@{username}</span> - {createdAt}</p>
+                    <div className={styles.namedatecontainer}>
+                        <p className={styles.namedate}><span className={userId === ownerId ? styles.postownernamedate : styles.username}>@{username}</span> - {createdAt}</p>
+                        <div className={styles.dropdownbutton} onClick={toggleDropdown}>
+                            <div className={styles.dropdownbuttonlogo}></div>
+                        </div>
+
+                        {isDropdownOpen && (
+                        <div className={styles.dropdownmenu}>
+                            {auth.currentUser?.uid === userId ? (
+                            <>
+                                <p className={styles.dropdownitem}>Edit</p>
+                                <p className={`${styles.dropdownitem} ${styles.delete}`}>Delete</p>
+                            </>
+                            ) : (
+                            <p className={styles.dropdownitem}>Report</p>
+                            )}
+                        </div>
+                        )}
+                    </div>
+
                     <div className={styles.messagecontainer}>
                     <p>
                     {!isLong 
