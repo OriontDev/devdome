@@ -7,7 +7,6 @@ function Project(){
     console.log(id);
     return(
         <>
-            <Header/>
 
         </>
     );
