@@ -395,7 +395,7 @@ function Posts() {
                         userId: commentData.userId,
                         text: commentData.text,
                         parentCommentId: commentData.parentCommentId || null,
-                        createdAt: commentData.createdAt?.toDate().toLocaleString() || "Unknown",
+                        createdAt: commentData.createdAt?.toDate() || "Unknown",
                         likesAmount: commentData.likesAmount || 0,
                     };
                 });
@@ -438,7 +438,9 @@ function Posts() {
                 replies.forEach(reply => {
                     const parent = topLevelComments.find(c => c.id === reply.parentCommentId);
                     if (parent) {
-                        parent.replies.push(reply);
+                        parent.replies.push({
+                            ...reply,
+                            createdAt: timeAgo(reply.createdAt)});
                     }
                 });
 
@@ -452,6 +454,33 @@ function Posts() {
 
         fetchComments();
     }, [authUser, postData]);
+
+    //change the createdAt into ... second/minute/hour/etc ago 
+    function timeAgo(date) {
+        if (!(date instanceof Date)) return "Unknown";
+
+        const now = new Date();
+        const seconds = Math.floor((now - date) / 1000);
+
+        const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+
+        if (seconds < 60) return rtf.format(-seconds, "second");
+
+        const minutes = Math.floor(seconds / 60);
+        if (minutes < 60) return rtf.format(-minutes, "minute");
+
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return rtf.format(-hours, "hour");
+
+        const days = Math.floor(hours / 24);
+        if (days < 30) return rtf.format(-days, "day");
+        
+        const months = Math.floor(days / 30);
+        if (months < 12) return rtf.format(-months, "month");
+        const years = Math.floor(months / 12);
+        return rtf.format(-years, "year");
+    }
+
 
 
 
@@ -547,7 +576,7 @@ function Posts() {
                                                 photoURL={comment.user.photoURL}
                                                 username={comment.user.username}
                                                 message={comment.text}
-                                                createdAt={comment.createdAt}
+                                                createdAt={timeAgo(comment.createdAt)}
                                                 replies={comment.replies}
                                                 likesAmount={comment.likesAmount}
                                                 ownerId={postData.userId}/>)}

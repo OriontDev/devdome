@@ -77,7 +77,13 @@ function Comment( { postId, commentId, userId, photoURL, username, message, crea
             <img src={photoURL} className={styles.pfp}/>
             <div className={styles.rightcontainer}>
                 <div className={styles.usercontainer}>
-                    <p className={styles.namedate}><span className={userId === ownerId ? styles.postownernamedate : ""}>@{username}</span> - {createdAt}</p>
+                    <div className={styles.namedatecontainer}>
+                        <p className={styles.namedate}><span className={userId === ownerId ? styles.postownernamedate : styles.username}>@{username}</span> - {createdAt}</p>
+                        <div className={styles.dropdownbutton}>
+                            <div className={styles.dropdownbuttonlogo}></div>
+                        </div>
+                    </div>
+
                     <div className={styles.messagecontainer}>
                     <p>
                     {!isLong 
@@ -96,7 +102,7 @@ function Comment( { postId, commentId, userId, photoURL, username, message, crea
                 </div>
                 <div className={styles.buttonscontainer}>
                     <div className={currentUserLiked ? styles.likedlogocontainer : styles.logocontainer} onClick={likeComment}>
-                        <div className={styles.likelogo}></div>
+                        <div className={currentUserLiked ? styles.likelogoliked : styles.likelogo}></div>
                         <p>{likes}</p>
                     </div>
                     <div className={styles.logocontainer}>

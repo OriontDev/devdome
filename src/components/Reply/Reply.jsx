@@ -74,7 +74,7 @@ function Reply( { postId, userId, replyId, photoURL, username, message, createdA
             <img src={photoURL} className={styles.pfp}/>
             <div className={styles.rightcontainer}>
                 <div className={styles.usercontainer}>
-                    <p className={styles.namedate}><span className={userId === ownerId ? styles.postownernamedate : ""}>@{username}</span> - {createdAt}</p>
+                    <p className={styles.namedate}><span className={userId === ownerId ? styles.postownernamedate : styles.username}>@{username}</span> - {createdAt}</p>
                     <div className={styles.messagecontainer}>
                     <p>
                     {!isLong 
@@ -93,7 +93,7 @@ function Reply( { postId, userId, replyId, photoURL, username, message, createdA
                 </div>
                 <div className={styles.buttonscontainer}>
                     <div className={currentUserLiked ? styles.likedlogocontainer : styles.logocontainer} onClick={likeReply}>
-                        <div className={styles.likelogo}></div>
+                        <div className={currentUserLiked ? styles.likelogoliked : styles.likelogo}></div>
                         <p>{likes}</p>
                     </div>
                 </div>

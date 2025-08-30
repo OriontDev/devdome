@@ -187,9 +187,9 @@
     width: 100%;
     outline: none;
     resize: none;
-    font-size: 1.2rem;
+    font-size: 1rem;
     overflow: hidden;        /* hide scrollbars */
-    line-height: 1.4rem;     /* adjust to match font size */
+    line-height: 1.2rem;     /* adjust to match font size */
     padding: 4px 8px;        /* optional, adjust for spacing */
     min-height: 1.5rem;      /* 1 line height */
     max-height: 6rem;
