@@ -410,6 +410,7 @@ function Posts() {
                         id: docSnap.id,
                         userId: commentData.userId,
                         text: commentData.text,
+                        edited: commentData.edited,
                         parentCommentId: commentData.parentCommentId || null,
                         createdAt: commentData.createdAt?.toDate() || "Unknown",
                         likesAmount: commentData.likesAmount || 0,
@@ -496,7 +497,6 @@ function Posts() {
         const years = Math.floor(months / 12);
         return rtf.format(-years, "year");
     }
-
 
 
 
@@ -589,6 +589,7 @@ function Posts() {
                                                 postId={postData.id}
                                                 commentId={comment.id}
                                                 userId={comment.userId}
+                                                edited={comment.edited}
                                                 photoURL={comment.user.photoURL}
                                                 username={comment.user.username}
                                                 message={comment.text}

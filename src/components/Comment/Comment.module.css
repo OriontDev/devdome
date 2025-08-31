@@ -56,6 +56,10 @@
     width: fit-content;
 }
 
+.editednamedate{
+    font-weight: normal;
+}
+
 .postownernamedate{
     border-radius: 5px;
     padding: 0px 10px;

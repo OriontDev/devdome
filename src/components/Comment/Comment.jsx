@@ -6,7 +6,7 @@ import { db, auth } from "../../config/firebase"; // ✅ adjust path
 
 import pfp from '/public/pfp.png'; //loading pfp
 
-function Comment( { postId, commentId, userId, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId} ){
+function Comment( { postId, commentId, userId, edited, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId} ){
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
     const [hasReplies, setHasReplies] = useState(false);
@@ -37,7 +37,7 @@ function Comment( { postId, commentId, userId, photoURL, username, message, crea
         // ✅ check if current user already liked this comment
         const checkLike = async () => {
             const authUser = auth.currentUser;
-            if (!authUser || !postId || !commentId) return; // ✅ guard
+            if (!authUser || !postId || !commentId) return; // guard
 
             const likeRef = doc(db, "posts", postId, "comments", commentId, "likes", authUser.uid);
             const likeSnap = await getDoc(likeRef);
@@ -82,13 +82,16 @@ function Comment( { postId, commentId, userId, photoURL, username, message, crea
         }
     }
 
+
     return(
         <div className={styles.container}>
             <img src={photoURL} className={styles.pfp}/>
             <div className={styles.rightcontainer}>
                 <div className={styles.usercontainer}>
                     <div className={styles.namedatecontainer}>
-                        <p className={styles.namedate}><span className={userId === ownerId ? styles.postownernamedate : styles.username}>@{username}</span> - {createdAt}</p>
+                        {/* if the comment is fro the owner of the post, highlight the username */}
+                        <p className={styles.namedate}><span className={userId === ownerId ? styles.postownernamedate : styles.username}>@{username}</span> - {createdAt} {edited === true && <span className={styles.editednamedate}>(Edited)</span>} </p>
+
                         <div className={styles.dropdownbutton} onClick={toggleDropdown}>
                             <div className={styles.dropdownbuttonlogo}></div>
                         </div>
