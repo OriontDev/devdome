@@ -25,6 +25,7 @@ import {
 
 function Home(){
 
+
     const [authUser, setAuthUser] = useState(null);     // Firebase Auth user
     const [userProfile, setUserProfile] = useState(null); // Firestore doc data
     const [friendReccomendations, setFriendReccomendations] = useState([]); //friend reccomendation
@@ -164,8 +165,6 @@ function Home(){
                 await deleteDoc(reverseRequestDoc);
 
                 console.log("Friendship created with:", targetid);
-
-                // update friendlist
 
                 setFriendReccomendations(prev =>
                     prev.filter(user => user.id !== targetid) // remove from recs

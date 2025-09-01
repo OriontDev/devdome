@@ -10,6 +10,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  addDoc,
   onSnapshot,
   query,
   where,
@@ -70,6 +71,57 @@ function Posts() {
     useEffect(() => {
         adjustHeight(); // adjust when component mounts
     }, []);
+
+
+    async function postComment(){
+        if (!authUser) return;
+
+        const commentsCollectionRef = collection(db, "posts", id, "comments");
+
+        // New comment data
+        const newComment = {
+            userId: authUser.uid,
+            text: userCommentInput,
+            createdAt: serverTimestamp(),
+            edited: false,
+            parentCommentId: null, // top-level comment
+            likesAmount: 0
+        };
+
+        // Add comment to Firestore
+        const commentDoc = await addDoc(commentsCollectionRef, newComment);
+
+        // Increment post's commentsAmount
+        const postRef = doc(db, "posts", id);
+        await updateDoc(postRef, { commentsAmount: increment(1) });
+
+        // Reset input + textarea height
+        setUserCommentInput("");
+        if (textareaRef.current) {
+            textareaRef.current.style.height = "auto";
+        }
+
+        // Optimistic update: add it into local state
+        setComments(prev => [
+            {
+                id: commentDoc.id,
+                ...newComment,
+                createdAt: new Date(), // show as "just now"
+                user: {
+                    username: userProfile.username,
+                    photoURL: userProfile.photoURL
+                },
+                replies: []
+            },
+            ...prev
+        ]);
+
+        // Also update the postData.commentsAmount locally
+        setPostData(prev => prev ? { ...prev, commentsAmount: prev.commentsAmount + 1 } : prev);
+
+    }
+
+
 
     //close dropdown if user click outside dropdown
     useEffect(() => {
@@ -380,10 +432,6 @@ function Posts() {
 
         fetchPost();
     }, [id, authUser, navigate]);
-
-    async function postComment(){
-        setUserCommentInput((prev) => "");
-    }
 
     //Check if the post is ours or not
     useEffect(() => {

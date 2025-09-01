@@ -27,11 +27,35 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
         }
     }
 
+    function getPreview(message) {
+    const lines = message.split("\n");
+
+    // If too many lines, cut after 8
+    if (lines.length > 8) {
+        return lines.slice(0, 8).join("\n") + "...";
+    }
+
+    // If too many characters, cut at 256
+    if (message.length > 256) {
+        return message.slice(0, 256) + "...";
+    }
+
+    // Otherwise return full
+    return message;
+    }
+
 
     useEffect(() => {
-        if (message.length >= 256) {
+        //setIsLong if the message length (letter + space) is 256 or if there are more than 8 lines
+        const lines = message.split("\n").length;
+        if (message.length >= 256 || lines > 8) { 
             setIsLong(true);
         }
+    }, [message]);
+
+        
+
+    useEffect(() => {
 
         if (replies.length !== 0) {
             setHasReplies(true);
@@ -114,12 +138,12 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
                     </div>
 
                     <div className={styles.messagecontainer}>
-                    <p>
-                    {!isLong 
-                        ? message 
-                        : (!messageCutted 
-                            ? message.slice(0, 256) + "..." 
-                            : message)}
+                    <p className={styles.message}>
+                        {!isLong 
+                            ? message 
+                            : (!messageCutted 
+                                ? getPreview(message) 
+                                : message)}
                     </p>
 
                         {isLong ? 

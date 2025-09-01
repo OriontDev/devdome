@@ -31,6 +31,10 @@
     line-height: 1.3rem;
 }
 
+.message{
+    white-space: pre-wrap;
+}
+
 .showtext{
     font-weight: bold;
     cursor: pointer;
