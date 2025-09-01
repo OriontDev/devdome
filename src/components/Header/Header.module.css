@@ -188,6 +188,8 @@
   -ms-user-select: none;     /* Old IE/Edge */
 }
 
+
+
 @media screen and (max-width: 768px) {
   .centerheader {
     display: none;

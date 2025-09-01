@@ -9,6 +9,7 @@ import Error from './pages/Error';
 import ResetPassword from './pages/ResetPassword';
 import Posts from './pages/Posts';
 import Header from './components/Header/Header';
+import toast, { Toaster } from 'react-hot-toast';
 
 function AppWrapper() {
   const location = useLocation();
@@ -18,6 +19,17 @@ function AppWrapper() {
   return (
     <>
       {showHeader && <Header />}
+      <Toaster
+        toastOptions={{
+          success: {
+            style: {
+              background: '#1877F2',
+              color: 'white',
+              fontWeight: 'bold',
+            },
+          },
+        }}
+      />
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />

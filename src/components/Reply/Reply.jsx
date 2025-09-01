@@ -4,7 +4,7 @@ import { doc, getDoc, setDoc, deleteDoc, updateDoc, increment } from "firebase/f
 import { db, auth } from "../../config/firebase"; // ✅ import auth + db
 import pfp from '/public/pfp.png'; //loading pfp
 
-function Reply( { postId, userId, replyId, photoURL, username, message, createdAt, likesAmount, ownerId, openDropdownId, setOpenDropdownId} ){
+function Reply( { postId, userId, replyId, photoURL, username, message, createdAt, likesAmount, ownerId, openDropdownId, setOpenDropdownId, redirectToUserPage} ){
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
 
@@ -87,7 +87,7 @@ function Reply( { postId, userId, replyId, photoURL, username, message, createdA
             <div className={styles.rightcontainer}>
                 <div className={styles.usercontainer}>
                     <div className={styles.namedatecontainer}>
-                        <p className={styles.namedate}><span className={userId === ownerId ? styles.postownernamedate : styles.username}>@{username}</span> - {createdAt}</p>
+                        <p className={styles.namedate}><span className={userId === ownerId ? styles.postownernamedate : styles.username} onClick={redirectToUserPage}>@{username}</span> - {createdAt}</p>
                         <div className={styles.dropdownbutton} onClick={toggleDropdown}>
                             <div className={styles.dropdownbuttonlogo}></div>
                         </div>

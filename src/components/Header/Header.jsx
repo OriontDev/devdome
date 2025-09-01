@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styles from './Header.module.css';
 import logo from '/public/logo.png';
+import toast from 'react-hot-toast';
 
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../config/firebase";
@@ -18,6 +19,11 @@ function Header(){
     const [loading, setLoading] = useState(true);
 
     const user = auth?.currentUser;
+
+
+    //used to handle the notification, so that the friend req notifs doesnt appear on refresh
+    //use useRef because it odesnt cause re render every change
+    const firstLoad = useRef(true);
     // console.log(userPhoto);
 
     const [menuOpen, setMenuOpen] = useState(false);
@@ -79,6 +85,8 @@ function Header(){
         const requestsRef = collection(db, "friendRequests");
         const q = query(requestsRef, where("to", "==", authUser.uid));
 
+        const prevRequestIds = new Set(friendRequests.map(req => req.id));
+
         //onSnapshot is a real-time listener.
         const unsubscribe = onSnapshot(q, async (snapshot) => {
             const requests = await Promise.all(
@@ -95,6 +103,30 @@ function Header(){
                     };
             })
         );
+
+
+        //if the new request isnt stored yet, then its a new one, make a notificaiton
+        // ✅ Skip showing notifications on first load
+        if (!firstLoad.current) {
+            const prevRequestIds = new Set(friendRequests.map((req) => req.id));
+            requests.forEach((req) => {
+                if (!prevRequestIds.has(req.id)) {
+                    // make notification
+                    toast.success(`New friend request from ${req.senderName}`, {
+                        icon: "✉️",
+                    });
+                }
+            });
+        } else {
+            if (requests.length > 0) {
+                toast.success(`You got ${requests.length} friend request${requests.length > 1 ? "s" : ""} in your inbox!`, {
+                    icon: "📩",
+                    duration: 5000,
+                });
+            }
+            firstLoad.current = false;
+        }
+
         setFriendRequests(requests);
     });
         return () => unsubscribe();
@@ -169,6 +201,7 @@ function Header(){
                         {inboxOpen && (
                             <div className={styles.inboxdropdown}>
                                 <h1>Inbox</h1>
+                                {friendRequests.length === 0 && <p>Inbox is empty..</p>}
                                 {friendRequests.map((request) => <InboxRequestCard
                                                                     key={request.id}
                                                                     senderName={request.senderName}
@@ -215,5 +248,4 @@ function Header(){
         </>
     );
 }
-
 export default Header

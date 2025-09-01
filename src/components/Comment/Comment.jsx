@@ -3,16 +3,19 @@ import styles from './Comment.module.css';
 import Reply from '../Reply/Reply.jsx'
 import { doc, getDoc, setDoc, deleteDoc, updateDoc, increment } from "firebase/firestore";
 import { db, auth } from "../../config/firebase"; // ✅ adjust path
+import { useNavigate } from 'react-router-dom';
 
 import pfp from '/public/pfp.png'; //loading pfp
 
-function Comment( { postId, commentId, userId, edited, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId} ){
+function Comment( { postId, commentId, userId, edited, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId, redirectToUserPage} ){
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
     const [hasReplies, setHasReplies] = useState(false);
     const [replyOpen, setReplyOpen] = useState(false);
     const [currentUserLiked, setCurrentUserLiked] = useState(false);
     const [likes, setLikes] = useState(likesAmount);
+
+    const navigate = useNavigate();
 
     const isDropdownOpen = openDropdownId === commentId;
 
@@ -90,7 +93,7 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
                 <div className={styles.usercontainer}>
                     <div className={styles.namedatecontainer}>
                         {/* if the comment is fro the owner of the post, highlight the username */}
-                        <p className={styles.namedate}><span className={userId === ownerId ? styles.postownernamedate : styles.username}>@{username}</span> - {createdAt} {edited === true && <span className={styles.editednamedate}>(Edited)</span>} </p>
+                        <p className={styles.namedate}><span className={userId === ownerId ? styles.postownernamedate : styles.username} onClick={redirectToUserPage}>@{username}</span> - {createdAt} {edited === true && <span className={styles.editednamedate}>(Edited)</span>} </p>
 
                         <div className={styles.dropdownbutton} onClick={toggleDropdown}>
                             <div className={styles.dropdownbuttonlogo}></div>
@@ -151,6 +154,7 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
                                                 ownerId={ownerId}
                                                 openDropdownId={openDropdownId}
                                                 setOpenDropdownId={setOpenDropdownId}
+                                                redirectToUserPage={() => navigate(`/account/${reply.userId}`)}
                                             />) : <></>}
                 </div>
 

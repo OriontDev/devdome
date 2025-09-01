@@ -171,6 +171,7 @@ function Home(){
                     const targetProfile = { id: targetid, ...targetProfileSnap.data() };
                     setFriends(prev => [...prev, targetProfile]);
                 }
+                
                 setFriendReccomendations(prev =>
                     prev.filter(user => user.id !== targetid) // remove from recs
                 );

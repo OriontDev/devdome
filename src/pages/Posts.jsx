@@ -599,6 +599,7 @@ function Posts() {
                                                 ownerId={postData.userId}
                                                 openDropdownId={openDropdownId}
                                                 setOpenDropdownId={setOpenDropdownId}
+                                                redirectToUserPage={() => navigate(`/account/${comment.userId}`)}
                                                 />)}
             </div>
         </div>

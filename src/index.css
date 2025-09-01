@@ -7,3 +7,8 @@ body {
   background-color: rgb(236, 236, 236);
 }
 
+.friendrequestnotification{
+  background-color: #1877F2;
+  color: white;
+  font-weight: bold;
+}
