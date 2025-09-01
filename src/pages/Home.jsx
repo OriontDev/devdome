@@ -166,12 +166,7 @@ function Home(){
                 console.log("Friendship created with:", targetid);
 
                 // update friendlist
-                const targetProfileSnap = await getDoc(doc(db, "users", targetid));
-                if (targetProfileSnap.exists()) {
-                    const targetProfile = { id: targetid, ...targetProfileSnap.data() };
-                    setFriends(prev => [...prev, targetProfile]);
-                }
-                
+
                 setFriendReccomendations(prev =>
                     prev.filter(user => user.id !== targetid) // remove from recs
                 );
