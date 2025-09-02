@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './Comment.module.css';
 import Reply from '../Reply/Reply.jsx'
 import { doc, getDoc, setDoc, deleteDoc, updateDoc, increment } from "firebase/firestore";
@@ -7,15 +7,43 @@ import { useNavigate } from 'react-router-dom';
 
 import pfp from '/public/pfp.png'; //loading pfp
 
-function Comment( { postId, commentId, userId, edited, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId, redirectToUserPage} ){
+function Comment( { postId, commentId, userId, edited, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId, redirectToUserPage, currentUserPhotoURL} ){
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
     const [hasReplies, setHasReplies] = useState(false);
     const [replyOpen, setReplyOpen] = useState(false);
     const [currentUserLiked, setCurrentUserLiked] = useState(false);
     const [likes, setLikes] = useState(likesAmount);
+    const [userReplyInput, setUserReplyInput] = useState("")
+
+    const textareaRef = useRef(null);
+
+    const userReplyChange = (e) => {
+        setUserReplyInput(e.target.value);
+
+        // Reset height to auto first to shrink if needed
+        textareaRef.current.style.height = "auto";
+        // Set height to scrollHeight so it fits content
+        textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+    };
+
+    const adjustHeight = () => {
+        const textarea = textareaRef.current;
+        if (!textarea) return;
+        textarea.style.height = "auto"; // reset to shrink if text deleted
+        textarea.style.height = textarea.scrollHeight + "px"; // fit content
+    };
+
+    useEffect(() => {
+        adjustHeight(); // adjust when component mounts
+    }, []);
 
     const navigate = useNavigate();
+    let isUserReplyOpen = false;
+
+    function toggleUserReplyOpen(){
+        isUserReplyOpen = !isUserReplyOpen
+    }
 
     const isDropdownOpen = openDropdownId === commentId;
 
@@ -28,21 +56,22 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
     }
 
     function getPreview(message) {
-    const lines = message.split("\n");
+        const lines = message.split("\n");
 
-    // If too many lines, cut after 8
-    if (lines.length > 8) {
-        return lines.slice(0, 8).join("\n") + "...";
+        // If too many lines, cut after 8
+        if (lines.length > 8) {
+            return lines.slice(0, 8).join("\n") + "...";
+        }
+
+        // If too many characters, cut at 256
+        if (message.length > 256) {
+            return message.slice(0, 256) + "...";
+        }
+
+        // Otherwise return full
+        return message;
     }
 
-    // If too many characters, cut at 256
-    if (message.length > 256) {
-        return message.slice(0, 256) + "...";
-    }
-
-    // Otherwise return full
-    return message;
-    }
 
 
     useEffect(() => {
@@ -158,13 +187,24 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
                         <div className={currentUserLiked ? styles.likelogoliked : styles.likelogo}></div>
                         <p>{likes}</p>
                     </div>
-                    <div className={styles.logocontainer}>
+                    <div className={styles.logocontainer} onClick={toggleUserReplyOpen}>
                         <div className={styles.commentlogo}></div>
                         <p>0</p>
                     </div>
                 </div>
-                {!hasReplies ? <></> : (!replyOpen ? <p className={styles.showreplybutton} onClick={() => setReplyOpen(true)}>⮟Show Replies</p> : <p className={styles.showreplybutton} onClick={() => setReplyOpen(false)}>⮝Hide Replies</p>)}
+
                 <div className={styles.repliescontainer}>
+                    <div className={styles.userReplyContainer}>
+                        <img src={currentUserPhotoURL} className={styles.userReplyPfp}/>
+                        <div className={styles.userReplyTextButtonContainer}>
+                            <textarea ref={textareaRef} value={userReplyInput} onChange={userReplyChange} className={styles.userReplyInput}></textarea>
+                            <div className={styles.userReplyButtonsContainer}>
+                                <button className={styles.cancelUserReplyButton}>Cancel</button>
+                                <button className={userReplyInput.length !== 0 ? styles.postUserReplyButton : styles.disabledPostUserReplyButton}>Post</button>
+                            </div>
+                        </div>
+                    </div>
+                    {!hasReplies ? <></> : (!replyOpen ? <p className={styles.showreplybutton} onClick={() => setReplyOpen(true)}>⮟Show Replies</p> : <p className={styles.showreplybutton} onClick={() => setReplyOpen(false)}>⮝Hide Replies</p>)}
                     {replyOpen ? replies.map((reply) => <Reply
                                                 key={reply.id}
                                                 postId={postId}

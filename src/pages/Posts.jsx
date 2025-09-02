@@ -648,6 +648,7 @@ function Posts() {
                                                 openDropdownId={openDropdownId}
                                                 setOpenDropdownId={setOpenDropdownId}
                                                 redirectToUserPage={() => navigate(`/account/${comment.userId}`)}
+                                                currentUserPhotoURL={userProfile.photoURL}
                                                 />)}
             </div>
         </div>

@@ -230,6 +230,86 @@
     background-color: rgb(255, 240, 240);
 }
 
+.userReplyContainer{
+    display: flex;
+    margin-top: 5px;
+}
+
+.userReplyPfp{
+    height: 35px;
+    border-radius: 50%;
+}
+
+.userReplyTextButtonContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 5px;
+}
+
+.userReplyButtonsContainer{
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    gap: 10px;
+}
+
+.cancelUserReplyButton{
+    background-color: rgb(228, 228, 228);
+    width: 5rem;
+    height: 2rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.cancelUserReplyButton:hover{
+    background-color: rgb(215, 215, 215);
+}
+
+.postUserReplyButton{
+    background-color: #1877F2;
+    color: white;
+    font-weight: bold;
+    width: 5rem;
+    height: 2rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.postUserReplyButton:hover{
+    background-color: #166cdd;
+}
+
+.userReplyInput{
+    background-color: rgb(240, 240, 240);
+    border: none;
+    border-radius: 10px;
+    width: 100%;
+    outline: none;
+    resize: none;
+    font-size: 1rem;
+    overflow: hidden;        /* hide scrollbars */
+    line-height: 1.1rem;     /* adjust to match font size */
+    padding: 4px 8px;        /* optional, adjust for spacing */
+    min-height: 1.3rem;      /* 1 line height */
+    max-height: 2rem;
+    box-sizing: border-box;  /* include padding in height */
+}
+
+.disabledPostUserReplyButton{
+    background-color: #bbbbbb;
+    color: white;
+    font-weight: bold;
+    width: 5rem;
+    height: 2rem;
+    border: none;
+    border-radius: 10px;
+    cursor: not-allowed;  
+}
+
 
 @media screen and (max-width: 768px) {
     .repliescontainer{
