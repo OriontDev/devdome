@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import pfp from '/public/pfp.png'; //loading pfp
 
-function Comment( { postId, commentId, userId, edited, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId, redirectToUserPage, currentUserPhotoURL} ){
+function Comment( { postId, commentId, userId, edited, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId, openReplyId, setOpenReplyId, redirectToUserPage, currentUserPhotoURL} ){
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
     const [hasReplies, setHasReplies] = useState(false);
@@ -39,10 +39,14 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
     }, []);
 
     const navigate = useNavigate();
-    let isUserReplyOpen = false;
+    const isUserReplyOpen = openReplyId === commentId;
 
-    function toggleUserReplyOpen(){
-        isUserReplyOpen = !isUserReplyOpen
+    function toggleUserReplyOpen() {
+    if (isUserReplyOpen) {
+        setOpenReplyId(null); // close if already open
+    } else {
+        setOpenReplyId(commentId); // open this one
+    }
     }
 
     const isDropdownOpen = openDropdownId === commentId;
@@ -194,16 +198,19 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
                 </div>
 
                 <div className={styles.repliescontainer}>
-                    <div className={styles.userReplyContainer}>
-                        <img src={currentUserPhotoURL} className={styles.userReplyPfp}/>
-                        <div className={styles.userReplyTextButtonContainer}>
-                            <textarea ref={textareaRef} value={userReplyInput} onChange={userReplyChange} className={styles.userReplyInput}></textarea>
-                            <div className={styles.userReplyButtonsContainer}>
-                                <button className={styles.cancelUserReplyButton}>Cancel</button>
-                                <button className={userReplyInput.length !== 0 ? styles.postUserReplyButton : styles.disabledPostUserReplyButton}>Post</button>
+                    {isUserReplyOpen &&
+                        <div className={styles.userReplyContainer}>
+                            <img src={currentUserPhotoURL} className={styles.userReplyPfp}/>
+                            <div className={styles.userReplyTextButtonContainer}>
+                                <textarea ref={textareaRef} value={userReplyInput} onChange={userReplyChange} className={styles.userReplyInput}></textarea>
+                                <div className={styles.userReplyButtonsContainer}>
+                                    <button className={styles.cancelUserReplyButton}>Cancel</button>
+                                    <button className={userReplyInput.length !== 0 ? styles.postUserReplyButton : styles.disabledPostUserReplyButton}>Post</button>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        </div>                    
+                    }
+
                     {!hasReplies ? <></> : (!replyOpen ? <p className={styles.showreplybutton} onClick={() => setReplyOpen(true)}>⮟Show Replies</p> : <p className={styles.showreplybutton} onClick={() => setReplyOpen(false)}>⮝Hide Replies</p>)}
                     {replyOpen ? replies.map((reply) => <Reply
                                                 key={reply.id}

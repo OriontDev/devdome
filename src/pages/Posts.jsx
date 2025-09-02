@@ -33,6 +33,7 @@ function Posts() {
     const [editDropdownOpen, setEditDropdownOpen] = useState(false);
     const [userCommentInput, setUserCommentInput] = useState("");
     const [openDropdownId, setOpenDropdownId] = useState(null);
+    const [openReplyId, setOpenReplyId] = useState(null);
 
 
     const [isOwner, setIsOwner] = useState(false);
@@ -647,6 +648,8 @@ function Posts() {
                                                 ownerId={postData.userId}
                                                 openDropdownId={openDropdownId}
                                                 setOpenDropdownId={setOpenDropdownId}
+                                                openReplyId={openReplyId}
+                                                setOpenReplyId={setOpenReplyId}
                                                 redirectToUserPage={() => navigate(`/account/${comment.userId}`)}
                                                 currentUserPhotoURL={userProfile.photoURL}
                                                 />)}
