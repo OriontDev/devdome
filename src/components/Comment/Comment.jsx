@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import pfp from '/public/pfp.png'; //loading pfp
 
-function Comment( { postId, commentId, userId, edited, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId, openReplyId, setOpenReplyId, redirectToUserPage, userProfile, onAddReply, setPostData} ){
+function Comment( { postId, commentId, userId, edited, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId, openReplyId, setOpenReplyId, redirectToUserPage, userProfile, onAddReply, setPostData, deleteComment} ){
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
     const [hasReplies, setHasReplies] = useState(false);
@@ -191,7 +191,6 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
         }
     }
 
-
     return(
         <div className={styles.container}>
             <img src={photoURL} className={styles.pfp}/>
@@ -210,7 +209,7 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
                             {auth.currentUser?.uid === userId ? (
                             <>
                                 <p className={styles.dropdownitem}>Edit</p>
-                                <p className={`${styles.dropdownitem} ${styles.delete}`}>Delete</p>
+                                <p className={`${styles.dropdownitem} ${styles.delete}`} onClick={deleteComment}>Delete</p>
                             </>
                             ) : (
                             <p className={styles.dropdownitem}>Report</p>
@@ -242,7 +241,7 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
                     </div>
                     <div className={styles.logocontainer} onClick={toggleUserReplyOpen}>
                         <div className={styles.commentlogo}></div>
-                        <p>0</p>
+                        <p>{replies.length}</p>
                     </div>
                 </div>
 

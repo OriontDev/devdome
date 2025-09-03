@@ -388,6 +388,7 @@ function Posts() {
         }
     }
 
+    //fetch post data
     useEffect(() => {
         if (!id || !authUser) return;
 
@@ -433,6 +434,47 @@ function Posts() {
 
         fetchPost();
     }, [id, authUser, navigate]);
+
+
+    async function deleteComment(commentId) {
+    if (!authUser) return;
+
+    try {
+        const commentsCollectionRef = collection(db, "posts", id, "comments");
+
+        // 1. Delete the parent comment
+        const commentRef = doc(commentsCollectionRef, commentId);
+        await deleteDoc(commentRef);
+
+        // 2. Find replies for this comment in Firestore
+        const repliesQuery = query(commentsCollectionRef, where("parentCommentId", "==", commentId));
+        const repliesSnap = await getDocs(repliesQuery);
+
+        // Delete each reply
+        const batchSize = repliesSnap.size;
+        const deletePromises = repliesSnap.docs.map(replyDoc => deleteDoc(replyDoc.ref));
+        await Promise.all(deletePromises);
+
+        // 3. Update post's commentsAmount (comment + replies)
+        const totalToDecrement = 1 + batchSize;
+        const postRef = doc(db, "posts", id);
+        await updateDoc(postRef, { commentsAmount: increment(-totalToDecrement) });
+
+        // 4. Update local state
+        setComments(prevComments =>
+        prevComments.filter(c => c.id !== commentId) // remove parent
+        );
+        setPostData(prev =>
+        prev ? { ...prev, commentsAmount: prev.commentsAmount - totalToDecrement } : prev
+        );
+
+        console.log(`Deleted comment ${commentId} and ${batchSize} replies`);
+
+    } catch (err) {
+        console.error("Error deleting comment:", err);
+    }
+    }
+
 
     //Check if the post is ours or not
     useEffect(() => {
@@ -666,6 +708,7 @@ function Posts() {
                                                 userProfile={userProfile}
                                                 onAddReply={handleAddReply}
                                                 setPostData={setPostData}
+                                                deleteComment={() => deleteComment(comment.id)}
                                                 />)}
             </div>
         </div>
