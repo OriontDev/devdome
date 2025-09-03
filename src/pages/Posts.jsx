@@ -547,10 +547,22 @@ function Posts() {
         return rtf.format(-years, "year");
     }
 
+    //to update local data when theres a new reply
+    function handleAddReply(parentCommentId, newReply) {
+        setComments(prevComments =>
+            prevComments.map(comment =>
+            comment.id === parentCommentId
+                ? { ...comment, replies: [newReply, ...comment.replies] }
+                : comment
+            )
+        );
+        console.log("handleaddreply done")
+    }
 
 
     if (loading) return <p>Loading... page</p>;
     if(postData === null) return <p>Loading... post</p>
+    console.log(comments)
 
   return (
     <>
@@ -651,7 +663,9 @@ function Posts() {
                                                 openReplyId={openReplyId}
                                                 setOpenReplyId={setOpenReplyId}
                                                 redirectToUserPage={() => navigate(`/account/${comment.userId}`)}
-                                                currentUserPhotoURL={userProfile.photoURL}
+                                                userProfile={userProfile}
+                                                onAddReply={handleAddReply}
+                                                setPostData={setPostData}
                                                 />)}
             </div>
         </div>

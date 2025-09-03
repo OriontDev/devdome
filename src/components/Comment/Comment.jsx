@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from './Comment.module.css';
 import Reply from '../Reply/Reply.jsx'
-import { doc, getDoc, setDoc, deleteDoc, updateDoc, increment } from "firebase/firestore";
+import { doc, getDoc, addDoc, setDoc, deleteDoc, updateDoc, increment, serverTimestamp, collection } from "firebase/firestore";
 import { db, auth } from "../../config/firebase"; // ✅ adjust path
 import { useNavigate } from 'react-router-dom';
 
 import pfp from '/public/pfp.png'; //loading pfp
 
-function Comment( { postId, commentId, userId, edited, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId, openReplyId, setOpenReplyId, redirectToUserPage, currentUserPhotoURL} ){
+function Comment( { postId, commentId, userId, edited, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId, openReplyId, setOpenReplyId, redirectToUserPage, userProfile, onAddReply, setPostData} ){
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
     const [hasReplies, setHasReplies] = useState(false);
@@ -16,6 +16,54 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
     const [likes, setLikes] = useState(likesAmount);
     const [userReplyInput, setUserReplyInput] = useState("")
 
+
+
+    async function postReply(){
+        if (userReplyInput.length === 0) return;
+        const authUser = auth.currentUser;
+        if (!authUser || userReplyInput.trim() === "") return;
+
+        const commentsCollectionRef = collection(db, "posts", postId, "comments");
+
+        // New reply data
+        const newReply = {
+            userId: authUser.uid,
+            text: userReplyInput,
+            createdAt: serverTimestamp(),
+            edited: false,
+            parentCommentId: commentId, // top-level comment
+            likesAmount: 0
+        };
+
+        // Add comment to Firestore
+        const replyDoc = await addDoc(commentsCollectionRef, newReply);
+
+        // Increment post's commentsAmount
+        const postRef = doc(db, "posts", postId);
+        await updateDoc(postRef, { commentsAmount: increment(1) });
+
+        // Reset input
+        setUserReplyInput("");
+        setOpenReplyId(null);
+
+        // ✅ Optimistic update via parent callback
+        if (typeof onAddReply === "function") {
+            onAddReply(commentId, {
+                id: replyDoc.id,
+                ...newReply,
+                createdAt: new Date(), // for "just now"
+                user: {
+                    username: userProfile.username || authUser.displayName || "Unknown",
+                    photoURL: userProfile.photoURL || authUser.photoURL || pfp,
+                },
+            });
+            console.log("optimistic completed")
+        }
+
+        setPostData(prev => prev ? { ...prev, commentsAmount: prev.commentsAmount + 1 } : prev);
+    }
+
+//handle userreplyinput
     const textareaRef = useRef(null);
 
     const userReplyChange = (e) => {
@@ -49,6 +97,7 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
     }
     }
 
+    //handle dropdown of comments
     const isDropdownOpen = openDropdownId === commentId;
 
     function toggleDropdown() {
@@ -200,12 +249,12 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
                 <div className={styles.repliescontainer}>
                     {isUserReplyOpen &&
                         <div className={styles.userReplyContainer}>
-                            <img src={currentUserPhotoURL} className={styles.userReplyPfp}/>
+                            <img src={userProfile.photoURL} className={styles.userReplyPfp}/>
                             <div className={styles.userReplyTextButtonContainer}>
                                 <textarea ref={textareaRef} value={userReplyInput} onChange={userReplyChange} className={styles.userReplyInput}></textarea>
                                 <div className={styles.userReplyButtonsContainer}>
-                                    <button className={styles.cancelUserReplyButton}>Cancel</button>
-                                    <button className={userReplyInput.length !== 0 ? styles.postUserReplyButton : styles.disabledPostUserReplyButton}>Post</button>
+                                    <button className={styles.cancelUserReplyButton} onClick={toggleUserReplyOpen}>Cancel</button>
+                                    <button className={userReplyInput.length !== 0 ? styles.postUserReplyButton : styles.disabledPostUserReplyButton} onClick={postReply}>Post</button>
                                 </div>
                             </div>
                         </div>                    
