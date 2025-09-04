@@ -504,6 +504,7 @@ function Posts() {
                         edited: commentData.edited,
                         parentCommentId: commentData.parentCommentId || null,
                         createdAt: commentData.createdAt?.toDate() || "Unknown",
+                        createdAtRaw: commentData.createdAt?.toDate() || null,
                         likesAmount: commentData.likesAmount || 0,
                     };
                 });
@@ -550,6 +551,11 @@ function Posts() {
                             ...reply,
                             createdAt: timeAgo(reply.createdAt)});
                     }
+                });
+
+                // Sort replies for each parent (newest first)
+                topLevelComments.forEach(parent => {
+                    parent.replies.sort((a, b) => a.createdAtRaw - b.createdAtRaw);
                 });
 
                 setComments(topLevelComments);
