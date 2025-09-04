@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from './Comment.module.css';
 import Reply from '../Reply/Reply.jsx'
+import { Timestamp } from 'firebase/firestore';
 import { doc, getDoc, addDoc, setDoc, deleteDoc, updateDoc, increment, serverTimestamp, collection } from "firebase/firestore";
 import { db, auth } from "../../config/firebase"; // ✅ adjust path
 import { useNavigate } from 'react-router-dom';

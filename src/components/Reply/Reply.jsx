@@ -81,13 +81,27 @@ function Reply( { postId, userId, replyId, photoURL, username, message, createdA
         }
     }
 
+    //format it so it doesnt crash on optimistic upd since we passed a raw Date
+    function formatDate(createdAt) {
+        if (!createdAt) return "just now";
+
+        // Firestore Timestamp has .toDate()
+        if (createdAt.toDate) return createdAt.toDate().toLocaleString();
+
+        // JS Date
+        if (createdAt instanceof Date) return createdAt.toLocaleString();
+
+        return String(createdAt); // fallback
+    }
+
+
     return(
         <div className={styles.container}>
             <img src={photoURL} className={styles.pfp}/>
             <div className={styles.rightcontainer}>
                 <div className={styles.usercontainer}>
                     <div className={styles.namedatecontainer}>
-                        <p className={styles.namedate}><span className={userId === ownerId ? styles.postownernamedate : styles.username} onClick={redirectToUserPage}>@{username}</span> - {createdAt}</p>
+                        <p className={styles.namedate}><span className={userId === ownerId ? styles.postownernamedate : styles.username} onClick={redirectToUserPage}>@{username}</span> - {formatDate(createdAt)}</p>
                         <div className={styles.dropdownbutton} onClick={toggleDropdown}>
                             <div className={styles.dropdownbuttonlogo}></div>
                         </div>

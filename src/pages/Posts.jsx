@@ -610,7 +610,7 @@ function Posts() {
 
     if (loading) return <p>Loading... page</p>;
     if(postData === null) return <p>Loading... post</p>
-    console.log(comments)
+    // console.log(comments)
 
   return (
     <>
