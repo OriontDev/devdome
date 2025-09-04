@@ -4,6 +4,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { auth, db } from "../config/firebase.jsx";
 import pfp from '/public/pfp.png';
+import toast from 'react-hot-toast';
 import { onAuthStateChanged } from "firebase/auth";
 import {
   collection,
@@ -437,42 +438,46 @@ function Posts() {
 
 
     async function deleteComment(commentId) {
-    if (!authUser) return;
+        if (!authUser) return;
 
-    try {
-        const commentsCollectionRef = collection(db, "posts", id, "comments");
+        try {
+            const commentsCollectionRef = collection(db, "posts", id, "comments");
 
-        // 1. Delete the parent comment
-        const commentRef = doc(commentsCollectionRef, commentId);
-        await deleteDoc(commentRef);
+            // 1. Delete the parent comment
+            const commentRef = doc(commentsCollectionRef, commentId);
+            await deleteDoc(commentRef);
 
-        // 2. Find replies for this comment in Firestore
-        const repliesQuery = query(commentsCollectionRef, where("parentCommentId", "==", commentId));
-        const repliesSnap = await getDocs(repliesQuery);
+            // 2. Find replies for this comment in Firestore
+            const repliesQuery = query(commentsCollectionRef, where("parentCommentId", "==", commentId));
+            const repliesSnap = await getDocs(repliesQuery);
 
-        // Delete each reply
-        const batchSize = repliesSnap.size;
-        const deletePromises = repliesSnap.docs.map(replyDoc => deleteDoc(replyDoc.ref));
-        await Promise.all(deletePromises);
+            // Delete each reply
+            const batchSize = repliesSnap.size;
+            const deletePromises = repliesSnap.docs.map(replyDoc => deleteDoc(replyDoc.ref));
+            await Promise.all(deletePromises);
 
-        // 3. Update post's commentsAmount (comment + replies)
-        const totalToDecrement = 1 + batchSize;
-        const postRef = doc(db, "posts", id);
-        await updateDoc(postRef, { commentsAmount: increment(-totalToDecrement) });
+            // 3. Update post's commentsAmount (comment + replies)
+            const totalToDecrement = 1 + batchSize;
+            const postRef = doc(db, "posts", id);
+            await updateDoc(postRef, { commentsAmount: increment(-totalToDecrement) });
 
-        // 4. Update local state
-        setComments(prevComments =>
-        prevComments.filter(c => c.id !== commentId) // remove parent
-        );
-        setPostData(prev =>
-        prev ? { ...prev, commentsAmount: prev.commentsAmount - totalToDecrement } : prev
-        );
+            // 4. Update local state
+            setComments(prevComments =>
+            prevComments.filter(c => c.id !== commentId) // remove parent
+            );
+            setPostData(prev =>
+            prev ? { ...prev, commentsAmount: prev.commentsAmount - totalToDecrement } : prev
+            );
 
-        console.log(`Deleted comment ${commentId} and ${batchSize} replies`);
-
-    } catch (err) {
-        console.error("Error deleting comment:", err);
-    }
+            console.log(`Deleted comment ${commentId} and ${batchSize} replies`);
+            toast.success("Your comment has been deleted", {
+                icon: "🗑️",
+                position: "bottom-left",
+                duration: 4000
+            });
+        } catch (err) {
+            console.error("Error deleting comment:", err);
+        }
     }
 
 
