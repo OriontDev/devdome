@@ -4,7 +4,7 @@ import { doc, getDoc, setDoc, deleteDoc, updateDoc, increment } from "firebase/f
 import { db, auth } from "../../config/firebase"; // ✅ import auth + db
 import pfp from '/public/pfp.png'; //loading pfp
 
-function Reply( { postId, userId, replyId, photoURL, username, message, createdAt, likesAmount, ownerId, openDropdownId, setOpenDropdownId, redirectToUserPage} ){
+function Reply( { postId, userId, replyId, photoURL, username, message, createdAt, likesAmount, ownerId, openDropdownId, setOpenDropdownId, redirectToUserPage, handleDeleteClick, setSelectedCommentId} ){
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
 
@@ -18,6 +18,7 @@ function Reply( { postId, userId, replyId, photoURL, username, message, createdA
         if (isDropdownOpen) {
             setOpenDropdownId(null); // close it
         } else {
+            setSelectedCommentId(replyId);
             setOpenDropdownId(replyId); // open this reply’s dropdown (and close others automatically)
         }
     }
@@ -111,7 +112,7 @@ function Reply( { postId, userId, replyId, photoURL, username, message, createdA
                             {auth.currentUser?.uid === userId ? (
                             <>
                                 <p className={styles.dropdownitem}>Edit</p>
-                                <p className={`${styles.dropdownitem} ${styles.delete}`}>Delete</p>
+                                <p className={`${styles.dropdownitem} ${styles.delete}`} onClick={handleDeleteClick}>Delete</p>
                             </>
                             ) : (
                             <p className={styles.dropdownitem}>Report</p>

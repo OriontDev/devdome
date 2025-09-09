@@ -97,7 +97,7 @@
     justify-items: center;    /* centers items inside each cell */
 }
 
-/* Optional: backdrop overlay */
+/* backdrop overlay */
 .overlay {
   position: fixed;
   top: 0;

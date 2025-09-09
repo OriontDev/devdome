@@ -4,6 +4,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { auth, db } from "../config/firebase.jsx";
 import pfp from '/public/pfp.png';
+import CommentDeleteConfirm from '../components/CommentDeleteConfirm/CommentDeleteConfirm.jsx';
 import toast from 'react-hot-toast';
 import { onAuthStateChanged } from "firebase/auth";
 import {
@@ -35,6 +36,12 @@ function Posts() {
     const [userCommentInput, setUserCommentInput] = useState("");
     const [openDropdownId, setOpenDropdownId] = useState(null);
     const [openReplyId, setOpenReplyId] = useState(null);
+
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+    //for deleting and editing post
+    const [selectedCommentId, setSelectedCommentId] = useState(null);
+    const [selectedCommentIdIsAReply, setSelectedCommentIdIsAReply] = useState(false);
 
 
     const [isOwner, setIsOwner] = useState(false);
@@ -436,6 +443,42 @@ function Posts() {
         fetchPost();
     }, [id, authUser, navigate]);
 
+    useEffect(() => {
+        if (!authUser) return;
+        if (!selectedCommentId) return;
+
+        console.log("checking collection")
+
+        const commentsCollectionRef = collection(db, "posts", id, "comments");
+
+        // Get the specific comment first
+        const checkComment = async () => {
+            try {
+                console.log("checking snap")
+                const commentRef = doc(commentsCollectionRef, selectedCommentId);
+                const commentSnap = await getDoc(commentRef);
+
+            if (commentSnap.exists()) {
+                const commentData = commentSnap.data();
+                // If it has a parentCommentId -> it's a reply
+                if (commentData.parentCommentId) {
+                    setSelectedCommentIdIsAReply(true);
+                    console.log("selected a Reply!");
+                } else {
+                    setSelectedCommentIdIsAReply(false);
+                    console.log("selected a Comment");
+                }
+            } else {
+                console.log("Comment not found");
+            }
+            } catch (err) {
+            console.error(err);
+            }
+        };
+
+        checkComment();
+    }, [authUser, selectedCommentId, id]);
+
 
     async function deleteComment(commentId) {
         if (!authUser) return;
@@ -475,8 +518,35 @@ function Posts() {
                 position: "bottom-left",
                 duration: 4000
             });
+            setShowDeleteConfirm(false);
         } catch (err) {
             console.error("Error deleting comment:", err);
+        }
+    }
+
+    async function deleteReply(parentCommentId, replyId) {
+        if (!authUser) return;
+
+        try {
+            const replyRef = doc(db, "posts", id, "comments", replyId);
+            await deleteDoc(replyRef);
+
+            // Update count
+            const postRef = doc(db, "posts", id);
+            await updateDoc(postRef, { commentsAmount: increment(-1) });
+
+            // Update local state: remove from replies array in parent
+            setComments(prev =>
+            prev.map(c =>
+                c.id === parentCommentId
+                ? { ...c, replies: c.replies.filter(r => r.id !== replyId) }
+                : c
+            )
+            );
+
+            toast.success("Reply deleted 🗑️");
+        } catch (err) {
+            console.error("Error deleting reply:", err);
         }
     }
 
@@ -612,14 +682,30 @@ function Posts() {
         console.log("handleaddreply done")
     }
 
+    function handleCommentDeleteClicked(){
+        console.log("handleCommentDeleteClicked Runned")
+        setShowDeleteConfirm(true);
+        setOpenDropdownId(null);
+    }
 
     if (loading) return <p>Loading... page</p>;
     if(postData === null) return <p>Loading... post</p>
     // console.log(comments)
+    console.log(selectedCommentId)
+    console.log("showDeleteConfirm: " + showDeleteConfirm)
 
   return (
     <>
       <div className={styles.container}>
+
+        {showDeleteConfirm && (
+            <>
+                <div className={styles.overlay} onClick={() => {setShowDeleteConfirm(false); setSelectedCommentId(null)}}></div>         
+                <CommentDeleteConfirm
+                    deleteComment={() => deleteComment(selectedCommentId)}
+                    setShowDeleteConfirm={() => setShowDeleteConfirm(false)}/>             
+            </>
+        )}
         <div className={styles.contentcontainer}>
           <div className={styles.headercontainer}>
                 <img src={postData !== null ? postData.userPhotoURL : pfp} className={styles.headerpfp}/>
@@ -720,6 +806,8 @@ function Posts() {
                                                 onAddReply={handleAddReply}
                                                 setPostData={setPostData}
                                                 deleteComment={() => deleteComment(comment.id)}
+                                                setSelectedCommentId={setSelectedCommentId}
+                                                handleDeleteClick={handleCommentDeleteClicked}
                                                 />)}
             </div>
         </div>

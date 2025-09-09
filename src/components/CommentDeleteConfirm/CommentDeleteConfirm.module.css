@@ -1,0 +1,49 @@
+.container{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  width: fit-content;
+  max-width: 1100px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  height: fit-content;
+  max-height: 90vh; /* shrink if screen is smaller */
+  overflow-y: auto; /* enable scrolling if content is too tall */
+  gap: 15px;
+}
+
+button{
+  padding: 10px;
+  border: none;
+  background-color: rgb(255, 255, 255);
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.15s ease;
+}
+
+.buttonsContainer{
+  display: flex;
+  gap: 1rem;
+}
+
+.deleteButton{
+
+  color: red;
+}
+
+.deleteButton:hover{
+  background-color: rgb(255, 219, 219);  
+}
+
+.cancelButton:hover{
+  background-color: rgb(238, 238, 238);  
+}

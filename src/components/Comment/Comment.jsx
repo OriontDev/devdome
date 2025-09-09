@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 import pfp from '/public/pfp.png'; //loading pfp
 
-function Comment( { postId, commentId, userId, edited, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId, openReplyId, setOpenReplyId, redirectToUserPage, userProfile, onAddReply, setPostData, deleteComment} ){
+function Comment( { postId, commentId, userId, edited, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId, openReplyId, setOpenReplyId, redirectToUserPage, userProfile, onAddReply, setPostData, deleteComment, handleDeleteClick, setSelectedCommentId} ){
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
     const [hasReplies, setHasReplies] = useState(false);
@@ -91,11 +91,11 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
     const isUserReplyOpen = openReplyId === commentId;
 
     function toggleUserReplyOpen() {
-    if (isUserReplyOpen) {
-        setOpenReplyId(null); // close if already open
-    } else {
-        setOpenReplyId(commentId); // open this one
-    }
+        if (isUserReplyOpen) {
+            setOpenReplyId(null); // close if already open
+        } else {
+            setOpenReplyId(commentId); // open this one
+        }
     }
 
     //handle dropdown of comments
@@ -105,6 +105,7 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
         if (isDropdownOpen) {
             setOpenDropdownId(null); // close
         } else {
+            setSelectedCommentId(commentId);
             setOpenDropdownId(commentId); // open this one
         }
     }
@@ -210,7 +211,7 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
                             {auth.currentUser?.uid === userId ? (
                             <>
                                 <p className={styles.dropdownitem}>Edit</p>
-                                <p className={`${styles.dropdownitem} ${styles.delete}`} onClick={deleteComment}>Delete</p>
+                                <p className={`${styles.dropdownitem} ${styles.delete}`} onClick={handleDeleteClick}>Delete</p>
                             </>
                             ) : (
                             <p className={styles.dropdownitem}>Report</p>
@@ -275,6 +276,8 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
                                                 openDropdownId={openDropdownId}
                                                 setOpenDropdownId={setOpenDropdownId}
                                                 redirectToUserPage={() => navigate(`/account/${reply.userId}`)}
+                                                setSelectedCommentId={setSelectedCommentId}
+                                                handleDeleteClick={handleDeleteClick} // ✅ Pass reply id
                                             />) : <></>}
                 </div>
 
