@@ -41,7 +41,7 @@ function Posts() {
 
     //for deleting and editing post
     const [selectedCommentId, setSelectedCommentId] = useState(null);
-    const [selectedCommentIdIsAReply, setSelectedCommentIdIsAReply] = useState(false);
+    // const [selectedCommentIdIsAReply, setSelectedCommentIdIsAReply] = useState(false);
 
 
     const [isOwner, setIsOwner] = useState(false);
@@ -443,41 +443,40 @@ function Posts() {
         fetchPost();
     }, [id, authUser, navigate]);
 
-    useEffect(() => {
-        if (!authUser) return;
-        if (!selectedCommentId) return;
+    // useEffect(() => {
+    //     if (!authUser) return;
+    //     if (!selectedCommentId) return;
 
-        console.log("checking collection")
 
-        const commentsCollectionRef = collection(db, "posts", id, "comments");
+    //     const commentsCollectionRef = collection(db, "posts", id, "comments");
 
-        // Get the specific comment first
-        const checkComment = async () => {
-            try {
-                console.log("checking snap")
-                const commentRef = doc(commentsCollectionRef, selectedCommentId);
-                const commentSnap = await getDoc(commentRef);
+    //     // Get the specific comment first
+    //     const checkComment = async () => {
+    //         try {
 
-            if (commentSnap.exists()) {
-                const commentData = commentSnap.data();
-                // If it has a parentCommentId -> it's a reply
-                if (commentData.parentCommentId) {
-                    setSelectedCommentIdIsAReply(true);
-                    console.log("selected a Reply!");
-                } else {
-                    setSelectedCommentIdIsAReply(false);
-                    console.log("selected a Comment");
-                }
-            } else {
-                console.log("Comment not found");
-            }
-            } catch (err) {
-            console.error(err);
-            }
-        };
+    //             const commentRef = doc(commentsCollectionRef, selectedCommentId);
+    //             const commentSnap = await getDoc(commentRef);
 
-        checkComment();
-    }, [authUser, selectedCommentId, id]);
+    //         if (commentSnap.exists()) {
+    //             const commentData = commentSnap.data();
+    //             // If it has a parentCommentId -> it's a reply
+    //             if (commentData.parentCommentId) {
+    //                 setSelectedCommentIdIsAReply(true);
+    //                 console.log("selected a Reply!");
+    //             } else {
+    //                 setSelectedCommentIdIsAReply(false);
+    //                 console.log("selected a Comment");
+    //             }
+    //         } else {
+    //             console.log("Comment not found");
+    //         }
+    //         } catch (err) {
+    //         console.error(err);
+    //         }
+    //     };
+
+    //     checkComment();
+    // }, [authUser, selectedCommentId, id]);
 
 
     async function deleteComment(commentId) {
@@ -691,8 +690,8 @@ function Posts() {
     if (loading) return <p>Loading... page</p>;
     if(postData === null) return <p>Loading... post</p>
     // console.log(comments)
-    console.log(selectedCommentId)
-    console.log("showDeleteConfirm: " + showDeleteConfirm)
+    // console.log(selectedCommentId)
+    // console.log("showDeleteConfirm: " + showDeleteConfirm)
 
   return (
     <>
