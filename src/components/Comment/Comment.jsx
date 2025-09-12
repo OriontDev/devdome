@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 import pfp from '/public/pfp.png'; //loading pfp
 
-function Comment( { postId, commentId, userId, edited, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId, openReplyId, setOpenReplyId, redirectToUserPage, userProfile, onAddReply, setPostData, deleteComment, handleDeleteClick, setSelectedCommentId} ){
+function Comment( { postId, commentId, userId, edited, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId, openReplyId, setOpenReplyId, redirectToUserPage, userProfile, onAddReply, setPostData, handleEditClick, handleDeleteClick, setSelectedCommentId} ){
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
     const [hasReplies, setHasReplies] = useState(false);
@@ -210,7 +210,7 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
                         <div className={styles.dropdownmenu}>
                             {auth.currentUser?.uid === userId ? (
                             <>
-                                <p className={styles.dropdownitem}>Edit</p>
+                                <p className={styles.dropdownitem} onClick={handleEditClick}>Edit</p>
                                 <p className={`${styles.dropdownitem} ${styles.delete}`} onClick={handleDeleteClick}>Delete</p>
                             </>
                             ) : (

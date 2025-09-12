@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { auth, db } from "../config/firebase.jsx";
 import pfp from '/public/pfp.png';
 import CommentDeleteConfirm from '../components/CommentDeleteConfirm/CommentDeleteConfirm.jsx';
+import CommentEditConfirm from '../components/CommentEditConfirm/CommentEditConfirm.jsx';
 import toast from 'react-hot-toast';
 import { onAuthStateChanged } from "firebase/auth";
 import {
@@ -38,6 +39,7 @@ function Posts() {
     const [openReplyId, setOpenReplyId] = useState(null);
 
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [showEditConfirm, setShowEditConfirm] = useState(false);
 
     //for deleting and editing post
     const [selectedCommentId, setSelectedCommentId] = useState(null);
@@ -84,6 +86,7 @@ function Posts() {
 
     async function postComment(){
         if (!authUser) return;
+        if (userCommentInput.length === 0) return;
 
         const commentsCollectionRef = collection(db, "posts", id, "comments");
 
@@ -427,6 +430,7 @@ function Posts() {
                     username: userData?.username,
                     displayName: userData?.displayName,
                     userPhotoURL: userData?.photoURL,
+                    projectId: userData?.projectId,
                     ...data,
                     createdAt: data.createdAt?.toDate().toLocaleString() || null,
                 });
@@ -687,6 +691,16 @@ function Posts() {
         setOpenDropdownId(null);
     }
 
+    function handleCommentEditClicked(){
+        console.log("handleCommentEditClicked Runned")
+        setShowEditConfirm(true);
+        setOpenDropdownId(null);       
+    }
+
+    function editComment(commentId){
+
+    }
+
     if (loading) return <p>Loading... page</p>;
     if(postData === null) return <p>Loading... post</p>
     // console.log(comments)
@@ -705,11 +719,20 @@ function Posts() {
                     setShowDeleteConfirm={() => setShowDeleteConfirm(false)}/>             
             </>
         )}
+        {showEditConfirm && (
+            <>
+                <div className={styles.overlay} onClick={() => {setShowEditConfirm(false); setSelectedCommentId(null)}}></div>         
+                <CommentEditConfirm
+                    editComment={() => editComment(selectedCommentId)}
+                    setShowEditConfirm={() => setShowEditConfirm(false)}/>             
+            </>
+        )}
+        
         <div className={styles.contentcontainer}>
           <div className={styles.headercontainer}>
-                <img src={postData !== null ? postData.userPhotoURL : pfp} className={styles.headerpfp}/>
+                <img src={postData !== null ? postData.userPhotoURL : pfp} className={styles.headerpfp} onClick={() => navigate(`/account/${postData.userId}`)}/>
                 <div className={styles.titlecontainer}>
-                    <p>@{postData !== null ? postData.username : "Loading"} - {postData !== null ? postData.displayName : "Loading"}</p>
+                    <p className={styles.postusername} onClick={() => navigate(`/account/${postData.userId}`)}>@{postData !== null ? postData.username : "Loading"} - {postData !== null ? postData.displayName : "Loading"}</p>
                     <p>{postData !== null ? postData.createdAt : "Loading"}</p>
                 </div>
                 <div className={styles.headerbuttoncontainer}>
@@ -748,6 +771,11 @@ function Posts() {
 
           </div>
 
+          {postData.projectId &&
+            <div className={styles.projectidcontainer}>
+                    <p>Project: To-Do List</p>
+            </div>         
+          }
           <div className={styles.messagecontainer}>
             <p>{postData.message}</p>
           </div>
@@ -807,6 +835,7 @@ function Posts() {
                                                 deleteComment={() => deleteComment(comment.id)}
                                                 setSelectedCommentId={setSelectedCommentId}
                                                 handleDeleteClick={handleCommentDeleteClicked}
+                                                handleEditClick={handleCommentEditClicked}
                                                 />)}
             </div>
         </div>

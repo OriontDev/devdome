@@ -18,9 +18,15 @@ function Post( {username, displayName, userPhotoURL, message, createdAt, likesAm
                     </div>
                     <div className={styles.postinfobutton}>•••</div>
                 </div>
+
+                <div className={styles.projectidcontainer}>
+                    <p>Project: To-Do List</p>
+                </div>  
+
                 <div className={styles.messagecontainer} onClick={redirectToPostPage}>
                     <p>{message}</p>
                 </div>
+
                 <hr></hr>
                 <div className={styles.footercontainer}>
                     <div className={currentUserLiked ? styles.footerbuttoncontainerliked : styles.footerbuttoncontainer} onClick={likeFunction}>
