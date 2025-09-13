@@ -50,7 +50,7 @@ function Posts() {
     const textareaRef = useRef(null);
     const dropdownRef = useRef(null); //Ref for dropdown
 
-
+    const [editCommentInput, setEditCommentInput] = useState("");
 
   //initialize with location.state (fast path)
     const [postData, setPostData] = useState(null);
@@ -527,32 +527,36 @@ function Posts() {
         }
     }
 
-    async function deleteReply(parentCommentId, replyId) {
+    async function editComment(commentId){
         if (!authUser) return;
+        if (editCommentInput.length === 0) return;
 
         try {
-            const replyRef = doc(db, "posts", id, "comments", replyId);
-            await deleteDoc(replyRef);
+            const commentsCollectionRef = collection(db, "posts", id, "comments");
 
-            // Update count
-            const postRef = doc(db, "posts", id);
-            await updateDoc(postRef, { commentsAmount: increment(-1) });
+            // 1. Delete the parent comment
+            const commentRef = doc(commentsCollectionRef, commentId);
+            await updateDoc(commentRef, { text: editCommentInput, edited: true });
 
-            // Update local state: remove from replies array in parent
-            setComments(prev =>
-            prev.map(c =>
-                c.id === parentCommentId
-                ? { ...c, replies: c.replies.filter(r => r.id !== replyId) }
-                : c
+            // 2. Update local state
+            setComments(prevComments =>
+            prevComments.map(c =>
+                c.id === commentId ? { ...c, text: editCommentInput, edited: true } : c
             )
             );
 
-            toast.success("Reply deleted 🗑️");
+            console.log(`Edited comment ${commentId}`);
+            toast.success("Your comment has been Edited", {
+                icon: "🗑️",
+                position: "bottom-left",
+                duration: 4000
+            });
+            setShowEditConfirm(false);
+            setEditCommentInput(""); //clear
         } catch (err) {
-            console.error("Error deleting reply:", err);
+            console.error("Error Editing comment:", err);
         }
     }
-
 
     //Check if the post is ours or not
     useEffect(() => {
@@ -697,9 +701,7 @@ function Posts() {
         setOpenDropdownId(null);       
     }
 
-    function editComment(commentId){
 
-    }
 
     if (loading) return <p>Loading... page</p>;
     if(postData === null) return <p>Loading... post</p>
@@ -724,7 +726,8 @@ function Posts() {
                 <div className={styles.overlay} onClick={() => {setShowEditConfirm(false); setSelectedCommentId(null)}}></div>         
                 <CommentEditConfirm
                     editComment={() => editComment(selectedCommentId)}
-                    setShowEditConfirm={() => setShowEditConfirm(false)}/>             
+                    setShowEditConfirm={() => setShowEditConfirm(false)}
+                    setEditCommentInput={setEditCommentInput}/>             
             </>
         )}
         
