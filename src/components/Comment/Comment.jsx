@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 import pfp from '/public/pfp.png'; //loading pfp
 
-function Comment( { postId, commentId, userId, edited, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId, openReplyId, setOpenReplyId, redirectToUserPage, userProfile, onAddReply, setPostData, handleEditClick, handleDeleteClick, setSelectedCommentId} ){
+function Comment( { postId, commentId, userId, edited, photoURL, username, message, createdAt, replies = [], likesAmount, ownerId, openDropdownId, setOpenDropdownId, openReplyId, setOpenReplyId, redirectToUserPage, userProfile, onAddReply, setPostData, handleEditClick, handleDeleteClick, setSelectedCommentId,setSelectedParentCommentId, setSelectedCommentText} ){
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
     const [hasReplies, setHasReplies] = useState(false);
@@ -106,6 +106,8 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
             setOpenDropdownId(null); // close
         } else {
             setSelectedCommentId(commentId);
+            setSelectedParentCommentId(null);
+            setSelectedCommentText(message);
             setOpenDropdownId(commentId); // open this one
         }
     }
@@ -264,12 +266,14 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
                     {!hasReplies ? <></> : (!replyOpen ? <p className={styles.showreplybutton} onClick={() => setReplyOpen(true)}>⮟Show Replies</p> : <p className={styles.showreplybutton} onClick={() => setReplyOpen(false)}>⮝Hide Replies</p>)}
                     {replyOpen ? replies.map((reply) => <Reply
                                                 key={reply.id}
+                                                parentId={commentId}
                                                 postId={postId}
                                                 replyId={reply.id}
                                                 userId={reply.userId}
                                                 photoURL={reply.user.photoURL} 
                                                 username={reply.user.username} 
                                                 message={reply.text}
+                                                edited={reply.edited}
                                                 createdAt={reply.createdAt}
                                                 likesAmount={reply.likesAmount}
                                                 ownerId={ownerId}
@@ -278,6 +282,9 @@ function Comment( { postId, commentId, userId, edited, photoURL, username, messa
                                                 redirectToUserPage={() => navigate(`/account/${reply.userId}`)}
                                                 setSelectedCommentId={setSelectedCommentId}
                                                 handleDeleteClick={handleDeleteClick} // ✅ Pass reply id
+                                                handleEditClick={handleEditClick}
+                                                setSelectedParentCommentId={setSelectedParentCommentId}
+                                                setSelectedCommentText={setSelectedCommentText}
                                             />) : <></>}
                 </div>
 

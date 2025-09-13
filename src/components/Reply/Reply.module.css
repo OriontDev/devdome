@@ -52,6 +52,10 @@
     font-size: 0.8rem;
 }
 
+.editednamedate{
+    font-weight: normal;
+}
+
 .buttonscontainer{
     display: flex;
 }

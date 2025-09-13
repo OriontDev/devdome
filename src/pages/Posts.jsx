@@ -41,8 +41,11 @@ function Posts() {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showEditConfirm, setShowEditConfirm] = useState(false);
 
-    //for deleting and editing post
+    //for deleting and editing post's comments
     const [selectedCommentId, setSelectedCommentId] = useState(null);
+    const [selectedParentCommentId, setSelectedParentCommentId] = useState(null);
+    const [selectedCommentText, setSelectedCommentText] = useState("");
+
     // const [selectedCommentIdIsAReply, setSelectedCommentIdIsAReply] = useState(false);
 
 
@@ -527,7 +530,7 @@ function Posts() {
         }
     }
 
-    async function editComment(commentId){
+    async function editComment(commentId, parentCommentId = null){
         if (!authUser) return;
         if (editCommentInput.length === 0) return;
 
@@ -538,12 +541,27 @@ function Posts() {
             const commentRef = doc(commentsCollectionRef, commentId);
             await updateDoc(commentRef, { text: editCommentInput, edited: true });
 
-            // 2. Update local state
-            setComments(prevComments =>
-            prevComments.map(c =>
+            // update local state
+            setComments(prevComments => {
+            if (!parentCommentId) {
+                // editing a parent comment
+                return prevComments.map(c =>
                 c.id === commentId ? { ...c, text: editCommentInput, edited: true } : c
-            )
-            );
+                );
+            } else {
+                // editing a reply
+                return prevComments.map(parent => {
+                if (parent.id !== parentCommentId) return parent;
+
+                return {
+                    ...parent,
+                    replies: parent.replies.map(r =>
+                    r.id === commentId ? { ...r, text: editCommentInput, edited: true } : r
+                    )
+                };
+                });
+            }
+            });
 
             console.log(`Edited comment ${commentId}`);
             toast.success("Your comment has been Edited", {
@@ -707,6 +725,7 @@ function Posts() {
     if(postData === null) return <p>Loading... post</p>
     // console.log(comments)
     // console.log(selectedCommentId)
+    // console.log(selectedParentCommentId)
     // console.log("showDeleteConfirm: " + showDeleteConfirm)
 
   return (
@@ -723,11 +742,12 @@ function Posts() {
         )}
         {showEditConfirm && (
             <>
-                <div className={styles.overlay} onClick={() => {setShowEditConfirm(false); setSelectedCommentId(null)}}></div>         
+                <div className={styles.overlay} onClick={() => {setShowEditConfirm(false); setSelectedCommentId(null); setSelectedParentCommentId(null)}}></div>         
                 <CommentEditConfirm
-                    editComment={() => editComment(selectedCommentId)}
+                    editComment={() => editComment(selectedCommentId, selectedParentCommentId)}
                     setShowEditConfirm={() => setShowEditConfirm(false)}
-                    setEditCommentInput={setEditCommentInput}/>             
+                    setEditCommentInput={setEditCommentInput}
+                    currentCommentText={selectedCommentText}/>             
             </>
         )}
         
@@ -837,8 +857,10 @@ function Posts() {
                                                 setPostData={setPostData}
                                                 deleteComment={() => deleteComment(comment.id)}
                                                 setSelectedCommentId={setSelectedCommentId}
+                                                setSelectedParentCommentId={setSelectedParentCommentId}
                                                 handleDeleteClick={handleCommentDeleteClicked}
                                                 handleEditClick={handleCommentEditClicked}
+                                                setSelectedCommentText={setSelectedCommentText}
                                                 />)}
             </div>
         </div>

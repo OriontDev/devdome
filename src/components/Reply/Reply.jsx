@@ -4,7 +4,7 @@ import { doc, getDoc, setDoc, deleteDoc, updateDoc, increment } from "firebase/f
 import { db, auth } from "../../config/firebase"; // ✅ import auth + db
 import pfp from '/public/pfp.png'; //loading pfp
 
-function Reply( { postId, userId, replyId, photoURL, username, message, createdAt, likesAmount, ownerId, openDropdownId, setOpenDropdownId, redirectToUserPage, handleDeleteClick, setSelectedCommentId} ){
+function Reply( { parentId, postId, userId, replyId, photoURL, username, message, edited, createdAt, likesAmount, ownerId, openDropdownId, setOpenDropdownId, redirectToUserPage, handleDeleteClick, setSelectedCommentId, handleEditClick, setSelectedParentCommentId, setSelectedCommentText} ){
     const [isLong, setIsLong] = useState(false)
     const [messageCutted, setMessageCutted] = useState(false)
 
@@ -19,6 +19,8 @@ function Reply( { postId, userId, replyId, photoURL, username, message, createdA
             setOpenDropdownId(null); // close it
         } else {
             setSelectedCommentId(replyId);
+            setSelectedParentCommentId(parentId);
+            setSelectedCommentText(message);
             setOpenDropdownId(replyId); // open this reply’s dropdown (and close others automatically)
         }
     }
@@ -102,7 +104,7 @@ function Reply( { postId, userId, replyId, photoURL, username, message, createdA
             <div className={styles.rightcontainer}>
                 <div className={styles.usercontainer}>
                     <div className={styles.namedatecontainer}>
-                        <p className={styles.namedate}><span className={userId === ownerId ? styles.postownernamedate : styles.username} onClick={redirectToUserPage}>@{username}</span> - {formatDate(createdAt)}</p>
+                        <p className={styles.namedate}><span className={userId === ownerId ? styles.postownernamedate : styles.username} onClick={redirectToUserPage}>@{username}</span> - {formatDate(createdAt)} {edited === true && <span className={styles.editednamedate}>(Edited)</span>}</p>
                         <div className={styles.dropdownbutton} onClick={toggleDropdown}>
                             <div className={styles.dropdownbuttonlogo}></div>
                         </div>
@@ -111,7 +113,7 @@ function Reply( { postId, userId, replyId, photoURL, username, message, createdA
                         <div className={styles.dropdownmenu}>
                             {auth.currentUser?.uid === userId ? (
                             <>
-                                <p className={styles.dropdownitem}>Edit</p>
+                                <p className={styles.dropdownitem} onClick={handleEditClick}>Edit</p>
                                 <p className={`${styles.dropdownitem} ${styles.delete}`} onClick={handleDeleteClick}>Delete</p>
                             </>
                             ) : (
