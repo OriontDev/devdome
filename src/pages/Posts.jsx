@@ -27,6 +27,7 @@ import {
 import Comment from '../components/Comment/Comment.jsx';
 import FriendCard from "../components/FriendCard/FriendCard.jsx";
 import ProfileCard from "../components/ProfileCard/ProfileCard.jsx";
+import PostEditConfirm from '../components/PostEditConfirm/PostEditConfirm.jsx';
 
 function Posts() {
   const { id } = useParams(); 
@@ -40,6 +41,10 @@ function Posts() {
 
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showEditConfirm, setShowEditConfirm] = useState(false);
+
+
+    const [showPostEditConfirm, setShowPostEditConfirm] = useState(false);
+    const [editPostInput, setEditPostInput] = useState("");
 
     //for deleting and editing post's comments
     const [selectedCommentId, setSelectedCommentId] = useState(null);
@@ -750,6 +755,16 @@ function Posts() {
                     currentCommentText={selectedCommentText}/>             
             </>
         )}
+        {showPostEditConfirm && (
+            <>
+                <div className={styles.overlay} onClick={() => {setShowPostEditConfirm(false);}}></div> 
+                <PostEditConfirm
+                    editComment={() => editComment(selectedCommentId, selectedParentCommentId)}
+                    setShowPostEditConfirm={() => setShowPostEditConfirm(false)}
+                    setEditPostInput={setEditPostInput}
+                    currentPostText={postData.message}/>             
+            </>
+        )}
         
         <div className={styles.contentcontainer}>
           <div className={styles.headercontainer}>
@@ -766,7 +781,7 @@ function Posts() {
                     <div ref={dropdownRef} className={styles.dropdown}>
                         {isOwner ? (
                             <>
-                                <div className={styles.dropdownitem}>
+                                <div className={styles.dropdownitem} onClick={() => {setShowPostEditConfirm(true); setEditDropdownOpen(false)}}>
                                     <div className={styles.dropdownlogocontainer}>
                                         <div className={styles.editlogodropdown}></div>
                                     </div>
