@@ -836,7 +836,7 @@ function Posts() {
           </div>
 
           {postData.projectId &&
-            <div className={styles.projectidcontainer}>
+            <div className={styles.projectidcontainer} onClick={() => {navigate(`/project/${postData.projectId}`)}}>
                     <p>Project: To-Do List</p>
             </div>         
           }

@@ -3,7 +3,7 @@ import pfp from '/public/pfp.png'; //loading pfp
 import { useNavigate } from 'react-router-dom';
 import exitlogo from '/exitlogo.svg'
 
-function Post( {username, displayName, userPhotoURL, message, createdAt, likesAmount, commentsAmount, currentUserLiked, likeFunction, redirectToPostPage, redirectToUserPage } ){
+function Post( {username, displayName, userPhotoURL, message, createdAt, likesAmount, commentsAmount, currentUserLiked, likeFunction, redirectToPostPage, redirectToUserPage, projectId } ){
 
     const navigate = useNavigate();
 
@@ -19,7 +19,7 @@ function Post( {username, displayName, userPhotoURL, message, createdAt, likesAm
                     <div className={styles.postinfobutton}>•••</div>
                 </div>
 
-                <div className={styles.projectidcontainer}>
+                <div className={styles.projectidcontainer} onClick={() => {navigate(`/project/${projectId}`)}}>
                     <p>Project: To-Do List</p>
                 </div>  
 

@@ -284,6 +284,7 @@ function Home(){
                             likesAmount: postData.likesAmount || 0,
                             commentsAmount: postData.commentsAmount || 0,
                             currentUserLiked, // ✅ true/false
+                            projectId: postData.projectId
                         };
                     })
                 );
@@ -383,6 +384,7 @@ function Home(){
                                                 likeFunction={() => likePost(post.id)}
                                                 redirectToPostPage={() => navigate(`/posts/${post.id}`)}
                                                 redirectToUserPage={() => navigate(`/account/${post.userId}`)}
+                                                projectId={post.projectId}
                                             />)}
                     </div>
                 </div>
