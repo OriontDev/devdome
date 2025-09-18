@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styles from './PostEditConfirm.module.css';
 
-function PostEditConfirm( {editComment, setShowPostEditConfirm, setEditPostInput, currentPostText} ){
+function PostEditConfirm( {editPost, setShowPostEditConfirm, setEditPostInput, currentPostText} ){
     
     const [localText, setLocalText] = useState(currentPostText);
 
@@ -14,6 +14,11 @@ function PostEditConfirm( {editComment, setShowPostEditConfirm, setEditPostInput
         setLocalText(e.target.value);
         setEditPostInput(e.target.value); // keep parent state in sync
     };
+
+    function handleEditClicked(){
+        console.log("edit clicked post!");
+        editPost();
+    }
     
     return(
         <div className={styles.container}>
@@ -24,7 +29,7 @@ function PostEditConfirm( {editComment, setShowPostEditConfirm, setEditPostInput
 
             <div className={styles.buttonsContainer}>
                 <button onClick={setShowPostEditConfirm} className={styles.cancelButton}>Cancel</button>
-                <button onClick={editComment} className={styles.deleteButton}>Edit</button>
+                <button onClick={handleEditClicked} className={styles.deleteButton}>Edit</button>
             </div>
         </div>        
     );

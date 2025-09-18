@@ -535,6 +535,32 @@ function Posts() {
         }
     }
 
+    async function editPost(postId){
+        if (!authUser) return;
+        if (editPostInput.length === 0) return;
+        const postCollectionRef = collection(db, "posts");             
+        console.log("edit button in edit post clicked")
+
+        try{
+            const postRef = doc(postCollectionRef, postId);
+            await updateDoc(postRef, {message: editPostInput})
+
+            console.log(`Edited Post ${postId}`);
+            toast.success("Your post has been Edited", {
+                icon: "✍️",
+                position: "bottom-left",
+                duration: 4000
+            });
+
+            setPostData(prev => prev ? { ...prev, message: editPostInput, edited: true } : prev);
+            
+            setShowPostEditConfirm(false);
+            setEditPostInput(""); //clear
+        }catch(err){
+            console.error(err);
+        }
+    }
+
     async function editComment(commentId, parentCommentId = null){
         if (!authUser) return;
         if (editCommentInput.length === 0) return;
@@ -542,7 +568,6 @@ function Posts() {
         try {
             const commentsCollectionRef = collection(db, "posts", id, "comments");
 
-            // 1. Delete the parent comment
             const commentRef = doc(commentsCollectionRef, commentId);
             await updateDoc(commentRef, { text: editCommentInput, edited: true });
 
@@ -570,7 +595,7 @@ function Posts() {
 
             console.log(`Edited comment ${commentId}`);
             toast.success("Your comment has been Edited", {
-                icon: "🗑️",
+                icon: "✍️",
                 position: "bottom-left",
                 duration: 4000
             });
@@ -733,6 +758,7 @@ function Posts() {
     // console.log(selectedParentCommentId)
     // console.log("showDeleteConfirm: " + showDeleteConfirm)
 
+
   return (
     <>
       <div className={styles.container}>
@@ -759,7 +785,7 @@ function Posts() {
             <>
                 <div className={styles.overlay} onClick={() => {setShowPostEditConfirm(false);}}></div> 
                 <PostEditConfirm
-                    editComment={() => editComment(selectedCommentId, selectedParentCommentId)}
+                    editPost={() => editPost(postData.id)}
                     setShowPostEditConfirm={() => setShowPostEditConfirm(false)}
                     setEditPostInput={setEditPostInput}
                     currentPostText={postData.message}/>             
@@ -771,7 +797,7 @@ function Posts() {
                 <img src={postData !== null ? postData.userPhotoURL : pfp} className={styles.headerpfp} onClick={() => navigate(`/account/${postData.userId}`)}/>
                 <div className={styles.titlecontainer}>
                     <p className={styles.postusername} onClick={() => navigate(`/account/${postData.userId}`)}>@{postData !== null ? postData.username : "Loading"} - {postData !== null ? postData.displayName : "Loading"}</p>
-                    <p>{postData !== null ? postData.createdAt : "Loading"}</p>
+                    <p>{postData !== null ? postData.createdAt : "Loading"} {postData.edited ? "- (Edited)" : ""}</p>
                 </div>
                 <div className={styles.headerbuttoncontainer}>
                     <div className={styles.settingiconcontainer} onClick={() => setEditDropdownOpen(prev => !prev)}>
