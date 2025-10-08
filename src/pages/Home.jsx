@@ -9,6 +9,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useParams, useNavigate } from "react-router-dom";
 import { auth, db } from "../config/firebase";
 import {
+  orderBy,
   getDocs,
   getDoc,
   collection,
@@ -263,27 +264,39 @@ function Home(){
         const fetchPosts = async () => {
             try {
                 const postsRef = collection(db, "posts");
-                const postsSnap = await getDocs(postsRef);
+                let postsQuery;
+
+                // 🧠 Build query based on sort mode
+                if (sortPostMode === "LTO") {
+                    postsQuery = query(postsRef, orderBy("createdAt", "desc"), limit(6));
+                } else if (sortPostMode === "OTL") {
+                    postsQuery = query(postsRef, orderBy("createdAt", "asc"), limit(6));
+                } else if (sortPostMode === "LIK") {
+                    postsQuery = query(postsRef, orderBy("likesAmount", "desc"), limit(6));
+                } else if (sortPostMode === "DLK") {
+                    postsQuery = query(postsRef, orderBy("likesAmount", "asc"), limit(6));
+                } else if (sortPostMode === "COM") {
+                    postsQuery = query(postsRef, orderBy("commentsAmount", "desc"), limit(6));
+                } else {
+                    // fallback
+                    postsQuery = query(postsRef, orderBy("createdAt", "desc"), limit(6));
+                }
+
+                const postsSnap = await getDocs(postsQuery);
 
                 const postsData = await Promise.all(
                     postsSnap.docs.map(async (docSnap) => {
                         const postData = docSnap.data();
 
-                        //get post owner data
+                        // get post owner data
                         const userRef = doc(db, "users", postData.userId);
                         const userDataSnap = await getDoc(userRef);
-                        let userData = null;
-                        if(userDataSnap.exists()){
-                            userData = userDataSnap.data();
-                        }
-
+                        const userData = userDataSnap.exists() ? userDataSnap.data() : null;
 
                         // check if current user liked this post
                         const likeDocRef = doc(db, "posts", docSnap.id, "likes", authUser.uid);
                         const likeDocSnap = await getDoc(likeDocRef);
                         const currentUserLiked = likeDocSnap.exists();
-
-                        
 
                         return {
                             id: docSnap.id,
@@ -295,7 +308,7 @@ function Home(){
                             createdAt: postData.createdAt?.toDate().toLocaleString() || "Unknown",
                             likesAmount: postData.likesAmount || 0,
                             commentsAmount: postData.commentsAmount || 0,
-                            currentUserLiked, // ✅ true/false
+                            currentUserLiked,
                             projectId: postData.projectId
                         };
                     })
@@ -308,7 +321,9 @@ function Home(){
         };
 
         fetchPosts();
-    }, [authUser]);
+    }, [authUser, sortPostMode]); // 👈 re-run when sort mode changes
+
+
 
     async function createPost(){
         if (!authUser) return;
