@@ -23,7 +23,8 @@ import {
   onSnapshot,
   updateDoc,
   addDoc,
-  increment
+  increment,
+  startAfter
 } from "firebase/firestore";
 
 function Home(){
@@ -39,11 +40,13 @@ function Home(){
     const [addPostInput, setAddPostInput] = useState("");
     const [showAddPost, setShowAddPost] = useState(false);
 
+    const [lastVisible, setLastVisible] = useState(null);
+    const [hasMore, setHasMore] = useState(true);
+    const [isFetchingMore, setIsFetchingMore] = useState(false);
     const [sortPostMode, setSortPostMode] = useState("LTO")
     // LTO => Latest To Oldest
     // OTL => Oldest To Latest
     // LIK => By Like
-    // DLK => By Dislike
     // COM => By Comments
 
     const [loading, setLoading] = useState(true);
@@ -257,71 +260,128 @@ function Home(){
         }
     }
 
-    //fetch posts
-    useEffect(() => {
+    async function fetchPosts(loadMore = false){
         if (!authUser) return;
+        if (isFetchingMore) return; // prevent double-fetch
+        setIsFetchingMore(true);
 
-        const fetchPosts = async () => {
-            try {
-                const postsRef = collection(db, "posts");
-                let postsQuery;
+        try {
+            const postsRef = collection(db, "posts");
+            let postsQuery;
 
-                // 🧠 Build query based on sort mode
-                if (sortPostMode === "LTO") {
-                    postsQuery = query(postsRef, orderBy("createdAt", "desc"), limit(6));
-                } else if (sortPostMode === "OTL") {
-                    postsQuery = query(postsRef, orderBy("createdAt", "asc"), limit(6));
-                } else if (sortPostMode === "LIK") {
-                    postsQuery = query(postsRef, orderBy("likesAmount", "desc"), limit(6));
-                } else if (sortPostMode === "DLK") {
-                    postsQuery = query(postsRef, orderBy("likesAmount", "asc"), limit(6));
-                } else if (sortPostMode === "COM") {
-                    postsQuery = query(postsRef, orderBy("commentsAmount", "desc"), limit(6));
-                } else {
-                    // fallback
-                    postsQuery = query(postsRef, orderBy("createdAt", "desc"), limit(6));
-                }
+            // 🧠 Build query based on sort mode
+            const sortField =
+                sortPostMode === "LIK" || sortPostMode === "DLK"
+                    ? "likesAmount"
+                    : sortPostMode === "COM"
+                    ? "commentsAmount"
+                    : "createdAt";
 
-                const postsSnap = await getDocs(postsQuery);
+            const sortDirection =
+                sortPostMode === "OTL" || sortPostMode === "DLK" ? "asc" : "desc";
 
-                const postsData = await Promise.all(
-                    postsSnap.docs.map(async (docSnap) => {
-                        const postData = docSnap.data();
-
-                        // get post owner data
-                        const userRef = doc(db, "users", postData.userId);
-                        const userDataSnap = await getDoc(userRef);
-                        const userData = userDataSnap.exists() ? userDataSnap.data() : null;
-
-                        // check if current user liked this post
-                        const likeDocRef = doc(db, "posts", docSnap.id, "likes", authUser.uid);
-                        const likeDocSnap = await getDoc(likeDocRef);
-                        const currentUserLiked = likeDocSnap.exists();
-
-                        return {
-                            id: docSnap.id,
-                            userId: postData.userId,
-                            username: userData?.username,
-                            displayName: userData?.displayName,
-                            userPhotoURL: userData?.photoURL,
-                            message: postData.message,
-                            createdAt: postData.createdAt?.toDate().toLocaleString() || "Unknown",
-                            likesAmount: postData.likesAmount || 0,
-                            commentsAmount: postData.commentsAmount || 0,
-                            currentUserLiked,
-                            projectId: postData.projectId
-                        };
-                    })
+            // Build query
+            if (loadMore && lastVisible) {
+                postsQuery = query(
+                    postsRef,
+                    orderBy(sortField, sortDirection),
+                    startAfter(lastVisible),
+                    limit(3)
                 );
-
-                setPosts(postsData);
-            } catch (err) {
-                console.error("Error fetching posts:", err);
+            } else {
+                postsQuery = query(
+                    postsRef,
+                    orderBy(sortField, sortDirection),
+                    limit(3)
+                );
             }
-        };
 
-        fetchPosts();
-    }, [authUser, sortPostMode]); // 👈 re-run when sort mode changes
+            const postsSnap = await getDocs(postsQuery);
+
+            if (postsSnap.empty) {
+                setHasMore(false);
+                setIsFetchingMore(false);
+                return;
+            }
+
+            const newPostsData = await Promise.all(
+                postsSnap.docs.map(async (docSnap) => {
+                    const postData = docSnap.data();
+
+                    // get post owner data
+                    const userRef = doc(db, "users", postData.userId);
+                    const userDataSnap = await getDoc(userRef);
+                    const userData = userDataSnap.exists() ? userDataSnap.data() : null;
+
+                    // check if current user liked this post
+                    const likeDocRef = doc(db, "posts", docSnap.id, "likes", authUser.uid);
+                    const likeDocSnap = await getDoc(likeDocRef);
+                    const currentUserLiked = likeDocSnap.exists();
+
+                    return {
+                        id: docSnap.id,
+                        userId: postData.userId,
+                        username: userData?.username,
+                        displayName: userData?.displayName,
+                        userPhotoURL: userData?.photoURL,
+                        message: postData.message,
+                        createdAt: postData.createdAt?.toDate().toLocaleString() || "Unknown",
+                        likesAmount: postData.likesAmount || 0,
+                        commentsAmount: postData.commentsAmount || 0,
+                        currentUserLiked,
+                        projectId: postData.projectId
+                    };
+                })
+            );
+
+            const lastDoc = postsSnap.docs[postsSnap.docs.length - 1];
+            setLastVisible(lastDoc);
+
+            if (loadMore) {
+                setPosts((prev) => [...prev, ...newPostsData]);
+            } else {
+                setPosts(newPostsData);
+            }
+
+            setIsFetchingMore(false);
+        } catch (err) {
+            console.error("Error fetching posts:", err);
+            setIsFetchingMore(false);
+        }
+    };
+
+    //fetch post use effect
+    useEffect(() => {
+        if (authUser) {
+            setHasMore(true);
+            setLastVisible(null);
+            fetchPosts(false);
+        }
+    }, [authUser, sortPostMode]);
+
+    useEffect(() => {
+    const postContainer = document.querySelector(`.${styles.postcontainer}`);
+    if (!postContainer) return;
+
+    const handleScroll = () => {
+        const { scrollTop, scrollHeight, clientHeight } = postContainer;
+
+        if (
+        scrollTop + clientHeight >= scrollHeight - 100 &&
+        hasMore &&
+        !isFetchingMore
+        ) {
+        console.log("Reached bottom of post container → fetching more posts");
+        fetchPosts(true);
+        }
+    };
+
+    postContainer.addEventListener("scroll", handleScroll);
+
+    return () => {
+        postContainer.removeEventListener("scroll", handleScroll);
+    };
+    }, [hasMore, isFetchingMore, fetchPosts]);
 
 
 
@@ -467,6 +527,8 @@ function Home(){
                                                 redirectToUserPage={() => navigate(`/account/${post.userId}`)}
                                                 projectId={post.projectId}
                                             />)}
+                        {isFetchingMore && <p>Loading more posts...</p>}
+                        {!hasMore && <p>No more posts to show.</p>}
                     </div>
                 </div>
                 <div className={styles.sidebarcontainer}>
