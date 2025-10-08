@@ -114,7 +114,7 @@ function Account(){
                     {profile?.bio ? <p className={styles.bio}>{profile.bio}</p> : <p>Loading bio..</p>}
 
                     {!isOwner && (
-                        <button>Send friend request</button>
+                        <button className={styles.friendRequestButton}>Send friend request</button>
                     )}
 
                     {isOwner && !isEditing && (

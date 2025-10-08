@@ -92,6 +92,8 @@ p{
 .messagecontainer{
     height: 100%;
     cursor: pointer;
+    white-space: pre-wrap;
+    overflow: hidden;
 }
 
 .footercontainer{

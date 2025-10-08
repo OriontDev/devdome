@@ -106,10 +106,14 @@
     transform: scale(1.05);
 }
 
-.messagecontainer{
+.messagecontainer {
     font-size: 1.2rem;
-    min-height: 5rem;
+    /* min-height: 5rem; */
+    height: auto;            /* let it grow naturally */
     margin-bottom: 10px;
+    word-wrap: break-word;   /* prevent long words from overflowing */
+    overflow-wrap: break-word; /* modern fallback */
+    white-space: pre-wrap;   /* preserve newlines and wrap long text */
 }
 
 
@@ -214,6 +218,7 @@
     line-height: 1.2rem;     /* adjust to match font size */
     padding: 4px 8px;        /* optional, adjust for spacing */
     min-height: 1.5rem;      /* 1 line height */
+    height: auto;
     max-height: 6rem;
     box-sizing: border-box;  /* include padding in height */
 }

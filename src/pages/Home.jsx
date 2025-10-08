@@ -3,6 +3,7 @@ import styles from './Home.module.css'
 import ProfileCard from "../components/ProfileCard/ProfileCard.jsx";
 import FriendCard from "../components/FriendCard/FriendCard.jsx";
 import Post from "../components/Post/Post.jsx";
+import AddPost from "../components/AddPost/AddPost.jsx";
 import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useParams, useNavigate } from "react-router-dom";
@@ -20,6 +21,7 @@ import {
   limit,
   onSnapshot,
   updateDoc,
+  addDoc,
   increment
 } from "firebase/firestore";
 
@@ -32,6 +34,16 @@ function Home(){
     const [friends, setFriends] = useState([]); //user's friend
     const [isPosting, setIsPosting] = useState(false);
     const [posts, setPosts] = useState([]);
+
+    const [addPostInput, setAddPostInput] = useState("");
+    const [showAddPost, setShowAddPost] = useState(false);
+
+    const [sortPostMode, setSortPostMode] = useState("LTO")
+    // LTO => Latest To Oldest
+    // OTL => Oldest To Latest
+    // LIK => By Like
+    // DLK => By Dislike
+    // COM => By Comments
 
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate(); //initialize usenavigate
@@ -298,6 +310,44 @@ function Home(){
         fetchPosts();
     }, [authUser]);
 
+    async function createPost(){
+        if (!authUser) return;
+        if (addPostInput.length === 0) return;
+
+        const postsCollectionRef = collection(db, "posts");
+
+        // New comment data
+        const newPost = {
+            userId: authUser.uid,
+            message: addPostInput,
+            createdAt: serverTimestamp(),
+            edited: false,
+            likesAmount: 0,
+            commentsAmount: 0,
+            projectId: "21"
+        };
+
+        // Add comment to Firestore
+        const postDoc = await addDoc(postsCollectionRef, newPost);
+
+        // Reset input + textarea height
+        setAddPostInput("");
+        setShowAddPost(false);
+
+        // Optimistic update: add it into local state
+        setPosts(prev => [
+            {
+                id: postDoc.id,
+                ...newPost,
+                createdAt: new Date(), // show as "just now"
+                username: userProfile?.username,
+                displayName: userProfile?.displayName,
+                userPhotoURL: userProfile?.photoURL,
+            },
+            ...prev
+        ]);
+    }
+
     // like/unlike post
     async function likePost(postId) {
         if (!authUser) return;
@@ -354,22 +404,33 @@ function Home(){
     return(
         <>
             <div className={styles.container}>
+                {showAddPost && (
+                    <>
+                        <div className={styles.overlay} onClick={() => {setShowAddPost(false);}}></div>            
+                        <AddPost
+                            createPost={() => createPost()}
+                            setShowAddPost={() => setShowAddPost(false)}
+                            setAddPostInput={setAddPostInput}
+                        />
+                    </>
+                )}
+
                 <div className={styles.contentcontainer}>
                     <div className={styles.userpostcontainer}>
                         {isPosting ? 
                             <div className={styles.overlay} onClick={closePopup}></div> 
                         : <></>}
                         <img src={userProfile !== null ? userProfile.photoURL : null} className={styles.userpostpfp}/>
-                        <button>Whats on your mind, {userProfile !== null ? userProfile.displayName : "Loading.."} ?</button>
+                        <button onClick={() => setShowAddPost(true)}>Whats on your mind, {userProfile !== null ? userProfile.displayName : "Loading.."} ?</button>
                     </div>
                     {console.log(posts)}
                     <div className={styles.postcontainer}>
-                        <Post
+                        {/* <Post
                             username={"OriontDev"}
                             message={"lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit ametlorem ipsum dolor sit amet lorem ipsum dolor sit lorem ipsum dolor sit amet lorem ipsum dolor s lorem ipsum dolor s lorem ipsum dolor sit ametit ametit amet amet"}
                             createdAt={"24-20-12"}
                             likesAmount={21}
-                            commentsAmount={20}/>
+                            commentsAmount={20}/> */}
                         {posts.map((post) => <Post
                                                 key={post.id}
                                                 username={post.username}
@@ -377,7 +438,12 @@ function Home(){
                                                 userId={post.userId}
                                                 userPhotoURL={post.userPhotoURL}
                                                 message={post.message}
-                                                createdAt={post.createdAt}
+                                                // createdAt={post.createdAt}
+                                                createdAt={
+                                                post.createdAt instanceof Date
+                                                    ? post.createdAt.toLocaleString()
+                                                    : post.createdAt
+                                                }
                                                 likesAmount={post.likesAmount}
                                                 commentsAmount={post.commentsAmount}
                                                 currentUserLiked={post.currentUserLiked}

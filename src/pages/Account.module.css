@@ -116,6 +116,11 @@
   margin-top: 10px;         /* optional spacing */
 }
 
+.friendRequestButton{
+    background-color: #1877F2;
+    color: white;
+}
+
 @media screen and (max-width: 768px) {
     .profilecontainer{
         display: none;
