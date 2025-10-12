@@ -71,3 +71,9 @@
 .editcontainer{
   width: 100%;
 }
+
+@media screen and (max-width: 768px) {
+  .editPopup input {
+      font-size: 18px;
+  }
+}

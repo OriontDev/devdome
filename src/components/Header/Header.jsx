@@ -229,7 +229,8 @@ function Header(){
                         
                         {menuOpen && (
                         <div className={styles.dropdown}>
-                            <div className={styles.dropdownItemCard} onClick={() => navigate(`/account/${auth.currentUser.uid}`)}>
+                            <div className={styles.dropdownItemCard} onClick={() => {navigate(`/account/${auth.currentUser.uid}`);
+                                                                                    setMenuOpen(false)}}>
                                 <img src={userProfile?.photoURL} className={styles.dropdownpfp}/>
                                 <h1 className={styles.dropdownuser}>{userProfile.displayName || "User"}</h1>
                             </div>

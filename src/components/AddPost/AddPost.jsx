@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import styles from './AddPost.module.css';
 
 function AddPost( {createPost, setShowAddPost, setAddPostInput} ){
     
     const [localText, setLocalText] = useState("");
+    const textareaRef = useRef(null); // <--- CREATE A REF
 
     // // If currentCommentText changes (e.g. when editing another comment), update local state
     // useEffect(() => {
@@ -18,6 +19,19 @@ function AddPost( {createPost, setShowAddPost, setAddPostInput} ){
     function handleCreateClicked(){
         createPost();
     }
+    // Auto-resize logic with a guaranteed buffer
+    useEffect(() => {
+        const el = textareaRef.current;
+        if (el) {
+            // 1. Reset height to 'auto' to correctly calculate scrollHeight based on content
+            el.style.height = 'auto'; 
+            
+            // 2. Set height to scrollHeight + 2px buffer for robustness.
+            // This prevents the common issue of the textarea being one pixel too short 
+            // when content wraps.
+            el.style.height = (el.scrollHeight + 2) + 'px';
+        }
+    }, [localText]);
     
     return(
         <div className={styles.container}>
@@ -29,7 +43,7 @@ function AddPost( {createPost, setShowAddPost, setAddPostInput} ){
             </div>
 
             <div className={styles.textareaContainer}>
-                <textarea onChange={handleChange} value={localText}></textarea>
+                <textarea onChange={handleChange} value={localText} ref={textareaRef}></textarea>
             </div>
 
             <div className={styles.buttonsContainer}>
