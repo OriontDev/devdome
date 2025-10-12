@@ -19,17 +19,25 @@ function AddPost( {createPost, setShowAddPost, setAddPostInput} ){
     function handleCreateClicked(){
         createPost();
     }
-    // Auto-resize logic with a guaranteed buffer
+    // Auto-resize logic with an aggressive reset to guarantee expansion
     useEffect(() => {
         const el = textareaRef.current;
         if (el) {
+            
+            // CRITICAL FIX: Temporarily set height to '0px' to force the browser 
+            // to completely discard the old rendering and accurately calculate scrollHeight.
+            el.style.height = '0px'; 
+            
             // 1. Reset height to 'auto' to correctly calculate scrollHeight based on content
             el.style.height = 'auto'; 
             
             // 2. Set height to scrollHeight + 2px buffer for robustness.
-            // This prevents the common issue of the textarea being one pixel too short 
-            // when content wraps.
             el.style.height = (el.scrollHeight + 2) + 'px';
+            console.log("Height plus!")
+            console.log(el.style.height)
+            
+            // NOTE on Scrollbar: Once the calculated height exceeds the CSS max-height: 30vh,
+            // the CSS rule overflow-y: auto will automatically enable the scrollbar.
         }
     }, [localText]);
     

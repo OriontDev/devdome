@@ -13,13 +13,13 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     width: 50%;
-    min-width: 400px;
-    max-width: 1100px;
+    /* min-width: 400px;
+    max-width: 1100px; */
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: center;
-    height: fit-content;
+    height: auto;
     max-height: 90vh; /* shrink if screen is smaller */
     overflow-y: auto; /* enable scrolling if content is too tall */
     gap: 15px;
@@ -53,25 +53,27 @@ button{
   background-color: rgb(238, 238, 238);  
 }
 
-/* Final recommended CSS for textarea */
-/* Final CSS for textarea to ensure auto-expansion and scrolling */
+/* CRITICAL FIX: Applying !important to override external overflow:hidden */
 textarea{
     width: 100%;
     resize: none;
     font-size: 1.2rem;
-    line-height: normal;
+    line-height: 1.4; 
     min-height: 10rem; 
-    max-height: 30vh;
-    overflow-y: auto; 
+    max-height: 30vh !important; /* FORCED MAX HEIGHT */
+    overflow-y: auto !important; /* FORCED SCROLLBAR */
     border: none;
     outline: none;
-    background-color: #ffffff00;
-    
-    /* Ensures correct height calculation for auto-resize */
-    box-sizing: content-box;
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    padding-bottom: 1px;
+    font-family: inherit;
+    box-sizing: content-box; /* Ensures JS height calculation is accurate */
+}
 
-    /* Small buffer to help scrollHeight calculation avoid rounding errors */
-    padding-bottom: 1px; 
+textarea::placeholder {
+    color: #a0a0a0;
 }
 
 .textareaContainer{
@@ -79,6 +81,7 @@ textarea{
   border-radius: 10px;
   padding: 4px;
   width: 100%;
+  height: auto;
 }
 
 .projectContainer{
@@ -96,16 +99,14 @@ textarea{
 }
 
 @media screen and (max-width: 768px) {
-  .container{
-    position: fixed;
-    width: 20%;
-    padding: 10px 15px;
-  }
+    .container{
+        width: 90%;
+        min-width: unset;
+        padding: 15px;
+    }
 
-  .textareaContainer{
-    background-color: rgb(230, 230, 230);
-    border-radius: 10px;
-    padding: 4px;
-    width: 95%;
-  }
+    .textareaContainer{
+        padding: 8px;
+        width: 100%;
+    }
 }

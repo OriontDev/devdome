@@ -2,7 +2,7 @@ import styles from './Login.module.css'
 import google from '/google.svg'
 import { auth, googleProvider, db } from "../config/firebase"
 import { useNavigate } from "react-router-dom";
-import { createUserWithEmailAndPassword, signInWithPopup, signOut, fetchSignInMethodsForEmail, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithPopup, signOut, fetchSignInMethodsForEmail, signInWithEmailAndPassword } from "firebase/auth";
 import {
   getDocs,
   collection,

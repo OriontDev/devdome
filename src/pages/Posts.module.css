@@ -407,4 +407,10 @@
     .contentcontainer{
         width: 90vw;
     }
+    .headercontainer{
+        display: flex;
+        gap: 5px;
+        width: auto;
+    }
+
 }
