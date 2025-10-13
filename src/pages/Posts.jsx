@@ -796,7 +796,7 @@ function Posts() {
           <div className={styles.headercontainer}>
                 <img src={postData !== null ? postData.userPhotoURL : pfp} className={styles.headerpfp} onClick={() => navigate(`/account/${postData.userId}`)}/>
                 <div className={styles.titlecontainer}>
-                    <p className={styles.postusername} onClick={() => navigate(`/account/${postData.userId}`)}>@{postData !== null ? postData.username : "Loading"} - {postData !== null ? postData.displayName : "Loading"}</p>
+                    <p className={styles.postusername} onClick={() => navigate(`/account/${postData.userId}`)}>@{postData !== null ? postData.username : "Loading"} <br></br>- {postData !== null ? postData.displayName : "Loading"}</p>
                     <p>{postData !== null ? postData.createdAt : "Loading"} {postData.edited ? "- (Edited)" : ""}</p>
                 </div>
                 <div className={styles.headerbuttoncontainer}>

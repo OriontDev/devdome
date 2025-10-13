@@ -234,12 +234,20 @@ function Header(){
                                 <img src={userProfile?.photoURL} className={styles.dropdownpfp}/>
                                 <h1 className={styles.dropdownuser}>{userProfile.displayName || "User"}</h1>
                             </div>
+                            <div className={styles.dropdownItem} onClick={() => {navigate(`/friends`);
+                                                                                setMenuOpen(false)}}>
+                                <div className={styles.dropdownlogocontainer}>
+                                    <div className={styles.friendicon}></div>
+                                </div>
+                                <h2>Friends</h2>
+                            </div>
                             <div className={styles.dropdownItem} onClick={logOut}>
                                 <div className={styles.dropdownlogocontainer}>
                                     <div className={styles.logouticon}></div>
                                 </div>
                                 <h2>Log out</h2>
                             </div>
+                            
                             {/* <button className={styles.dropdownItem} onClick={logOut}>Log Out</button> */}
                         </div>
                         )}

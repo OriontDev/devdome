@@ -16,7 +16,7 @@ function Post( {username, displayName, userPhotoURL, message, createdAt, likesAm
                         <p className={styles.username} onClick={redirectToUserPage}>@{username} - {displayName}</p>
                         <p className={styles.date}>{createdAt}</p>
                     </div>
-                    <div className={styles.postinfobutton}>•••</div>
+                    {/* <div className={styles.postinfobutton}>•••</div> */}
                 </div>
 
                 <div className={styles.projectidcontainer} onClick={() => {navigate(`/project/${projectId}`)}}>
