@@ -7,14 +7,69 @@
 .mainContainer{
     /* background-color: red; */
     height: calc(98vh - 60px);
-    background-color: white;
+    padding: 5px 15px;
     display: flex;
     gap: 10px;
     justify-content: center;
     margin-top: 10px;
 }
 
+.subContainer{
+    background-color: white;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+.friendFilterContainer{
+    background-color: #ededed;
+    padding: 10px;
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.filterButton{
+  color: white;
+  background-color: #1877F2;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.filterButton:hover{
+  background-color: #3688f2;
+}
+
+.buttonChoosen{
+  background-color: #63a1f2;
+  color: white;
+}
+
+.friendCardContainer{
+    width: 50%;
+}
+
+.friendsContainer{
+    padding: 10px;
+    display: flex;
+    width: 100%;
+    gap: 10px;
+}
 
 @media screen and (max-width: 768px) {
+    .friendCardContainer{
+        width: 100%;
+    }
 
+    .friendsContainer{
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
 }

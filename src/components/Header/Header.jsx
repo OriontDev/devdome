@@ -181,8 +181,10 @@ function Header(){
         <>
             <div className={styles.header}>
                 <div className={styles.leftheader}>
-                    <img className={styles.logo} src={logo} onClick={() => navigate("/home")}/>
-                    <h1 className={styles.title} onClick={() => navigate("/home")}>DevDome</h1>
+                    <img className={styles.logo} src={logo} onClick={() => {navigate("/home");
+                                                                            setMenuOpen(false)}}/>
+                    <h1 className={styles.title} onClick={() => {navigate("/home");
+                                                                setMenuOpen(false)}}>DevDome</h1>
                 </div>
                 <div className={styles.centerheader}>
                     <img className={styles.logo} src={logo}/>
