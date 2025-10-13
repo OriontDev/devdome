@@ -39,7 +39,6 @@ function Post( {username, displayName, userPhotoURL, message, createdAt, likesAm
                     </div>
                     <div className={styles.footerbuttoncontainer}>
                         <div className={styles.sharelogo}></div>
-                        <p>67</p>
                     </div>
                 </div>
 

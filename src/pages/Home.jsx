@@ -3,6 +3,7 @@ import styles from './Home.module.css'
 import ProfileCard from "../components/ProfileCard/ProfileCard.jsx";
 import FriendCard from "../components/FriendCard/FriendCard.jsx";
 import Post from "../components/Post/Post.jsx";
+import FilterPostBar from "../components/FilterPostBar/FilterPostBar.jsx";
 import AddPost from "../components/AddPost/AddPost.jsx";
 import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
@@ -350,14 +351,18 @@ function Home(){
         }
     };
 
-    //fetch post use effect
+    // fetch post use effect
     useEffect(() => {
         if (authUser) {
             setHasMore(true);
             setLastVisible(null);
+            
+            // 🌟 THE FIX: Clear old posts before fetching the new set
+            setPosts([]); 
+            
             fetchPosts(false);
         }
-    }, [authUser, sortPostMode]);
+    }, [authUser, sortPostMode]); // <-- This runs when sortPostMode changes
 
     useEffect(() => {
     const postContainer = document.querySelector(`.${styles.postcontainer}`);
@@ -500,6 +505,9 @@ function Home(){
                     </div>
                     {console.log(posts)}
                     <div className={styles.postcontainer}>
+                        <FilterPostBar
+                            sortPostMode={sortPostMode}
+                            setSortPostMode={setSortPostMode}/>
                         {/* <Post
                             username={"OriontDev"}
                             message={"lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit ametlorem ipsum dolor sit amet lorem ipsum dolor sit lorem ipsum dolor sit amet lorem ipsum dolor s lorem ipsum dolor s lorem ipsum dolor sit ametit ametit amet amet"}

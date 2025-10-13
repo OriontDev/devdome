@@ -856,7 +856,6 @@ function Posts() {
                 </div>
                 <div className={styles.footerbuttoncontainer}>
                     <div className={styles.sharelogo}></div>
-                    <p>67</p>
                 </div>
             </div>
             <hr/>
