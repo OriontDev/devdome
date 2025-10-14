@@ -12,7 +12,8 @@ function Friends(){
     const [friendReccomendations, setFriendReccomendations] = useState([]); //friend reccomendation
     const [friends, setFriends] = useState([]); //user's friend
     const [loading, setLoading] = useState(true);
-    const [filterMode, setFilterMode] = useState("Reccomendations");
+    const [loadingFriends, setLoadingFriends] = useState(true);
+    const [filterMode, setFilterMode] = useState("List");
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -79,6 +80,7 @@ function Friends(){
                 })
             );
             setFriends(friendsData.filter(Boolean));
+            setLoadingFriends(false);
         });
 
         return () => unsubscribe();
@@ -99,7 +101,7 @@ function Friends(){
                     <div className={styles.friendsContainer}>
                         {filterMode === "List" &&
                             <>
-                                {friends.length === 0 ? 
+                                {!loadingFriends ? friends.length === 0 ? 
                                     <h3>you dont have a friend lol</h3> :
                                     friends.map((friend) =>
                                         <div className={styles.friendCardContainer}>
@@ -111,7 +113,9 @@ function Friends(){
                                                 removeFunction={() => removeFriend(friend.userId)}
                                             />
                                         </div>
-                                )}
+                                ) : <div className={styles.loadingContainer}>
+                                        <div className={styles.spinner}></div>
+                                    </div>}
                             </>
                         }
                         {filterMode === "Reccomendations" &&

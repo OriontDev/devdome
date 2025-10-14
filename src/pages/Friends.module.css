@@ -60,6 +60,30 @@
     gap: 10px;
 }
 
+.loadingContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; /* adjust based on your layout */
+}
+
+.spinner {
+  width: 100px;
+  height: 100px;
+  border: 6px solid #ccc;
+  border-top-color: #4a90e2; /* spinner color */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
 @media screen and (max-width: 768px) {
     .friendCardContainer{
         width: 100%;
