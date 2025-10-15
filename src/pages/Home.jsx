@@ -514,7 +514,7 @@ function Home(){
                             createdAt={"24-20-12"}
                             likesAmount={21}
                             commentsAmount={20}/> */}
-                        {posts.map((post) => <Post
+                        { posts.map((post) => <Post
                                                 key={post.id}
                                                 username={post.username}
                                                 displayName={post.displayName}
@@ -535,7 +535,9 @@ function Home(){
                                                 redirectToUserPage={() => navigate(`/account/${post.userId}`)}
                                                 projectId={post.projectId}
                                             />)}
-                        {isFetchingMore && <p>Loading more posts...</p>}
+                        {isFetchingMore && <div className={styles.loadingContainer}>
+                                                <div className={styles.spinner}></div>
+                                            </div>}
                         {!hasMore && <p>No more posts to show.</p>}
                     </div>
                 </div>

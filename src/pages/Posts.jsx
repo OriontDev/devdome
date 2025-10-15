@@ -42,6 +42,7 @@ function Posts() {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showEditConfirm, setShowEditConfirm] = useState(false);
 
+    const [loadingComments, setLoadingComments] = useState(true);
 
     const [showPostEditConfirm, setShowPostEditConfirm] = useState(false);
     const [editPostInput, setEditPostInput] = useState("");
@@ -621,6 +622,7 @@ function Posts() {
 
         const fetchComments = async () => {
             try {
+                setLoadingComments(true);
                 const commentsRef = collection(db, "posts", postData.id, "comments");
                 const commentsSnap = await getDocs(commentsRef);
 
@@ -689,6 +691,7 @@ function Posts() {
                 });
 
                 setComments(topLevelComments);
+                setLoadingComments(false);
                 // console.log(allCommentsWithUser);
 
             } catch (err) {
@@ -757,7 +760,6 @@ function Posts() {
     // console.log(selectedCommentId)
     // console.log(selectedParentCommentId)
     // console.log("showDeleteConfirm: " + showDeleteConfirm)
-
 
   return (
     <>
@@ -874,7 +876,7 @@ function Posts() {
             </div>
             <hr/>
             <div className={styles.commentscontainer}>
-                {comments.map((comment) => <Comment
+                {!loadingComments ? comments.map((comment) => <Comment
                                                 key={comment.id}
                                                 postId={postData.id}
                                                 commentId={comment.id}
@@ -901,7 +903,10 @@ function Posts() {
                                                 handleDeleteClick={handleCommentDeleteClicked}
                                                 handleEditClick={handleCommentEditClicked}
                                                 setSelectedCommentText={setSelectedCommentText}
-                                                />)}
+                                                />):
+                                                <div className={styles.loadingContainer}>
+                                                    <div className={styles.spinner}></div>
+                                                </div>}
             </div>
         </div>
 
