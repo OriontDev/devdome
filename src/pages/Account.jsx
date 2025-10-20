@@ -7,7 +7,7 @@ import x_logo from "../assets/x.svg"
 import linkedin_logo from "../assets/linkedin.svg"
 import pfp from '/public/pfp.png'; //loading pfp
 import Projectcard from "../components/Projectcard/Projectcard.jsx";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, onSnapshot, collection } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useParams } from "react-router-dom";
@@ -21,6 +21,23 @@ function Account(){
     const [currentUser, setCurrentUser] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [isOwner, setIsOwner] = useState(false);
+
+    const [friends, setFriends] = useState([]);
+
+    const [isFriend, setIsFriend] = useState(false);
+
+    // Check if currentUser and profile are friends
+    useEffect(() => {
+        if(isOwner){return};
+        if (!profile || friends.length === 0) {
+            setIsFriend(false);
+            return;
+        }
+
+        const friendExists = friends.some(friend => friend.id === profile.uid);
+        setIsFriend(friendExists);
+    }, [friends, profile]);
+
 
 
     const userPhoto = profile?.photoURL || pfp; // fallback if no photo
@@ -74,6 +91,29 @@ function Account(){
         fetchProfile();
     }, [uid]); //repeat everytime uid in web link mounts or changed
 
+    // fetch user's friends
+    // real-time listener for user's friends with onsnapshot
+    useEffect(() => {
+        if (!currentUser) return;
+
+        const friendsRef = collection(db, "users", currentUser.uid, "friends");
+        const unsubscribe = onSnapshot(friendsRef, async (snapshot) => {
+            const friendsData = await Promise.all(
+                snapshot.docs.map(async (docSnap) => {
+                    const data = docSnap.data();
+                    const friendRef = doc(db, "users", data.uid);
+                    const friendSnap = await getDoc(friendRef);
+                    return friendSnap.exists()
+                        ? { id: friendSnap.id, ...friendSnap.data() }
+                        : null;
+                })
+            );
+            setFriends(friendsData.filter(Boolean));
+        });
+
+        return () => unsubscribe();
+    }, [currentUser]);
+
 
     console.log("Profile photo:", profile?.photoURL);
     console.log("Current user photo:", currentUser?.photoURL);
@@ -113,7 +153,7 @@ function Account(){
 
                     {profile?.bio ? <p className={styles.bio}>{profile.bio}</p> : <p>Loading bio..</p>}
 
-                    {!isOwner && (
+                    {!isOwner && !isFriend && (
                         <button className={styles.friendRequestButton}>Send friend request</button>
                     )}
 
