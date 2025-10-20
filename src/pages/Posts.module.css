@@ -69,6 +69,8 @@
     border-radius: 50%;
     width: 60px;
     cursor: pointer;
+    object-fit: cover;     /* ensures the image fills without stretching */
+    aspect-ratio: 1 / 1;   /* keeps it perfectly square */
 }
 
 .postusername{
@@ -227,6 +229,8 @@
 .commentinputpfp{
     border-radius: 50%;
     width: 50px;
+    object-fit: cover;     /* ensures the image fills without stretching */
+    aspect-ratio: 1 / 1;   /* keeps it perfectly square */
 }
 
 .textareacontainer{

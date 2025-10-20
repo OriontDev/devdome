@@ -21,6 +21,8 @@
     border-radius: 50%;
     width: 3.5rem;
     cursor: pointer;
+    object-fit: cover;     /* ensures the image fills without stretching */
+    aspect-ratio: 1 / 1;   /* keeps it perfectly square */
 }
 
 .addbutton{

@@ -6,6 +6,8 @@
 .pfp{
     height: 50px;
     border-radius: 50%;
+    object-fit: cover;     /* ensures the image fills without stretching */
+    aspect-ratio: 1 / 1;   /* keeps it perfectly square */
 }
 
 .usercontainer{
@@ -238,6 +240,8 @@
 .userReplyPfp{
     height: 35px;
     border-radius: 50%;
+    object-fit: cover;     /* ensures the image fills without stretching */
+    aspect-ratio: 1 / 1;   /* keeps it perfectly square */
 }
 
 .userReplyTextButtonContainer{
