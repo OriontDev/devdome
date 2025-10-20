@@ -17,7 +17,7 @@ function Projectcard( {name, description, images, comments, likes, projectId} ){
                        <p className={styles.description}>{description.length > 350 ? description.slice(0, 350) + "..." : description}</p>
                     </div>
 
-                    <img className={styles.image} src={images[0]}/>
+                    <img className={styles.image} src={images}/>
                     <div className={styles.reactioncontainer}>
                         <h2>❤️{likes}</h2>
                         <h2>💬{comments}</h2>

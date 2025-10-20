@@ -21,6 +21,7 @@ function Account(){
     const [currentUser, setCurrentUser] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [isOwner, setIsOwner] = useState(false);
+    const [isLoadingData, setIsLoadingData] = useState(true);
 
     const [friends, setFriends] = useState([]);
 
@@ -86,6 +87,7 @@ function Account(){
             } else {
                     console.log("No profile found for this uid!");
             }
+            setIsLoadingData(false); 
         };
 
         fetchProfile();
@@ -109,6 +111,7 @@ function Account(){
                 })
             );
             setFriends(friendsData.filter(Boolean));
+            setIsLoadingData(false); 
         });
 
         return () => unsubscribe();
@@ -153,9 +156,19 @@ function Account(){
 
                     {profile?.bio ? <p className={styles.bio}>{profile.bio}</p> : <p>Loading bio..</p>}
 
-                    {!isOwner && !isFriend && (
-                        <button className={styles.friendRequestButton}>Send friend request</button>
+                    {isLoadingData ? (
+                        <div className={styles.loadingContainer}>
+                            <div className={styles.spinner}></div>
+                        </div>
+                            ) : isOwner ? null : ( // hide buttons for your own account
+                            !isFriend ? (
+                                <button className={styles.friendRequestButton}>Send friend request</button>
+                            ) : (
+                                <button className={styles.friendRequestButton}>Remove Friend</button>
+                            )
                     )}
+
+
 
                     {isOwner && !isEditing && (
                     <button onClick={() => setIsEditing(true)} className={styles.editbutton}>
@@ -219,7 +232,7 @@ function Account(){
                         <Projectcard
                             name={"Project 1"}
                             description={"Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dol dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteuror sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur"}
-                            images={[pfp]}
+                            images={"https://static.wikitide.net/hoyodexwiki/thumb/d/d4/Venti_%28YS-MU%29.png/800px-Venti_%28YS-MU%29.png"}
                             comments={tempCommentAmount}
                             likes={tempLikeAmount}
                             projectId={212312}
@@ -227,7 +240,23 @@ function Account(){
                         <Projectcard
                             name={"Project 1"}
                             description={"Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur"}
-                            images={[pfp]}
+                            images={"https://preview.redd.it/venti-deserves-improvements-v0-r4jc3ryohv5e1.jpeg?width=640&crop=smart&auto=webp&s=91cb9ec4837f947081cb26a0ca603e1e89329292"}
+                            comments={tempCommentAmount}
+                            likes={tempLikeAmount}
+                            projectId={21231}
+                        />
+                        <Projectcard
+                            name={"Project 1"}
+                            description={"Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dol dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteuror sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur"}
+                            images={"https://static.wikitide.net/hoyodexwiki/thumb/d/d4/Venti_%28YS-MU%29.png/800px-Venti_%28YS-MU%29.png"}
+                            comments={tempCommentAmount}
+                            likes={tempLikeAmount}
+                            projectId={212312}
+                        />
+                        <Projectcard
+                            name={"Project 1"}
+                            description={"Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur"}
+                            images={"https://preview.redd.it/venti-deserves-improvements-v0-r4jc3ryohv5e1.jpeg?width=640&crop=smart&auto=webp&s=91cb9ec4837f947081cb26a0ca603e1e89329292"}
                             comments={tempCommentAmount}
                             likes={tempLikeAmount}
                             projectId={21231}
