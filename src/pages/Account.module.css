@@ -36,6 +36,21 @@
     overflow: hidden;
 }
 
+.projectContainerHeaderContainer{
+    display: flex;
+    gap: 10px;
+}
+
+.projectContainerHeaderContainer button{
+    width: 35px;
+    height: 35px;
+    border-radius: 50px;
+}
+
+.projectContainerHeaderContainer button:hover{
+    background-color: rgb(198, 227, 255);
+}
+
 .sidebartopcontainer{
     display: flex;
 }

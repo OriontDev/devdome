@@ -358,7 +358,7 @@ function Account(){
 
                 <div className={styles.profilecontainer}>
                     <div className={styles.profileheader}>
-                        {currentUser?.uid === profile?.uid ? <h1>Your Projects </h1> : <h1>Projects </h1>}
+                        {currentUser?.uid === profile?.uid ? <div className={styles.projectContainerHeaderContainer}><h1>Your Projects </h1> <button>+</button></div> : <h1>Projects </h1>}
                     </div>
                     <div className={styles.projectscontainer}>
                         <Projectcard
