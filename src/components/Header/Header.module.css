@@ -36,12 +36,16 @@
 }
 
 .profilepicture {
-    height: 50px;
-    margin: 5px;
-    border-radius: 100px;
-    cursor: pointer;
-    transition: filter 0.3s ease; /* smooth effect */
+  width: 50px; /* add width so it’s square */
+  height: 50px;
+  margin: 5px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: filter 0.3s ease;
+  object-fit: cover;     /* ensures the image fills without stretching */
+  aspect-ratio: 1 / 1;   /* keeps it perfectly square */
 }
+
 
 .profilepicture:hover {
     filter: brightness(70%);
@@ -129,6 +133,8 @@
   height: 60px;
   border-radius: 100px;
   border: solid #1767d1 2px;
+  object-fit: cover;     /* ensures the image fills without stretching */
+  aspect-ratio: 1 / 1;   /* keeps it perfectly square */
 }
 
 .dropdownuser{

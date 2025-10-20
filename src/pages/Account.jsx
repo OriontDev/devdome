@@ -7,7 +7,7 @@ import x_logo from "../assets/x.svg"
 import linkedin_logo from "../assets/linkedin.svg"
 import pfp from '/public/pfp.png'; //loading pfp
 import Projectcard from "../components/Projectcard/Projectcard.jsx";
-import { doc, getDoc, setDoc, onSnapshot, collection, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, onSnapshot, collection, deleteDoc, serverTimestamp } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useParams } from "react-router-dom";
@@ -22,7 +22,7 @@ function Account(){
     const [isEditing, setIsEditing] = useState(false);
     const [isOwner, setIsOwner] = useState(false);
     const [isLoadingData, setIsLoadingData] = useState(true);
-
+    const [friendRequestSent, setFriendRequestSent] = useState(false);
     const [friends, setFriends] = useState([]);
 
     const [isFriend, setIsFriend] = useState(false);
@@ -39,6 +39,23 @@ function Account(){
         setIsFriend(friendExists);
     }, [friends, profile]);
 
+    // check if current user has sent request to this profile
+    useEffect(() => {
+    // Skip check if owner or no user/profile loaded yet
+    if (isOwner || !currentUser || !profile) return;
+
+    const checkRequest = async () => {
+        const requestsRef = collection(db, "friendRequests");
+        const requestId = `${currentUser.uid}_${profile.uid}`;
+
+        const docRef = doc(requestsRef, requestId);
+        const docSnap = await getDoc(docRef);
+
+        setFriendRequestSent(docSnap.exists());
+    };
+
+    checkRequest();
+    }, [currentUser, profile, isOwner]);
 
 
     const userPhoto = profile?.photoURL || pfp; // fallback if no photo
@@ -92,6 +109,84 @@ function Account(){
 
         fetchProfile();
     }, [uid]); //repeat everytime uid in web link mounts or changed
+
+    // send request
+    async function sendFriendRequest(targetid) {
+        if (!currentUser) return;
+
+        try {
+            const requestsRef = collection(db, "friendRequests");
+
+            // deterministic request ID (sender_to_receiver)
+            const requestId = `${currentUser.uid}_${targetid}`;
+            const reverseRequestId = `${targetid}_${currentUser.uid}`;
+
+            const requestDoc = doc(requestsRef, requestId);
+            const reverseRequestDoc = doc(requestsRef, reverseRequestId);
+
+            // check if target already sent us a request
+            const reverseSnap = await getDoc(reverseRequestDoc);
+
+            if (reverseSnap.exists()) {
+                console.log("Mutual friend request detected → creating friendship");
+
+                // create friendship in both users' subcollections
+                const userFriendRef = doc(db, "users", currentUser.uid, "friends", targetid);
+                const targetFriendRef = doc(db, "users", targetid, "friends", currentUser.uid);
+
+                await setDoc(userFriendRef, {
+                    uid: targetid,
+                    since: serverTimestamp()
+                });
+
+                await setDoc(targetFriendRef, {
+                    uid: currentUser.uid,
+                    since: serverTimestamp()
+                });
+
+                // delete ONLY the reverse request (the one that exists)
+                await deleteDoc(reverseRequestDoc);
+
+                console.log("Friendship created with:", targetid);
+
+                setFriendReccomendations(prev =>
+                    prev.filter(user => user.id !== targetid) // remove from recs
+                );
+            } else {
+                // no reverse request → send normal friend request
+                await setDoc(requestDoc, {
+                    from: currentUser.uid,
+                    to: targetid,
+                    timestamp: serverTimestamp()
+                });
+
+                console.log("Friend request sent to:", targetid);
+
+                setFriendRequestSent(true);
+            }
+
+        } catch (err) {
+            console.error("Error sending friend request:", err);
+        }
+    }
+    // cancel request
+    async function cancelFriendRequest(targetid) {
+        if (!currentUser) return;
+
+        try {
+            const requestsRef = collection(db, "friendRequests");
+            const requestId = `${currentUser.uid}_${targetid}`;
+            const requestDoc = doc(requestsRef, requestId);
+
+            await deleteDoc(requestDoc);
+
+            console.log("Friend request cancelled for:", targetid);
+
+            setFriendRequestSent(false);
+        } catch (err) {
+            console.error("Error cancelling friend request:", err);
+        }
+    }
 
     // fetch user's friends
     // real-time listener for user's friends with onsnapshot
@@ -179,16 +274,31 @@ function Account(){
                     {profile?.bio ? <p className={styles.bio}>{profile.bio}</p> : <p>Loading bio..</p>}
 
                     {isLoadingData ? (
-                        <div className={styles.loadingContainer}>
-                            <div className={styles.spinner}></div>
-                        </div>
-                            ) : isOwner ? null : ( // hide buttons for your own account
-                            !isFriend ? (
-                                <button className={styles.friendRequestButton}>Send friend request</button>
-                            ) : (
-                                <button className={styles.friendRequestButton} onClick={() => removeFriend(uid)}>Remove Friend</button>
-                            )
+                    <div className={styles.loadingContainer}>
+                        <div className={styles.spinner}></div>
+                    </div>
+                    ) : isOwner ? null : (
+                    !isFriend ? (
+                        <button
+                        className={`${styles.friendRequestButton} ${friendRequestSent && styles.friendRequestSentButton}`}
+                        onClick={() =>
+                            friendRequestSent
+                            ? cancelFriendRequest(uid)
+                            : sendFriendRequest(uid)
+                        }
+                        >
+                        {friendRequestSent ? "Cancel Friend Request" : "Send Friend Request"}
+                        </button>
+                    ) : (
+                        <button
+                        className={styles.friendRequestButton}
+                        onClick={() => removeFriend(uid)}
+                        >
+                        Remove Friend
+                        </button>
+                    )
                     )}
+
 
 
 

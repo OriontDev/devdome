@@ -10,6 +10,7 @@ function EditProfile({ profile, onClose, onSave }) {
     linkedin: profile.linkedin || "",
     x: profile.x || "",
     personalWebsite: profile.personalWebsite || "",
+    photoURL: profile.photoURL || "",
   });
 
   const handleChange = (e) => {
@@ -50,6 +51,16 @@ function EditProfile({ profile, onClose, onSave }) {
             value={formData.bio}
             onChange={handleChange}
             placeholder="Bio"
+          />
+        </div>
+
+        <div className={styles.editcontainer}>
+          <p className={styles.edittitle}>Profile Picture (URL)</p>
+          <input
+            name="photoURL"
+            value={formData.photoURL}
+            onChange={handleChange}
+            placeholder="profile picture URL"
           />
         </div>
 

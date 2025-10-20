@@ -28,6 +28,8 @@ p{
     height: 100%;
     border-radius: 50%;
     cursor: pointer;
+    object-fit: cover;     /* ensures the image fills without stretching */
+    aspect-ratio: 1 / 1;   /* keeps it perfectly square */
 }
 
 .pfp:hover{

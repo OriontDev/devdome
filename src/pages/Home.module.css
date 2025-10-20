@@ -77,6 +77,8 @@
 .userpostpfp{
     border-radius: 50%;
     width: 60px;
+    object-fit: cover;     /* ensures the image fills without stretching */
+    aspect-ratio: 1 / 1;   /* keeps it perfectly square */
 }
 
 .userpostcontainer button{
