@@ -49,11 +49,13 @@
   color: white;
 }
 
-.friendCardContainer{
-    width: 50%;
+.friendCardContainer {
+  flex: 1 1 calc(50% - 10px);  /* two per row with spacing */
+  max-width: calc(50% - 10px); /* ensures it won’t exceed half the width */
 }
 
 .friendsContainer{
+    flex-wrap: wrap;
     padding: 10px;
     display: flex;
     width: 100%;
@@ -85,13 +87,16 @@
 
 
 @media screen and (max-width: 768px) {
-    .friendCardContainer{
-        width: 100%;
+
+    .friendCardContainer {
+      flex: 1 1 100%;     /* take full width */
+      max-width: 100%;    /* override 50% limit */
     }
 
     .friendsContainer{
         padding: 10px;
         display: flex;
+        flex-wrap: nowrap;
         flex-direction: column;
         width: 100%;
         gap: 10px;

@@ -1,5 +1,5 @@
 import styles from './Friends.module.css'
-import { doc, getDoc, getDocs, setDoc, collection, onSnapshot, query, limit, where } from "firebase/firestore";
+import { doc, getDoc, getDocs, setDoc, collection, onSnapshot, query, limit, where, serverTimestamp, deleteDoc } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useParams } from "react-router-dom";
@@ -23,6 +23,124 @@ function Friends(){
 
         return () => unsubscribe();
     }, []);
+
+    // remove friend
+    async function removeFriend(targetid) {
+        if (!authUser) return;
+
+        try {
+            // References to both users' friend subcollections
+            const userFriendRef = doc(db, "users", authUser.uid, "friends", targetid);
+            const targetFriendRef = doc(db, "users", targetid, "friends", authUser.uid);
+
+            // Delete both documents
+            await deleteDoc(userFriendRef);
+            await deleteDoc(targetFriendRef);
+
+            console.log("Friend removed:", targetid);
+
+            // Update local state
+            setFriends(prev => prev.filter(friend => friend.id !== targetid));
+
+            // Optional: add removed user back to recommendations
+            const targetProfileSnap = await getDoc(doc(db, "users", targetid));
+            if (targetProfileSnap.exists()) {
+                const targetProfile = { id: targetid, ...targetProfileSnap.data() };
+                setFriendReccomendations(prev => [...prev, targetProfile]);
+            }
+
+        } catch (err) {
+            console.error("Error removing friend:", err);
+        }
+    }
+
+    // cancel request
+    async function cancelFriendRequest(targetid) {
+        if (!authUser) return;
+
+        try {
+            const requestsRef = collection(db, "friendRequests");
+            const requestId = `${authUser.uid}_${targetid}`;
+            const requestDoc = doc(requestsRef, requestId);
+
+            await deleteDoc(requestDoc);
+
+            console.log("Friend request cancelled for:", targetid);
+
+            // update state instantly
+            setFriendReccomendations(prev =>
+                prev.map(user =>
+                    user.id === targetid ? { ...user, requestSent: false } : user
+                )
+            );
+        } catch (err) {
+            console.error("Error cancelling friend request:", err);
+        }
+    }
+
+    // send request
+    async function sendFriendRequest(targetid) {
+        if (!authUser) return;
+
+        try {
+            const requestsRef = collection(db, "friendRequests");
+
+            // deterministic request ID (sender_to_receiver)
+            const requestId = `${authUser.uid}_${targetid}`;
+            const reverseRequestId = `${targetid}_${authUser.uid}`;
+
+            const requestDoc = doc(requestsRef, requestId);
+            const reverseRequestDoc = doc(requestsRef, reverseRequestId);
+
+            // check if target already sent us a request
+            const reverseSnap = await getDoc(reverseRequestDoc);
+
+            if (reverseSnap.exists()) {
+                console.log("Mutual friend request detected → creating friendship");
+
+                // create friendship in both users' subcollections
+                const userFriendRef = doc(db, "users", authUser.uid, "friends", targetid);
+                const targetFriendRef = doc(db, "users", targetid, "friends", authUser.uid);
+
+                await setDoc(userFriendRef, {
+                    uid: targetid,
+                    since: serverTimestamp()
+                });
+
+                await setDoc(targetFriendRef, {
+                    uid: authUser.uid,
+                    since: serverTimestamp()
+                });
+
+                // delete ONLY the reverse request (the one that exists)
+                await deleteDoc(reverseRequestDoc);
+
+                console.log("Friendship created with:", targetid);
+
+                setFriendReccomendations(prev =>
+                    prev.filter(user => user.id !== targetid) // remove from recs
+                );
+            } else {
+                // no reverse request → send normal friend request
+                await setDoc(requestDoc, {
+                    from: authUser.uid,
+                    to: targetid,
+                    timestamp: serverTimestamp()
+                });
+
+                console.log("Friend request sent to:", targetid);
+            }
+
+            // update UI state instantly
+            setFriendReccomendations(prev =>
+                prev.map(user =>
+                    user.id === targetid ? { ...user, requestSent: true } : user
+                )
+            );
+        } catch (err) {
+            console.error("Error sending friend request:", err);
+        }
+    }
 
 
     // fetch friend recommendations (max 10)

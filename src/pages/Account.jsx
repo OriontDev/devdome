@@ -7,7 +7,7 @@ import x_logo from "../assets/x.svg"
 import linkedin_logo from "../assets/linkedin.svg"
 import pfp from '/public/pfp.png'; //loading pfp
 import Projectcard from "../components/Projectcard/Projectcard.jsx";
-import { doc, getDoc, setDoc, onSnapshot, collection } from "firebase/firestore";
+import { doc, getDoc, setDoc, onSnapshot, collection, deleteDoc } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useParams } from "react-router-dom";
@@ -117,9 +117,31 @@ function Account(){
         return () => unsubscribe();
     }, [currentUser]);
 
+    async function removeFriend(targetid) {
+        if (!currentUser) return;
 
-    console.log("Profile photo:", profile?.photoURL);
-    console.log("Current user photo:", currentUser?.photoURL);
+        try {
+            // References to both users' friend subcollections
+            const userFriendRef = doc(db, "users", currentUser.uid, "friends", targetid);
+            const targetFriendRef = doc(db, "users", targetid, "friends", currentUser.uid);
+
+            // Delete both documents
+            await deleteDoc(userFriendRef);
+            await deleteDoc(targetFriendRef);
+
+            console.log("Friend removed:", targetid);
+
+            // Update local state
+            setFriends(prev => prev.filter(friend => friend.id !== targetid));
+
+        } catch (err) {
+            console.error("Error removing friend:", err);
+        }
+    }
+
+
+    // console.log("Profile photo:", profile?.photoURL);
+    // console.log("Current user photo:", currentUser?.photoURL);
 
     return(
         <>
@@ -164,7 +186,7 @@ function Account(){
                             !isFriend ? (
                                 <button className={styles.friendRequestButton}>Send friend request</button>
                             ) : (
-                                <button className={styles.friendRequestButton}>Remove Friend</button>
+                                <button className={styles.friendRequestButton} onClick={() => removeFriend(uid)}>Remove Friend</button>
                             )
                     )}
 

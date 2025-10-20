@@ -167,4 +167,7 @@
         min-width: 90vw;
         max-width: none;
     }
+    .bio{
+        font-size: 1.25rem;
+    }
 }
