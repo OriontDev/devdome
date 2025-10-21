@@ -269,9 +269,34 @@ function Account(){
         }
     }
 
-    async function createProject(){
-        console.log("making project")
+    //Create project
+    async function createProject(projectData) {
+    if (!currentUser) return;
+    try {
+        const projectsRef = collection(db, "projects");
+        const newProject = {
+            userId: currentUser.uid,
+            title: projectData.title,
+            description: projectData.description,
+            link: projectData.link,
+            thumbnailURL: projectData.thumbnailURL,
+            tags: projectData.tags,
+            createdAt: serverTimestamp(),
+            likesAmount: 0,
+            commentsAmount: 0,
+        };
+
+        await setDoc(doc(projectsRef), newProject);
+
+        console.log("✅ Project created:", newProject);
+
+        setIsCreatingProject(false); // close popup
+        setProfileProject(prev => [...prev, newProject]); // show instantly in UI
+    } catch (err) {
+        console.error("❌ Error creating project:", err);
     }
+    }
+
 
     // console.log("Profile photo:", profile?.photoURL);
     // console.log("Current user photo:", currentUser?.photoURL);

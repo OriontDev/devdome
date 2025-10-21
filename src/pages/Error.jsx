@@ -7,13 +7,19 @@ function Error(){
     const navigate = useNavigate(); //initialize usenavigate
     const location = useLocation(); 
 
-    function handleClick(){
-        if(location.state.invalidPost){
+    function handleClick() {
+        if (location.state && location.state.invalidPost) {
             navigate('/home');
-        }else{
-            navigate(-1);
+        } else {
+            // if there's no previous page, go to home instead of crashing
+            if (window.history.length > 1) {
+                navigate(-1);
+            } else {
+                navigate('/home');
+            }
         }
     }
+
 
     return(
         <>

@@ -14,9 +14,17 @@ function AddProject( {createProject, setIsCreatingProject} ){
         tags: [],
     });
 
-    function handleCreateClicked(){
-        createProject();
-    }
+    const handleCreateClicked = () => {
+        // Check for required fields
+        if (!projectData.title.trim() || !projectData.description.trim()) {
+            alert("Please fill in both the Title and Description before posting.");
+            return; // stop the function if missing
+        }
+
+        // Everything is fine → continue
+        createProject(projectData);
+    };
+
 
     const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,10 +67,10 @@ function AddProject( {createProject, setIsCreatingProject} ){
             </div>
 
             <div className={styles.contentContainer}>
-                <div className={styles.projectContainer}>
+                {/* <div className={styles.projectContainer}>
                     <h3>Project:</h3>
                     <h3 className={styles.linkButton}>Link this post to a project?</h3>
-                </div>
+                </div> */}
 
                 <div className={styles.editcontainer}>
                     <p className={styles.edittitle}>Project Title</p>
