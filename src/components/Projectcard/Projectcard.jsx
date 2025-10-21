@@ -1,7 +1,7 @@
 import styles from './Projectcard.module.css';
 import { useNavigate } from "react-router-dom";
 
-function Projectcard( {name, description, images, comments, likes, projectId} ){
+function Projectcard( {name, description, thumbnailURL, comments, likes, projectId} ){
 
     const navigate = useNavigate(); //initialize usenavigate
 
@@ -17,7 +17,7 @@ function Projectcard( {name, description, images, comments, likes, projectId} ){
                        <p className={styles.description}>{description.length > 400 ? description.slice(0, 400) + "..." : description}</p>
                     </div>
 
-                    <img className={styles.image} src={images}/>
+                    <img className={styles.image} src={thumbnailURL}/>
                     <div className={styles.reactioncontainer}>
                         <h2>❤️{likes}</h2>
                         <h2>💬{comments}</h2>

@@ -404,7 +404,7 @@ function Account(){
 
                 <div className={styles.profilecontainer}>
                     <div className={styles.profileheader}>
-                        {currentUser?.uid === profile?.uid ? <div className={styles.projectContainerHeaderContainer}><h1>Your Projects </h1> <button onClick={() => setIsCreatingProject(true)}>+</button></div> : <h1>Projects </h1>}
+                        {currentUser?.uid === profile?.uid ? <div className={styles.projectContainerHeaderContainer}><h1>Your Projects </h1> <button onClick={() => setIsCreatingProject(true)} className={styles.createProjectButton}>+</button></div> : <h1>Projects </h1>}
                     </div>
                     <div className={styles.projectscontainer}>
                         { !isLoadingProjects ? profileProject.map((project) => (
@@ -412,7 +412,7 @@ function Account(){
                                 name={project.title}
                                 link={project.link}
                                 description={project.description}
-                                images={project.thumbnailURL}
+                                thumbnailURL={project.thumbnailURL}
                                 comments={project.commentsAmount}
                                 likes={project.likesAmount}
                                 projectId={project.id}
