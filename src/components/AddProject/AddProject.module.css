@@ -1,0 +1,112 @@
+*{
+  box-sizing: border-box;
+}
+
+.container{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: 50%;
+    /* min-width: 400px;
+    max-width: 1100px; */
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    height: auto;
+    max-height: 90vh; /* shrink if screen is smaller */
+    overflow-y: auto; /* enable scrolling if content is too tall */
+    gap: 15px;
+}
+
+button{
+  padding: 10px;
+  border: none;
+  background-color: rgb(255, 255, 255);
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.15s ease;
+}
+
+.buttonsContainer{
+  display: flex;
+  gap: 1rem;
+}
+
+.deleteButton{
+
+  color: rgb(55, 0, 255);
+}
+
+.deleteButton:hover{
+  background-color: rgb(219, 233, 255);  
+}
+
+.cancelButton:hover{
+  background-color: rgb(238, 238, 238);  
+}
+
+/* CRITICAL FIX: Applying !important to override external overflow:hidden */
+textarea{
+    width: 100%;
+    resize: none;
+    font-size: 1.2rem;
+    line-height: 1.4; 
+    min-height: 10rem; 
+    max-height: 30vh !important; /* FORCED MAX HEIGHT */
+    overflow-y: auto !important; /* FORCED SCROLLBAR */
+    border: none;
+    outline: none;
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    padding-bottom: 1px;
+    font-family: inherit;
+    box-sizing: content-box; /* Ensures JS height calculation is accurate */
+}
+
+textarea::placeholder {
+    color: #a0a0a0;
+}
+
+.textareaContainer{
+  background-color: rgb(230, 230, 230);
+  border-radius: 10px;
+  padding: 4px;
+  width: 100%;
+  height: auto;
+}
+
+.projectContainer{
+  display: flex;
+  gap: 5px;
+}
+
+.linkButton{
+  color: #1877F2;
+}
+
+.linkButton:hover{
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+    .container{
+        width: 90%;
+        min-width: unset;
+        padding: 15px;
+    }
+
+    .textareaContainer{
+        padding: 8px;
+        width: 100%;
+    }
+}

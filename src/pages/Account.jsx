@@ -6,8 +6,9 @@ import personal_logo from "../assets/website.svg"
 import x_logo from "../assets/x.svg"
 import linkedin_logo from "../assets/linkedin.svg"
 import pfp from '/public/pfp.png'; //loading pfp
+import AddProject from "../components/AddProject/AddProject.jsx";
 import Projectcard from "../components/Projectcard/Projectcard.jsx";
-import { doc, getDoc, setDoc, onSnapshot, collection, deleteDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, getDocs, setDoc, onSnapshot, collection, deleteDoc, serverTimestamp, query, where } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useParams } from "react-router-dom";
@@ -17,6 +18,9 @@ function Account(){
 
     // info of the profile we are viewing
     const [profile, setProfile] = useState(null);
+
+    const [profileProject, setProfileProject] = useState([]);
+
     // the current user logged in
     const [currentUser, setCurrentUser] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -24,6 +28,8 @@ function Account(){
     const [isLoadingData, setIsLoadingData] = useState(true);
     const [friendRequestSent, setFriendRequestSent] = useState(false);
     const [friends, setFriends] = useState([]);
+
+    const [isLoadingProjects, setIsLoadingProjects] = useState(true);
 
     const [isCreatingProject, setIsCreatingProject] = useState(false);
 
@@ -89,6 +95,33 @@ function Account(){
         return () => unsubscribe();
     }, []);
 
+    // Fetch all projects belonging to the profile being viewed
+    useEffect(() => {
+        if (!profile) return; // wait until profile loads
+
+        const fetchProjects = async () => {
+            try {
+                setIsLoadingProjects(true);
+                const projectsRef = collection(db, "projects");
+                const q = query(projectsRef, where("userId", "==", profile.uid));
+
+                const querySnap = await getDocs(q);
+                const projects = querySnap.docs.map(docSnap => ({
+                    id: docSnap.id,
+                    ...docSnap.data(),
+                }));
+
+                setProfileProject(projects);
+                setIsLoadingProjects(false);
+                console.log("Fetched projects:", projects);
+            } catch (error) {
+                setIsLoadingProjects(false);
+                console.error("Error fetching projects:", error);
+            }
+        };
+
+        fetchProjects();
+    }, [profile]);
 
 
     //fetch the info of the profile we are viewing, it could be ours or other people's
@@ -236,6 +269,9 @@ function Account(){
         }
     }
 
+    async function createProject(){
+        console.log("making project")
+    }
 
     // console.log("Profile photo:", profile?.photoURL);
     // console.log("Current user photo:", currentUser?.photoURL);
@@ -313,6 +349,7 @@ function Account(){
                     {isOwner && isCreatingProject && (
                         <>
                             <div className={styles.overlay} onClick={() => setIsCreatingProject(false)}></div>                  
+                            <AddProject createProject={createProject} setIsCreatingProject={() => setIsCreatingProject(false)} />
                         </>
 
                     )}
@@ -370,38 +407,21 @@ function Account(){
                         {currentUser?.uid === profile?.uid ? <div className={styles.projectContainerHeaderContainer}><h1>Your Projects </h1> <button onClick={() => setIsCreatingProject(true)}>+</button></div> : <h1>Projects </h1>}
                     </div>
                     <div className={styles.projectscontainer}>
-                        <Projectcard
-                            name={"Project 1"}
-                            description={"Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dol dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteuror sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur"}
-                            images={"https://static.wikitide.net/hoyodexwiki/thumb/d/d4/Venti_%28YS-MU%29.png/800px-Venti_%28YS-MU%29.png"}
-                            comments={tempCommentAmount}
-                            likes={tempLikeAmount}
-                            projectId={212312}
-                        />
-                        <Projectcard
-                            name={"Project 1"}
-                            description={"Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur"}
-                            images={"https://preview.redd.it/venti-deserves-improvements-v0-r4jc3ryohv5e1.jpeg?width=640&crop=smart&auto=webp&s=91cb9ec4837f947081cb26a0ca603e1e89329292"}
-                            comments={tempCommentAmount}
-                            likes={tempLikeAmount}
-                            projectId={21231}
-                        />
-                        <Projectcard
-                            name={"Project 1"}
-                            description={"Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dol dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteuror sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur"}
-                            images={"https://static.wikitide.net/hoyodexwiki/thumb/d/d4/Venti_%28YS-MU%29.png/800px-Venti_%28YS-MU%29.png"}
-                            comments={tempCommentAmount}
-                            likes={tempLikeAmount}
-                            projectId={212312}
-                        />
-                        <Projectcard
-                            name={"Project 1"}
-                            description={"Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur Lorem ipsum dolor sit amet consecteur"}
-                            images={"https://preview.redd.it/venti-deserves-improvements-v0-r4jc3ryohv5e1.jpeg?width=640&crop=smart&auto=webp&s=91cb9ec4837f947081cb26a0ca603e1e89329292"}
-                            comments={tempCommentAmount}
-                            likes={tempLikeAmount}
-                            projectId={21231}
-                        />
+                        { !isLoadingProjects ? profileProject.map((project) => (
+                            <Projectcard
+                                name={project.title}
+                                link={project.link}
+                                description={project.description}
+                                images={project.thumbnailURL}
+                                comments={project.commentsAmount}
+                                likes={project.likesAmount}
+                                projectId={project.id}
+                                key={project.id}
+                            />
+                        )) : <div className={styles.loadingContainer}>
+                                <div className={styles.spinner}></div>
+                            </div>}
+
                     </div>
                     
                 </div>

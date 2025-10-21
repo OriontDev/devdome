@@ -15,7 +15,17 @@
 
 
 .descriptioncontainer{
-    height: 40%;
+    min-height: 160px;
+    width: 100%;
+}
+
+.description{
+    min-height: 100%;
+    white-space: pre-wrap;         /* keep line breaks */
+    display: -webkit-box;          /* enables line clamping */
+    -webkit-line-clamp: 8;         /* show only 8 lines */
+    -webkit-box-orient: vertical;  /* vertical flow */
+    overflow: hidden;              /* hide the rest */
 }
 
 .contentcontainer{

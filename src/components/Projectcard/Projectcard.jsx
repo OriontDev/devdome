@@ -14,7 +14,7 @@ function Projectcard( {name, description, images, comments, likes, projectId} ){
                 <div className={styles.contentcontainer}>
                     {/* if length more than 350,slice and add ... at the end */}
                     <div className={styles.descriptioncontainer}>
-                       <p className={styles.description}>{description.length > 350 ? description.slice(0, 350) + "..." : description}</p>
+                       <p className={styles.description}>{description.length > 400 ? description.slice(0, 400) + "..." : description}</p>
                     </div>
 
                     <img className={styles.image} src={images}/>
