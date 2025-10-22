@@ -104,3 +104,7 @@
     padding: 5px;
     box-shadow: 0px -10px 10px rgba(0, 0, 0, 0.2); /* optional: adds subtle pop */
 }
+
+.description{
+    white-space: pre-wrap;
+}

@@ -271,31 +271,36 @@ function Account(){
 
     //Create project
     async function createProject(projectData) {
-    if (!currentUser) return;
-    try {
-        const projectsRef = collection(db, "projects");
-        const newProject = {
-            userId: currentUser.uid,
-            title: projectData.title,
-            description: projectData.description,
-            link: projectData.link,
-            thumbnailURL: projectData.thumbnailURL,
-            tags: projectData.tags,
-            createdAt: serverTimestamp(),
-            likesAmount: 0,
-            commentsAmount: 0,
-        };
+        if (!currentUser) return;
+        try {
+            const projectsRef = collection(db, "projects");
+            const newDocRef = doc(projectsRef); // create new doc reference with generated ID
 
-        await setDoc(doc(projectsRef), newProject);
+            const newProject = {
+                id: newDocRef.id, // include ID immediately
+                userId: currentUser.uid,
+                title: projectData.title,
+                description: projectData.description,
+                link: projectData.link,
+                thumbnailURL: projectData.thumbnailURL,
+                tags: projectData.tags,
+                createdAt: serverTimestamp(),
+                likesAmount: 0,
+                commentsAmount: 0,
+                bannerURL: projectData.bannerURL
+            };
 
-        console.log("✅ Project created:", newProject);
+            await setDoc(newDocRef, newProject);
 
-        setIsCreatingProject(false); // close popup
-        setProfileProject(prev => [...prev, newProject]); // show instantly in UI
-    } catch (err) {
-        console.error("❌ Error creating project:", err);
+            console.log("✅ Project created:", newProject);
+
+            setIsCreatingProject(false); // close popup
+            setProfileProject(prev => [...prev, newProject]); // instantly show new project
+        } catch (err) {
+            console.error("❌ Error creating project:", err);
+        }
     }
-    }
+
 
 
     // console.log("Profile photo:", profile?.photoURL);

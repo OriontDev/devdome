@@ -132,6 +132,15 @@ textarea::placeholder {
     border: 2px #1877F2 solid;
 }
 
+.bannerPreview{
+    width: 90%;
+    aspect-ratio: 25 / 6;   /* keeps 16:9 ratio */
+    border-radius: 10px;
+    object-fit: cover;      /* 🔥 crops instead of stretching */
+    object-position: center; /* centers the crop */
+    border: 2px #1877F2 solid;
+}
+
 @media screen and (max-width: 768px) {
   .container {
     width: 95%;

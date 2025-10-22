@@ -11,6 +11,7 @@ function AddProject( {createProject, setIsCreatingProject} ){
         description: "",
         link: "",
         thumbnailURL: "",
+        bannerURL: "",
         tags: [],
     });
 
@@ -106,6 +107,17 @@ function AddProject( {createProject, setIsCreatingProject} ){
                         placeholder="Insert Thumbnail URL"
                     />
                     <img className={styles.thumbnailPreview} src={projectData.thumbnailURL} alt='Thumbnail Preview'/>
+                </div>
+
+                <div className={styles.editcontainerlong}>
+                    <p className={styles.edittitle}>Banner URL (Optional)</p>
+                    <input
+                        name="bannerURL"
+                        value={projectData.bannerURL}
+                        onChange={handleChange}
+                        placeholder="Insert Banner's URL"
+                    />
+                    <img className={styles.bannerPreview} src={projectData.bannerURL} alt='Banner Preview'/>
                 </div>
 
                 <div className={styles.editcontainerlong}>
