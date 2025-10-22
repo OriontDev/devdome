@@ -1,5 +1,6 @@
 
 import styles from './Posts.module.css';
+import paperPlaneIcon from '../assets/icon/paperplane.svg'
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { auth, db } from "../config/firebase.jsx";
@@ -868,7 +869,7 @@ function Posts() {
                         <textarea placeholder="Write a comment.." onChange={userCommentChange} ref={textareaRef} value={userCommentInput}></textarea>
                         <div className={styles.textareabuttoncontainer}>
                             <div className={userCommentInput !== "" ? styles.sendbutton : styles.sendbuttonoff} onClick={postComment}>
-                                <img src='/paperplane.svg' className={styles.sendbuttonimage}/>
+                                <img src={paperPlaneIcon} className={styles.sendbuttonimage}/>
                             </div>
                         </div>
                     </div>

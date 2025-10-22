@@ -1,7 +1,7 @@
 import styles from './Post.module.css';
 import pfp from '/public/pfp.png'; //loading pfp
 import { useNavigate } from 'react-router-dom';
-import exitlogo from '/exitlogo.svg'
+import exitlogo from '../../assets/icon/exitlogo.svg'
 
 function Post( {username, displayName, userPhotoURL, message, createdAt, likesAmount, commentsAmount, currentUserLiked, likeFunction, redirectToPostPage, redirectToUserPage, projectId } ){
 

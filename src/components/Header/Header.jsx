@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from './Header.module.css';
-import logo from '/public/logo.png';
+import logo from '../../assets/logo.png';
 import toast from 'react-hot-toast';
 
 import { useNavigate } from "react-router-dom";
