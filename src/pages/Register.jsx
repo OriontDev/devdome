@@ -1,7 +1,7 @@
 import styles from './Register.module.css'
 import { auth, googleProvider, db } from "../config/firebase"
 import { useNavigate } from "react-router-dom";
-import { createUserWithEmailAndPassword, signInWithPopup, signOut, fetchSignInMethodsForEmail, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithPopup, onAuthStateChanged } from "firebase/auth";
 import {
   getDocs,
   collection,
@@ -11,12 +11,11 @@ import {
   setDoc
 } from "firebase/firestore";
 import { serverTimestamp } from "firebase/firestore";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 
 
 function Register(){
-
     const defaultPfps = [
         "/pfp1.svg",
         "/pfp2.svg",
@@ -28,6 +27,18 @@ function Register(){
     const usernameRegex = /^[a-zA-Z0-9._]+$/;
     const usersCollectionRef = collection(db, "users");
     const navigate = useNavigate(); //initialize usenavigate
+
+    //prevent people who authed to go back to login
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // If already logged in, redirect to home
+                navigate("/home");
+            }
+        });
+
+        return () => unsubscribe(); // cleanup on unmount
+    }, [navigate]);
 
     //For email login
     const [username, setUsername] = useState("");
