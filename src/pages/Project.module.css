@@ -103,6 +103,13 @@
 .contentBodyContainer{
     padding: 5px;
     box-shadow: 0px -10px 10px rgba(0, 0, 0, 0.2); /* optional: adds subtle pop */
+
+
+    /* ✅ make it scrollable */
+    overflow-y: auto;
+
+    /* ✅ take up remaining space below the header */
+    flex: 1;
 }
 
 .description{
