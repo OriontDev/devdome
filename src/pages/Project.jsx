@@ -124,9 +124,9 @@ function Project(){
                     </div>
                     <div className={styles.sidebarContentContainer}>
                         <div className={styles.sidebarImagesContainer}>
-                            {imagesTemp.map((image, index) => (
+                            {projectData.attachments.length !== 0 ? projectData.attachments.map((image, index) => (
                                 <img src={image} className={styles.sidebarImage} key={index}/>
-                            ))}
+                            )) : <p>No attachments..</p>}
                         </div>
                     </div>
                     

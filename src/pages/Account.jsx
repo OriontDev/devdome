@@ -283,6 +283,7 @@ function Account(){
                 description: projectData.description,
                 link: projectData.link,
                 thumbnailURL: projectData.thumbnailURL,
+                attachments: projectData.attachments,
                 tags: projectData.tags,
                 createdAt: serverTimestamp(),
                 likesAmount: 0,

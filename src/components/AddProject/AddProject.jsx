@@ -3,6 +3,7 @@ import styles from './AddProject.module.css';
 
 function AddProject( {createProject, setIsCreatingProject} ){
     
+    const [attachmentsInput, setAttachmentsInput] = useState(""); // text typed by user
     const [tagsInput, setTagsInput] = useState(""); // text typed by user
     const textareaRef = useRef(null); // <--- CREATE A REF
 
@@ -13,6 +14,7 @@ function AddProject( {createProject, setIsCreatingProject} ){
         thumbnailURL: "",
         bannerURL: "",
         tags: [],
+        attachments: [],
     });
 
     const handleCreateClicked = () => {
@@ -28,15 +30,19 @@ function AddProject( {createProject, setIsCreatingProject} ){
 
 
     const handleChange = (e) => {
-    const { name, value } = e.target;
+        const { name, value } = e.target;
 
-    if (name === "tags") {
-        setTagsInput(value); // let user type freely
-        const tagArray = value.split(" ").filter(tag => tag.trim() !== "");
-        setProjectData({ ...projectData, tags: tagArray });
-    } else {
-        setProjectData({ ...projectData, [name]: value });
-    }
+        if (name === "tags") {
+            setTagsInput(value); // let user type freely
+            const tagArray = value.split(" ").filter(tag => tag.trim() !== "");
+            setProjectData({ ...projectData, tags: tagArray });
+        } else if (name === "attachments"){
+            setAttachmentsInput(value); // let user type freely
+            const attachmentsArray = value.split(" ").filter(attachment => attachment.trim() !== "");
+            setProjectData({ ...projectData, attachments: attachmentsArray });
+        } else {
+            setProjectData({ ...projectData, [name]: value });
+        }
     };
 
 
@@ -121,6 +127,16 @@ function AddProject( {createProject, setIsCreatingProject} ){
                 </div>
 
                 <div className={styles.editcontainerlong}>
+                    <p className={styles.edittitle}>Project's Attachment URLs (Space seperated)</p>
+                    <input
+                    name="attachments"
+                    value={attachmentsInput} // use text version instead of joined array
+                    onChange={handleChange}
+                    placeholder="Project's Attachment URLs (Space seperated)"
+                    />
+                </div>
+
+                <div className={styles.editcontainerlong}>
                     <p className={styles.edittitle}>Project's tags (Space seperated)</p>
                     <input
                     name="tags"
@@ -128,7 +144,6 @@ function AddProject( {createProject, setIsCreatingProject} ){
                     onChange={handleChange}
                     placeholder="e.g. Entertainment Fun Calculator Kids"
                     />
-
                 </div>
 
                 <div className={styles.buttonsContainer}>
