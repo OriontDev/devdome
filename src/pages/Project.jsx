@@ -136,6 +136,9 @@ function Project(){
                         <h1>{projectData.title}</h1>
                     </div>
 
+
+                    
+                    <div className={styles.contentBodyContainer}>
                     {projectData.bannerURL && projectData.bannerURL.trim() !== "" ? (
                         <img
                             className={styles.projectBanner}
@@ -144,9 +147,15 @@ function Project(){
                             onError={(e) => (e.target.style.display = "none")} // hides if invalid URL
                         />
                     ) : null}
-                    
-                    <div className={styles.contentBodyContainer}>
                         <p className={styles.description}>{projectData.description}</p>
+                        <div className={styles.contentBodyButtonContainer}>
+                            <button className={styles.contentButton}>Visit Project</button>
+                        </div>
+                        <div className={styles.contentCollaboratorTextContainer}>
+                            <h1 className={styles.contentCollaboratorText}>Owner & Collaborators</h1>
+                        </div>
+
+
                     </div>
                     {/* src="https://placehold.co/3000x720" */}
                 </div>

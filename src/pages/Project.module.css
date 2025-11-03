@@ -102,6 +102,8 @@
 
 .contentBodyContainer{
     padding: 5px;
+    padding-bottom: 20px;
+
     box-shadow: 0px -10px 10px rgba(0, 0, 0, 0.2); /* optional: adds subtle pop */
 
 
@@ -110,8 +112,58 @@
 
     /* ✅ take up remaining space below the header */
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .description{
     white-space: pre-wrap;
+    font-size: 1.2rem;
+}
+
+.contentButton{
+    text-align: center;
+    width: 50%;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    padding: 10px;
+    background-color: #1877F2;
+}
+
+.contentButton:hover{
+    background-color: #3d8bf1;
+}
+
+.contentBodyButtonContainer{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.contentCollaboratorTextContainer{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.contentCollaboratorText{
+    text-align: center;
+    width: 100%;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    padding: 10px;
+    background-color: #1877F2;
+    border-radius: 10px;
+}
+
+@media screen and (max-width: 768px) {
+    .sidebarContainer{
+        display: none;
+    }
+    .contentContainer{
+        width: 95%;
+    }
 }
