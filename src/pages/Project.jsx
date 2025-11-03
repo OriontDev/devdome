@@ -5,6 +5,7 @@ import EditProfile from "../components/EditProfile/EditProfile.jsx";
 import github_logo from "../assets/github.svg"
 import personal_logo from "../assets/website.svg"
 import x_logo from "../assets/x.svg"
+import CreditProfileCard from "../components/CreditProfileCard/CreditProfileCard.jsx";
 import linkedin_logo from "../assets/linkedin.svg"
 import pfp from '/public/pfp.png'; //loading pfp
 import AddProject from "../components/AddProject/AddProject.jsx";
@@ -153,6 +154,12 @@ function Project(){
                         </div>
                         <div className={styles.contentCollaboratorTextContainer}>
                             <h1 className={styles.contentCollaboratorText}>Owner & Collaborators</h1>
+                        </div>
+                        <div>
+                            <CreditProfileCard
+                                username={"aa"}
+                                userid={projectData.userId}
+                                photoURL={"dsadas"}/>
                         </div>
 
 
