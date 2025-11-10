@@ -158,32 +158,32 @@
     width: 20px;
     height: 20px;
     background-repeat: no-repeat;
-    background-position: 0 -863px;
-    background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yC/r/pS7pURSmNlX.png?_nc_eui2=AeErAUrAkR18yU687qemddon94jW2ZlCNaX3iNbZmUI1pTQCjc11GSbC9x369RRX_PfGIPBzWmwdshzUKMJDBbiq');
+    background-position: 0 -813px;
+    background-image: url('/src/assets/icon/iconSheet2.png');
 }
 
 .likelogoliked{
     width: 20px;
     height: 20px;
     background-repeat: no-repeat;
-    background-position: 0 -842px;
-    background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yC/r/pS7pURSmNlX.png?_nc_eui2=AeErAUrAkR18yU687qemddon94jW2ZlCNaX3iNbZmUI1pTQCjc11GSbC9x369RRX_PfGIPBzWmwdshzUKMJDBbiq');  
+    background-position: 0 -792px;
+    background-image: url('/src/assets/icon/iconSheet2.png');  
 }
 
 .commentlogo{
     width: 20px;
     height: 20px;
     background-repeat: no-repeat;
-    background-position: 0 -821px;
-    background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yC/r/pS7pURSmNlX.png?_nc_eui2=AeErAUrAkR18yU687qemddon94jW2ZlCNaX3iNbZmUI1pTQCjc11GSbC9x369RRX_PfGIPBzWmwdshzUKMJDBbiq');
+    background-position: 0 -771px;
+    background-image: url('/src/assets/icon/iconSheet2.png');
 }
 
 .sharelogo{
     width: 20px;
     height: 20px;
     background-repeat: no-repeat;
-    background-position: 0 -885px;
-    background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yC/r/pS7pURSmNlX.png?_nc_eui2=AeErAUrAkR18yU687qemddon94jW2ZlCNaX3iNbZmUI1pTQCjc11GSbC9x369RRX_PfGIPBzWmwdshzUKMJDBbiq');
+    background-position: 0 -835px;
+    background-image: url('/src/assets/icon/iconSheet2.png');
 }
 
 
@@ -319,10 +319,9 @@
     width: 20px;
     height: 20px;
     background-repeat: no-repeat;
-    background-position: 0 -589px;
-    background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yC/r/pS7pURSmNlX.png?_nc_eui2=AeErAUrAkR18yU687qemddon94jW2ZlCNaX3iNbZmUI1pTQCjc11GSbC9x369RRX_PfGIPBzWmwdshzUKMJDBbiq');
+    background-position: 0 -580px;
+    background-image: url('/src/assets/icon/iconSheet2.png');
 }
-
 .dropdown {
     position: absolute;
     right: 10px;
@@ -355,25 +354,25 @@
 .editlogodropdown{
     width: 20px;
     height: 20px;          /* must match icon height exactly */
-    background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yH/r/foe7A7YmG4v.png');
+    background-image: url('/src/assets/icon/iconSheet2.png');
     background-repeat: no-repeat;
-    background-position: 0 -402px; /* vertical offset: -80px for the correct icon */
+    background-position: 0 -666px; /* vertical offset: -80px for the correct icon */
 }
 
 .deletelogodropdown{
     width: 20px;
     height: 20px;          /* must match icon height exactly */
-    background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yC/r/pS7pURSmNlX.png?_nc_eui2=AeErAUrAkR18yU687qemddon94jW2ZlCNaX3iNbZmUI1pTQCjc11GSbC9x369RRX_PfGIPBzWmwdshzUKMJDBbiq');
+    background-image: url('/src/assets/icon/iconSheet2.png');
     background-repeat: no-repeat;
-    background-position: 0 -569px; /* vertical offset: -80px for the correct icon */
+    background-position: 0 -559px; /* vertical offset: -80px for the correct icon */
 }
 
 .reportlogodropdown{
     width: 20px;
     height: 20px;          /* must match icon height exactly */
-    background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yC/r/pS7pURSmNlX.png?_nc_eui2=AeErAUrAkR18yU687qemddon94jW2ZlCNaX3iNbZmUI1pTQCjc11GSbC9x369RRX_PfGIPBzWmwdshzUKMJDBbiq');
+    background-image: url('/src/assets/icon/iconSheet2.png');
     background-repeat: no-repeat;
-    background-position: 0 -296px; /* vertical offset: -80px for the correct icon */
+    background-position: 0 -288px; /* vertical offset: -80px for the correct icon */
 }
 
 

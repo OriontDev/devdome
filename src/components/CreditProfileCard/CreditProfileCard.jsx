@@ -2,7 +2,7 @@ import styles from './CreditProfileCard.module.css';
 import pfp from '/public/pfp.png'; //loading pfp
 import { useNavigate } from 'react-router-dom';
 
-function CreditProfileCard( { username, photo, userid, requestSent, sendFriendRequestFunc, cancelFriendRequestFunc } ){
+function CreditProfileCard( { username, photoURL, userid, requestSent, sendFriendRequestFunc, cancelFriendRequestFunc } ){
 
     const navigate = useNavigate();
 
@@ -10,7 +10,7 @@ function CreditProfileCard( { username, photo, userid, requestSent, sendFriendRe
         <>
             <div className={styles.container}>
                 <img 
-                    src={photo || pfp} 
+                    src={photoURL || pfp} 
                     className={styles.profilepicture} 
                     alt="profile"
                     onClick={() => navigate(`/account/${userid}`)}

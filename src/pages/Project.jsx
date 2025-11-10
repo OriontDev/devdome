@@ -69,6 +69,7 @@ function Project(){
                     userData = userSnap.data();
                 }
             }
+            console.log("User data from Firestore:", userData);
 
             // Combine data nicely
             const combinedData = {
@@ -111,7 +112,6 @@ function Project(){
     if (!projectData) {
         return <h2 style={{ textAlign: "center", marginTop: "2rem" }}>Project not found.</h2>;
     }
-
 
 
     // fetch project data from Firebase using id
@@ -157,9 +157,9 @@ function Project(){
                         </div>
                         <div>
                             <CreditProfileCard
-                                username={"aa"}
+                                username={projectData.owner.username}
                                 userid={projectData.userId}
-                                photoURL={"dsadas"}/>
+                                photoURL={projectData.owner.photoURL}/>
                         </div>
 
 

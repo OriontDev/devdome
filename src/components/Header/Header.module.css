@@ -145,17 +145,17 @@
 .logouticon {
   width: 20px;
   height: 20px;          /* must match icon height exactly */
-  background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yH/r/foe7A7YmG4v.png');
+  background-image: url('/src/assets/icon/iconSheet1.png');
   background-repeat: no-repeat;
-  background-position: 0 -110px; /* vertical offset: -80px for the correct icon */
+  background-position: 0 -130px; /* vertical offset: -80px for the correct icon */
 }
 
 .friendicon {
   width: 20px;
   height: 20px;          /* must match icon height exactly */
-  background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yH/r/foe7A7YmG4v.png');
+  background-image: url('/src/assets/icon/iconSheet1.png');
   background-repeat: no-repeat;
-  background-position: 0 -457px; /* vertical offset: -80px for the correct icon */
+  background-position: 0 -314px; /* vertical offset: -80px for the correct icon */
 }
 
 .dropdownlogocontainer{
@@ -184,9 +184,9 @@
 .inboxlogo{
   width: 20px;
   height: 20px;          /* must match icon height exactly */
-  background-image: url('https://static.xx.fbcdn.net/rsrc.php/v4/yH/r/foe7A7YmG4v.png');
+  background-image: url('/src/assets/icon/iconSheet1.png');
   background-repeat: no-repeat;
-  background-position: 0 -45px; /* vertical offset: -80px for the correct icon */  
+  background-position: 0 -66px; /* vertical offset: -80px for the correct icon */  
 }
 
 .inboxdropdown {
